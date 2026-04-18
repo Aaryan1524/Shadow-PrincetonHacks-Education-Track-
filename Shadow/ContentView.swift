@@ -3,6 +3,7 @@ import SwiftUI
 enum LensTarget { case user, expert }
 
 struct ContentView: View {
+    @Binding var isPresented: Bool
     @State private var zoomTarget: LensTarget? = nil
     @State private var isZooming = false
     @State private var showDestination = false
@@ -42,12 +43,26 @@ struct ContentView: View {
                 if !showDestination {
                     VStack {
                         Text("Shadow")
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
+                            .font(.custom("FiraCode-Bold", size: 36))
                             .foregroundStyle(.black)
                         Spacer()
                     }
                     .padding(.top, 64)
                     .zIndex(0)
+
+                    // Logout button — top right
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
+                    } label: {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.black)
+                            .padding(16)
+                            .background(Color.white.opacity(0.8))
+                            .clipShape(Circle())
+                    }
+                    .position(x: w - 44, y: 70)
+                    .zIndex(1)
 
                     // Tap zones over lenses
                     Button {
@@ -67,20 +82,16 @@ struct ContentView: View {
                         HStack(spacing: 24) {
                             Button { triggerZoom(target: .user, w: w, h: h) } label: {
                                 Text("User")
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundStyle(.white)
+                                    .font(.custom("FiraCode-SemiBold", size: 17))
                                     .frame(width: 120, height: 50)
-                                    .background(Color.black)
-                                    .cornerRadius(14)
                             }
+                            .buttonStyle(.glassProminent)
                             Button { triggerZoom(target: .expert, w: w, h: h) } label: {
                                 Text("Expert")
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundStyle(.white)
+                                    .font(.custom("FiraCode-SemiBold", size: 17))
                                     .frame(width: 120, height: 50)
-                                    .background(Color.black)
-                                    .cornerRadius(14)
                             }
+                            .buttonStyle(.glassProminent)
                         }
                         .padding(.bottom, 60)
                     }
@@ -114,14 +125,12 @@ struct ContentView: View {
                             Image(systemName: "record.circle")
                                 .font(.system(size: 18, weight: .semibold))
                             Text("View / Record")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.custom("FiraCode-SemiBold", size: 16))
                         }
-                        .foregroundStyle(.white)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 14)
-                        .background(Color.black)
-                        .cornerRadius(30)
                     }
+                    .buttonStyle(.glass)
                     .position(x: w / 2, y: h * 0.5)
                     .zIndex(3)
                 }
@@ -238,5 +247,5 @@ struct GlassesFrameView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(isPresented: .constant(true))
 }
