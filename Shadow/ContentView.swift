@@ -195,9 +195,8 @@ struct ContentView: View {
                             .glassEffect(.regular.interactive(), in: .circle)
                     }
                     .buttonStyle(.plain)
-                    .position(x: 44, y: 70)
+                    .position(x: 44, y: h * 0.10)
                     .zIndex(3)
-
                 }
 
                 // Deep zoom back button
@@ -212,11 +211,10 @@ struct ContentView: View {
                             .background(Color.black.opacity(0.6))
                             .clipShape(Circle())
                     }
-                    .position(x: 44, y: 70)
+                    .buttonStyle(.plain)
+                    .position(x: 44, y: h * 0.10)
                     .zIndex(3)
-                }
-
-                // Glasses frame — always on top during zoom
+                } — always on top during zoom
                 if zoomTarget != nil {
                     GlassesFrameView(width: w * 0.88)
                         .position(x: zoomX, y: zoomY)

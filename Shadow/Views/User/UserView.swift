@@ -138,8 +138,9 @@ struct UserView: View {
             }
             .navigationTitle("Learn")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.clear, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .navigationBarBackButtonHidden(true)
             .searchable(text: $searchText, prompt: "Search courses...")
         }
     }
