@@ -55,50 +55,58 @@ struct UserView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Sky background
+        ZStack {
+            // Sky background
+            LinearGradient(
+                stops: [
+                    .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                    .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
+                    .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            // Grass bottom half
+            VStack(spacing: 0) {
+                Color.clear.frame(height: UIScreen.main.bounds.height * 0.50)
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
-                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                        .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
+                        .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .ignoresSafeArea()
+                .frame(maxHeight: .infinity)
+            }
+            .ignoresSafeArea()
 
-                // Grass bottom half
-                VStack(spacing: 0) {
-                    Color.clear.frame(height: UIScreen.main.bounds.height * 0.50)
-                    LinearGradient(
-                        stops: [
-                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
-                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(maxHeight: .infinity)
-                }
-                .ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 14) {
+                    // Inline search
+                    HStack(spacing: 10) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.6))
+                        TextField("Search courses...", text: $searchText)
+                            .font(.custom("CopernicusTrial-Book", size: 14))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color.white.opacity(0.35))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
 
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Category pills
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(mockCategories) { category in
-                                    Button(action: { selectedCategory = category.name }) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: category.icon)
-                                                .font(.system(size: 12))
-                                            Text(category.name)
-                                                .font(.custom("CopernicusTrial-Book", size: 13))
-                                        }
+                    // Category pills
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(mockCategories) { category in
+                                Button(action: { selectedCategory = category.name }) {
+                                    Text(category.name)
+                                        .font(.custom("CopernicusTrial-Book", size: 13))
                                         .padding(.horizontal, 14)
-                                        .padding(.vertical, 8)
+                                        .padding(.vertical, 7)
                                         .background(
                                             selectedCategory == category.name
                                                 ? Color(red: 0.22, green: 0.50, blue: 0.12)
@@ -106,42 +114,30 @@ struct UserView: View {
                                         )
                                         .foregroundStyle(selectedCategory == category.name ? .white : Color(red: 0.10, green: 0.24, blue: 0.06))
                                         .clipShape(Capsule())
-                                    }
-                                    .buttonStyle(.plain)
                                 }
+                                .buttonStyle(.plain)
                             }
-                            .padding(.horizontal)
                         }
-
-                        if filteredTutorials.isEmpty {
-                            VStack(spacing: 12) {
-                                Image(systemName: "magnifyingglass")
-                                    .font(.system(size: 40))
-                                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.5))
-                                Text("No tutorials found")
-                                    .font(.custom("CopernicusTrial-Book", size: 15))
-                                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.7))
-                            }
-                            .padding(.top, 60)
-                        } else {
-                            LazyVGrid(columns: columns, spacing: 12) {
-                                ForEach(filteredTutorials) { tutorial in
-                                    TutorialCard(tutorial: tutorial)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 40)
+
+                    if filteredTutorials.isEmpty {
+                        Text("No courses found")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.6))
+                            .padding(.top, 40)
+                    } else {
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(filteredTutorials) { tutorial in
+                                TutorialCard(tutorial: tutorial)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
                 }
+                .padding(.top, 80)
+                .padding(.bottom, 40)
             }
-            .navigationTitle("Learn")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .navigationBarBackButtonHidden(true)
-            .searchable(text: $searchText, prompt: "Search courses...")
         }
     }
 }
