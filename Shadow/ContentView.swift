@@ -101,7 +101,6 @@ struct ContentView: View {
                 // Main content — hidden when destination is showing
                 if !showDestination {
 
-
                     // Log out button — top right
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
@@ -116,38 +115,51 @@ struct ContentView: View {
                     .position(x: w - 60, y: 110)
                     .zIndex(1)
 
-                    // Tap zones over lenses
+                    // Left lens label — Student
                     Button {
                         triggerZoom(target: .user, w: w, h: h)
-                    } label: { Color.clear.frame(width: w * 0.35, height: h * 0.14) }
-                        .position(x: leftLensX, y: lensY)
-                        .zIndex(0)
+                    } label: {
+                        VStack(spacing: 6) {
+                            Image(systemName: "graduationcap.fill")
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundStyle(.black.opacity(0.75))
+                            Text("Student")
+                                .font(.custom("CopernicusTrial-Book", size: 15))
+                                .foregroundStyle(.black.opacity(0.80))
+                        }
+                        .frame(width: w * 0.30, height: h * 0.12)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .position(x: leftLensX, y: lensY)
+                    .zIndex(1)
 
+                    // Right lens label — Expert
                     Button {
                         triggerZoom(target: .expert, w: w, h: h)
-                    } label: { Color.clear.frame(width: w * 0.35, height: h * 0.14) }
-                        .position(x: rightLensX, y: lensY)
-                        .zIndex(0)
-
-                    VStack {
-                        Spacer()
-                        HStack(spacing: 24) {
-                            Button { triggerZoom(target: .user, w: w, h: h) } label: {
-                                Text("User")
-                                    .font(.custom("CopernicusTrial-Book", size: 17))
-                                    .frame(width: 120, height: 50)
-                            }
-                            .buttonStyle(.glass)
-                            Button { triggerZoom(target: .expert, w: w, h: h) } label: {
-                                Text("Expert")
-                                    .font(.custom("CopernicusTrial-Book", size: 17))
-                                    .frame(width: 120, height: 50)
-                            }
-                            .buttonStyle(.glass)
+                    } label: {
+                        VStack(spacing: 6) {
+                            Image(systemName: "person.chalkboard")
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundStyle(.black.opacity(0.75))
+                            Text("Expert")
+                                .font(.custom("CopernicusTrial-Book", size: 15))
+                                .foregroundStyle(.black.opacity(0.80))
                         }
-                        .padding(.bottom, 60)
+                        .frame(width: w * 0.30, height: h * 0.12)
+                        .contentShape(Rectangle())
                     }
-                    .zIndex(0)
+                    .buttonStyle(.plain)
+                    .position(x: rightLensX, y: lensY)
+                    .zIndex(1)
+
+                    // Hint text below glasses
+                    Text("tap a lens to begin")
+                        .font(.custom("CopernicusTrial-Book", size: 13))
+                        .foregroundStyle(.black.opacity(0.40))
+                        .tracking(1.0)
+                        .position(x: w / 2, y: lensY + 72)
+                        .zIndex(1)
                 }
 
                 // Back button — always on top when destination is showing

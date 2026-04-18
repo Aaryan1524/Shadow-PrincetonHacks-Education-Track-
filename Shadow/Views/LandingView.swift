@@ -91,11 +91,11 @@ struct LandingView: View {
                     .position(x: w / 2 + w * glassesXOffset, y: h * 0.52)
 
                 // Slogan only — title lives in the outer ZStack overlay
-                Text("Learn through expert eyes.")
-                    .font(.custom("CopernicusTrial-Book", size: 16))
+                Text("See the world through expert eyes.")
+                    .font(.custom("CopernicusTrial-Book", size: 15))
                     .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.08))
-                    .tracking(1.2)
-                    .position(x: w / 2, y: h * 0.19)
+                    .tracking(1.0)
+                    .position(x: w / 2, y: h * 0.20)
 
                 // Shadow — outer green-tinted glow on grass
                 Ellipse()
