@@ -90,14 +90,13 @@ struct ContentView: View {
 
                 // Destination view — fades in after zoom
                 if showDestination {
-                    Group {
+                    ZStack(alignment: .topLeading) {
                         if zoomTarget == .user {
                             UserView()
                         } else {
                             ExpertView()
                         }
-                    }
-                    .overlay(alignment: .topLeading) {
+
                         if !isDeepZoom {
                             Button {
                                 withAnimation(.easeInOut(duration: 0.5)) {
@@ -108,16 +107,18 @@ struct ContentView: View {
                             } label: {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 18, weight: .semibold))
-                                    .padding(16)
-                                    .glassEffect(.regular.interactive(), in: .circle)
+                                    .foregroundStyle(.primary)
+                                    .frame(width: 44, height: 44)
+                                    .background(.ultraThinMaterial, in: Circle())
                             }
                             .buttonStyle(.plain)
                             .padding(.top, h * 0.06)
                             .padding(.leading, 12)
+                            .zIndex(999)
                         }
                     }
                     .transition(.opacity)
-                    .zIndex(1)
+                    .zIndex(10)
                 }
 
                 // Main content — hidden when destination is showing
