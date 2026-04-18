@@ -1,0 +1,22 @@
+{
+  "include": [
+    "backend"
+  ],
+  "exclude": [
+    "backend/lessons",
+    "backend/__pycache__",
+    "backend/**/__pycache__",
+    "meta-wearables-dat-ios"
+  ],
+  "ignore": [
+    "**/*.md",
+    "**/*.txt",
+    "**/Procfile"
+  ],
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Darwin",
+  "pythonPath": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingModuleSource": "none"
+}
