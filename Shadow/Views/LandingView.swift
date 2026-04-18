@@ -43,17 +43,40 @@ struct LandingView: View {
             let w = geo.size.width
             let h = geo.size.height
             ZStack {
-                // Beige top block
-                Color(red: 0.96, green: 0.93, blue: 0.86)
+                // Warm cream base
+                Color(red: 0.97, green: 0.94, blue: 0.89)
                     .ignoresSafeArea()
 
-                // Brown bottom block
+                // Soft light halo — spotlight from above tracking glasses
+                RadialGradient(
+                    colors: [Color.white.opacity(0.60), Color.clear],
+                    center: UnitPoint(x: 0.5, y: 0.28),
+                    startRadius: 10,
+                    endRadius: w * 0.65
+                )
+                .ignoresSafeArea()
+
+                // Deep walnut surface — bottom half
                 VStack(spacing: 0) {
                     Color.clear.frame(height: h * 0.52)
-                    Color(red: 0.38, green: 0.24, blue: 0.14)
+                    Color(red: 0.16, green: 0.10, blue: 0.06)
                         .frame(maxHeight: .infinity)
                 }
                 .ignoresSafeArea(edges: .bottom)
+
+                // Ambient glow bleeding over the surface rim
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [Color(red: 0.97, green: 0.94, blue: 0.89).opacity(0.18), Color.clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: w * 0.55
+                        )
+                    )
+                    .frame(width: w * 1.1, height: 80)
+                    .blur(radius: 18)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.52)
 
                 // Slogan only — title lives in the outer ZStack overlay
                 Text("Learn through expert eyes.")
@@ -62,12 +85,20 @@ struct LandingView: View {
                     .tracking(1.2)
                     .position(x: w / 2, y: h * 0.19)
 
-                // Cast shadow below glasses onto brown surface
+                // Shadow — outer wide soft glow
                 Ellipse()
-                    .fill(Color.black.opacity(0.50))
-                    .frame(width: w * 0.65, height: 44)
-                    .blur(radius: 26)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.52)
+                    .fill(Color.black.opacity(0.30))
+                    .frame(width: w * 0.82, height: 68)
+                    .blur(radius: 38)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.525)
+                    .offset(y: floatOffset * 0.15)
+
+                // Shadow — inner tight contact shadow
+                Ellipse()
+                    .fill(Color.black.opacity(0.55))
+                    .frame(width: w * 0.46, height: 16)
+                    .blur(radius: 10)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.522)
                     .offset(y: floatOffset * 0.15)
 
                 ZStack {

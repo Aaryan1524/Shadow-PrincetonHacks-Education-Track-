@@ -24,24 +24,54 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Beige top block
-                Color(red: 0.96, green: 0.93, blue: 0.86)
+                // Warm cream base
+                Color(red: 0.97, green: 0.94, blue: 0.89)
                     .ignoresSafeArea()
 
-                // Brown bottom block
+                // Soft light halo — as if a spotlight shines down onto the glasses
+                RadialGradient(
+                    colors: [Color.white.opacity(0.60), Color.clear],
+                    center: UnitPoint(x: 0.5, y: 0.30),
+                    startRadius: 10,
+                    endRadius: w * 0.65
+                )
+                .ignoresSafeArea()
+
+                // Deep walnut surface — bottom half
                 VStack(spacing: 0) {
-                    Color.clear.frame(height: h * 0.50)
-                    Color(red: 0.38, green: 0.24, blue: 0.14)
+                    Color.clear.frame(height: h * 0.48)
+                    Color(red: 0.16, green: 0.10, blue: 0.06)
                         .frame(maxHeight: .infinity)
                 }
                 .ignoresSafeArea(edges: .bottom)
 
-                // Shadow cast by glasses onto the brown surface
+                // Subtle ambient glow on the surface edge — light bleeding over the rim
                 Ellipse()
-                    .fill(Color.black.opacity(0.55))
-                    .frame(width: w * 0.72, height: 44)
-                    .blur(radius: 26)
-                    .position(x: w / 2, y: h * 0.50)
+                    .fill(
+                        RadialGradient(
+                            colors: [Color(red: 0.97, green: 0.94, blue: 0.89).opacity(0.18), Color.clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: w * 0.55
+                        )
+                    )
+                    .frame(width: w * 1.1, height: 80)
+                    .blur(radius: 18)
+                    .position(x: w / 2, y: h * 0.48)
+
+                // Shadow — outer wide soft glow
+                Ellipse()
+                    .fill(Color.black.opacity(0.32))
+                    .frame(width: w * 0.90, height: 72)
+                    .blur(radius: 40)
+                    .position(x: w / 2, y: h * 0.485)
+
+                // Shadow — inner tight contact shadow
+                Ellipse()
+                    .fill(Color.black.opacity(0.58))
+                    .frame(width: w * 0.48, height: 18)
+                    .blur(radius: 11)
+                    .position(x: w / 2, y: h * 0.482)
 
                 // Destination view — fades in after zoom
                 if showDestination {
