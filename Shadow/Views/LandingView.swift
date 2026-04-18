@@ -87,11 +87,11 @@ struct LandingView: View {
                 ZStack {
                     GlassesLensesView(width: w * glassesWidthFraction)
                     GlassesLeftArmView(width: w * glassesWidthFraction)
-                        .scaleEffect(x: leftArmScaleX, y: leftArmScaleY, anchor: UnitPoint(x: 0.26, y: 0.5))
-                        .rotation3DEffect(.degrees(leftArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.25, y: 0.5), perspective: 0.5)
+                        .scaleEffect(x: leftArmScaleX, y: leftArmScaleY, anchor: UnitPoint(x: 0.13, y: 0.5))
+                        .rotation3DEffect(.degrees(leftArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.13, y: 0.5), perspective: 0.5)
                     GlassesRightArmView(width: w * glassesWidthFraction)
-                        .scaleEffect(x: rightArmScaleX, y: rightArmScaleY, anchor: UnitPoint(x: 0.75, y: 0.6))
-                        .rotation3DEffect(.degrees(rightArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.75, y: 0.5), perspective: 0.5)
+                        .scaleEffect(x: rightArmScaleX, y: rightArmScaleY, anchor: UnitPoint(x: 0.87, y: 0.5))
+                        .rotation3DEffect(.degrees(rightArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.87, y: 0.5), perspective: 0.5)
                 }
                 .rotation3DEffect(.degrees(glassesY3D), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
                 .shadow(color: .black.opacity(0.15), radius: 24, x: 0, y: 10)
