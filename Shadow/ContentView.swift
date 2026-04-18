@@ -24,54 +24,60 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Warm cream base
-                Color(red: 0.97, green: 0.94, blue: 0.89)
-                    .ignoresSafeArea()
-
-                // Soft light halo — as if a spotlight shines down onto the glasses
-                RadialGradient(
-                    colors: [Color.white.opacity(0.60), Color.clear],
-                    center: UnitPoint(x: 0.5, y: 0.30),
-                    startRadius: 10,
-                    endRadius: w * 0.65
+                // Sky — light blue at top fading to warm horizon
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
+                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
-                // Deep walnut surface — bottom half
+                // Grass — rich green bottom half
                 VStack(spacing: 0) {
-                    Color.clear.frame(height: h * 0.48)
-                    Color(red: 0.16, green: 0.10, blue: 0.06)
-                        .frame(maxHeight: .infinity)
+                    Color.clear.frame(height: h * 0.50)
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
+                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(maxHeight: .infinity)
                 }
                 .ignoresSafeArea(edges: .bottom)
 
-                // Subtle ambient glow on the surface edge — light bleeding over the rim
+                // Soft horizon glow where sky meets grass
                 Ellipse()
                     .fill(
                         RadialGradient(
-                            colors: [Color(red: 0.97, green: 0.94, blue: 0.89).opacity(0.18), Color.clear],
+                            colors: [Color(red: 1.0, green: 0.95, blue: 0.80).opacity(0.45), Color.clear],
                             center: .center,
                             startRadius: 0,
-                            endRadius: w * 0.55
+                            endRadius: w * 0.6
                         )
                     )
-                    .frame(width: w * 1.1, height: 80)
-                    .blur(radius: 18)
-                    .position(x: w / 2, y: h * 0.48)
+                    .frame(width: w * 1.2, height: 90)
+                    .blur(radius: 20)
+                    .position(x: w / 2, y: h * 0.50)
 
-                // Shadow — outer wide soft glow
+                // Shadow — outer wide green-tinted glow on grass
                 Ellipse()
-                    .fill(Color.black.opacity(0.32))
-                    .frame(width: w * 0.90, height: 72)
-                    .blur(radius: 40)
-                    .position(x: w / 2, y: h * 0.485)
+                    .fill(Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.55))
+                    .frame(width: w * 0.88, height: 60)
+                    .blur(radius: 36)
+                    .position(x: w / 2, y: h * 0.505)
 
-                // Shadow — inner tight contact shadow
+                // Shadow — tight contact shadow
                 Ellipse()
-                    .fill(Color.black.opacity(0.58))
-                    .frame(width: w * 0.48, height: 18)
-                    .blur(radius: 11)
-                    .position(x: w / 2, y: h * 0.482)
+                    .fill(Color.black.opacity(0.45))
+                    .frame(width: w * 0.46, height: 14)
+                    .blur(radius: 10)
+                    .position(x: w / 2, y: h * 0.502)
 
                 // Destination view — fades in after zoom
                 if showDestination {
