@@ -14,9 +14,11 @@ struct ContentView: View {
             let w = geo.size.width
             let h = geo.size.height
             let lensY      = h * 0.40
-            let leftLensX  = w * 0.30
-            let rightLensX = w * 0.68
-            let canvasW    = w * 0.88 * 0.38 * 2 + 20
+            let lensW      = w * 0.88 * 0.38
+            let gap: CGFloat = 20
+            let leftLensX  = w / 2 - lensW / 2 - gap / 2
+            let rightLensX = w / 2 + lensW / 2 + gap / 2
+            let canvasW    = lensW * 2 + gap
             let lensShift  = canvasW * 0.04
             let zoomX: CGFloat = isZooming
                 ? (zoomTarget == .user ? w / 2 + lensShift : w / 2 - lensShift)
