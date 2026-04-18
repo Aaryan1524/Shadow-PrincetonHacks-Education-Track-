@@ -8,25 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		527EA4962F9349090085482E /* getting-started.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4492F9349090085482E /* getting-started.md */; };
-		527EA4972F9349090085482E /* mockdevice-testing.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4552F9349090085482E /* mockdevice-testing.mdc */; };
 		527EA4982F9349090085482E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4882F9349090085482E /* README.md */; };
 		527EA4992F9349090085482E /* plant.png in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4602F9349090085482E /* plant.png */; };
 		527EA49A2F9349090085482E /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44F2F9349090085482E /* settings.json */; };
-		527EA49B2F9349090085482E /* permissions-registration.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4562F9349090085482E /* permissions-registration.mdc */; };
-		527EA49C2F9349090085482E /* debugging.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4532F9349090085482E /* debugging.mdc */; };
 		527EA49D2F9349090085482E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4862F9349090085482E /* .gitignore */; };
 		527EA49E2F9349090085482E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4802F9349090085482E /* Info.plist */; };
 		527EA49F2F9349090085482E /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4902F9349090085482E /* LICENSE */; };
 		527EA4A02F9349090085482E /* dat-conventions.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4452F9349090085482E /* dat-conventions.md */; };
 		527EA4A12F9349090085482E /* build.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4432F9349090085482E /* build.md */; };
 		527EA4A22F9349090085482E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 527EA47D2F9349090085482E /* Assets.xcassets */; };
-		527EA4A32F9349090085482E /* camera-streaming.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4512F9349090085482E /* camera-streaming.mdc */; };
 		527EA4A42F9349090085482E /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48C2F9349090085482E /* CHANGELOG.md */; };
 		527EA4A52F9349090085482E /* camera-streaming.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4472F9349090085482E /* camera-streaming.md */; };
 		527EA4A62F9349090085482E /* NOTICE in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4912F9349090085482E /* NOTICE */; };
 		527EA4A72F9349090085482E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4922F9349090085482E /* README.md */; };
 		527EA4A82F9349090085482E /* copilot-instructions.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA45B2F9349090085482E /* copilot-instructions.md */; };
-		527EA4A92F9349090085482E /* dat-conventions.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4522F9349090085482E /* dat-conventions.mdc */; };
 		527EA4AA2F9349090085482E /* debugging.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4482F9349090085482E /* debugging.md */; };
 		527EA4AB2F9349090085482E /* CODE_OF_CONDUCT.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48D2F9349090085482E /* CODE_OF_CONDUCT.md */; };
 		527EA4AC2F9349090085482E /* permissions-registration.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44B2F9349090085482E /* permissions-registration.md */; };
@@ -34,12 +29,9 @@
 		527EA4AE2F9349090085482E /* install-skills.sh in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48F2F9349090085482E /* install-skills.sh */; };
 		527EA4AF2F9349090085482E /* mockdevice-testing.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44A2F9349090085482E /* mockdevice-testing.md */; };
 		527EA4B02F9349090085482E /* session-lifecycle.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44D2F9349090085482E /* session-lifecycle.md */; };
-		527EA4B12F9349090085482E /* session-lifecycle.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4582F9349090085482E /* session-lifecycle.mdc */; };
 		527EA4B22F9349090085482E /* plant.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 527EA45F2F9349090085482E /* plant.mp4 */; };
 		527EA4B32F9349090085482E /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48B2F9349090085482E /* AGENTS.md */; };
 		527EA4B42F9349090085482E /* sample-app-guide.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44C2F9349090085482E /* sample-app-guide.md */; };
-		527EA4B52F9349090085482E /* getting-started.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4542F9349090085482E /* getting-started.mdc */; };
-		527EA4B62F9349090085482E /* sample-app-guide.mdc in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4572F9349090085482E /* sample-app-guide.mdc */; };
 		527EA4B72F9349090085482E /* CONTRIBUTING.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48E2F9349090085482E /* CONTRIBUTING.md */; };
 		527EA4B82F9349090085482E /* PhotoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4782F9349090085482E /* PhotoPreviewView.swift */; };
 		527EA4B92F9349090085482E /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46A2F9349090085482E /* CardView.swift */; };
@@ -99,14 +91,6 @@
 		527EA44C2F9349090085482E /* sample-app-guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "sample-app-guide.md"; sourceTree = "<group>"; };
 		527EA44D2F9349090085482E /* session-lifecycle.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "session-lifecycle.md"; sourceTree = "<group>"; };
 		527EA44F2F9349090085482E /* settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = settings.json; sourceTree = "<group>"; };
-		527EA4512F9349090085482E /* camera-streaming.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "camera-streaming.mdc"; sourceTree = "<group>"; };
-		527EA4522F9349090085482E /* dat-conventions.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "dat-conventions.mdc"; sourceTree = "<group>"; };
-		527EA4532F9349090085482E /* debugging.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = debugging.mdc; sourceTree = "<group>"; };
-		527EA4542F9349090085482E /* getting-started.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "getting-started.mdc"; sourceTree = "<group>"; };
-		527EA4552F9349090085482E /* mockdevice-testing.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mockdevice-testing.mdc"; sourceTree = "<group>"; };
-		527EA4562F9349090085482E /* permissions-registration.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "permissions-registration.mdc"; sourceTree = "<group>"; };
-		527EA4572F9349090085482E /* sample-app-guide.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "sample-app-guide.mdc"; sourceTree = "<group>"; };
-		527EA4582F9349090085482E /* session-lifecycle.mdc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "session-lifecycle.mdc"; sourceTree = "<group>"; };
 		527EA45B2F9349090085482E /* copilot-instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "copilot-instructions.md"; sourceTree = "<group>"; };
 		527EA45D2F9349090085482E /* settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = settings.json; sourceTree = "<group>"; };
 		527EA45F2F9349090085482E /* plant.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = plant.mp4; sourceTree = "<group>"; };
@@ -257,29 +241,6 @@
 			path = .claude;
 			sourceTree = "<group>";
 		};
-		527EA4592F9349090085482E /* rules */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4512F9349090085482E /* camera-streaming.mdc */,
-				527EA4522F9349090085482E /* dat-conventions.mdc */,
-				527EA4532F9349090085482E /* debugging.mdc */,
-				527EA4542F9349090085482E /* getting-started.mdc */,
-				527EA4552F9349090085482E /* mockdevice-testing.mdc */,
-				527EA4562F9349090085482E /* permissions-registration.mdc */,
-				527EA4572F9349090085482E /* sample-app-guide.mdc */,
-				527EA4582F9349090085482E /* session-lifecycle.mdc */,
-			);
-			path = rules;
-			sourceTree = "<group>";
-		};
-		527EA45A2F9349090085482E /* .cursor */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4592F9349090085482E /* rules */,
-			);
-			path = .cursor;
-			sourceTree = "<group>";
-		};
 		527EA45C2F9349090085482E /* .github */ = {
 			isa = PBXGroup;
 			children = (
@@ -421,7 +382,6 @@
 			isa = PBXGroup;
 			children = (
 				527EA4502F9349090085482E /* .claude */,
-				527EA45A2F9349090085482E /* .cursor */,
 				527EA45C2F9349090085482E /* .github */,
 				527EA48A2F9349090085482E /* samples */,
 				527EA48B2F9349090085482E /* AGENTS.md */,
@@ -570,25 +530,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				527EA4962F9349090085482E /* getting-started.md in Resources */,
-				527EA4972F9349090085482E /* mockdevice-testing.mdc in Resources */,
 				527EA4982F9349090085482E /* README.md in Resources */,
 				527EA4992F9349090085482E /* plant.png in Resources */,
 				527EA49A2F9349090085482E /* settings.json in Resources */,
-				527EA49B2F9349090085482E /* permissions-registration.mdc in Resources */,
-				527EA49C2F9349090085482E /* debugging.mdc in Resources */,
 				527EA49D2F9349090085482E /* .gitignore in Resources */,
 				527EA49E2F9349090085482E /* Info.plist in Resources */,
 				527EA49F2F9349090085482E /* LICENSE in Resources */,
 				527EA4A02F9349090085482E /* dat-conventions.md in Resources */,
 				527EA4A12F9349090085482E /* build.md in Resources */,
 				527EA4A22F9349090085482E /* Assets.xcassets in Resources */,
-				527EA4A32F9349090085482E /* camera-streaming.mdc in Resources */,
 				527EA4A42F9349090085482E /* CHANGELOG.md in Resources */,
 				527EA4A52F9349090085482E /* camera-streaming.md in Resources */,
 				527EA4A62F9349090085482E /* NOTICE in Resources */,
 				527EA4A72F9349090085482E /* README.md in Resources */,
 				527EA4A82F9349090085482E /* copilot-instructions.md in Resources */,
-				527EA4A92F9349090085482E /* dat-conventions.mdc in Resources */,
 				527EA4AA2F9349090085482E /* debugging.md in Resources */,
 				527EA4AB2F9349090085482E /* CODE_OF_CONDUCT.md in Resources */,
 				527EA4AC2F9349090085482E /* permissions-registration.md in Resources */,
@@ -596,12 +551,9 @@
 				527EA4AE2F9349090085482E /* install-skills.sh in Resources */,
 				527EA4AF2F9349090085482E /* mockdevice-testing.md in Resources */,
 				527EA4B02F9349090085482E /* session-lifecycle.md in Resources */,
-				527EA4B12F9349090085482E /* session-lifecycle.mdc in Resources */,
 				527EA4B22F9349090085482E /* plant.mp4 in Resources */,
 				527EA4B32F9349090085482E /* AGENTS.md in Resources */,
 				527EA4B42F9349090085482E /* sample-app-guide.md in Resources */,
-				527EA4B52F9349090085482E /* getting-started.mdc in Resources */,
-				527EA4B62F9349090085482E /* sample-app-guide.mdc in Resources */,
 				527EA4B72F9349090085482E /* CONTRIBUTING.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
