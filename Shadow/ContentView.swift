@@ -37,10 +37,10 @@ struct ContentView: View {
 
                 // Shadow cast by glasses onto the brown surface
                 Ellipse()
-                    .fill(Color.black.opacity(0.30))
-                    .frame(width: w * 0.68, height: 28)
-                    .blur(radius: 22)
-                    .position(x: w / 2, y: h * 0.524)
+                    .fill(Color.black.opacity(0.60))
+                    .frame(width: w * 0.78, height: 54)
+                    .blur(radius: 30)
+                    .position(x: w / 2, y: h * 0.525)
 
                 // Destination view — fades in after zoom
                 if showDestination {
@@ -282,8 +282,8 @@ struct GlassesLeftArmView: View {
 
         Canvas { ctx, _ in
             var leftArm = Path()
-            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.5))
-            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.5))
+            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.42))
+            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.08))
             ctx.stroke(leftArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)
@@ -305,8 +305,8 @@ struct GlassesRightArmView: View {
 
         Canvas { ctx, _ in
             var rightArm = Path()
-            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.5))
-            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.5))
+            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.42))
+            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.08))
             ctx.stroke(rightArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)

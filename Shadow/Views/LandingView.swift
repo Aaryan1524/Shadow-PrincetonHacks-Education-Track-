@@ -84,6 +84,14 @@ struct LandingView: View {
                     .tracking(1.2)
                     .position(x: w / 2, y: h * 0.19)
 
+                // Cast shadow below glasses
+                Ellipse()
+                    .fill(Color.black.opacity(0.22))
+                    .frame(width: w * 0.65, height: 44)
+                    .blur(radius: 26)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * glassesYFraction + 70)
+                    .offset(y: floatOffset * 0.3)
+
                 ZStack {
                     GlassesLensesView(width: w * glassesWidthFraction)
                     GlassesLeftArmView(width: w * glassesWidthFraction)
