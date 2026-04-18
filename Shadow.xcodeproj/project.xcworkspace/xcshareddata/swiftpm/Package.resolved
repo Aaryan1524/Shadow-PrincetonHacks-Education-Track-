@@ -1,0 +1,15 @@
+{
+  "originHash" : "9dd59c7b31433c02fd72f5039d2946a8f5fb2c78553452e390c0f58c50176068",
+  "pins" : [
+    {
+      "identity" : "knot-api-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/millionscard/knot-api-ios",
+      "state" : {
+        "revision" : "c464f4dad5982f4695e897f2866013ea61679bdb",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}

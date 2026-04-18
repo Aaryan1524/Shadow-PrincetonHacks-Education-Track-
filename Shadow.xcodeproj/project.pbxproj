@@ -216,6 +216,9 @@
 			);
 			mainGroup = 527EA40B2F9348520085482E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6755D6242F94470000534FC5 /* XCRemoteSwiftPackageReference "knot-api-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 527EA4152F9348520085482E /* Products */;
 			projectDirPath = "";
@@ -636,6 +639,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6755D6242F94470000534FC5 /* XCRemoteSwiftPackageReference "knot-api-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/millionscard/knot-api-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 527EA40C2F9348520085482E /* Project object */;
 }
