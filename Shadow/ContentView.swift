@@ -8,7 +8,6 @@ struct ContentView: View {
     @State private var isZooming = false
     @State private var showDestination = false
     @State private var isDeepZoom = false
-    @State private var animateGlow = false
 
     var body: some View {
         GeometryReader { geo in
@@ -25,31 +24,23 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                MeshGradient(
-                    width: 3, height: 3,
-                    points: [
-                        .init(0, 0), .init(0.5, 0), .init(1, 0),
-                        .init(0, 0.4), .init(0.5, 0.38), .init(1, 0.4),
-                        .init(0, 1), .init(0.5, 1), .init(1, 1)
-                    ],
-                    colors: [
-                        Color.white,
-                        Color(red: 0.92, green: 0.96, blue: 1.0),
-                        Color.white,
-                        Color(red: 0.80, green: 0.91, blue: 1.0),
-                        animateGlow ? Color(red: 0.38, green: 0.68, blue: 0.98) : Color(red: 0.52, green: 0.78, blue: 1.0),
-                        Color(red: 0.80, green: 0.91, blue: 1.0),
-                        Color(red: 0.90, green: 0.95, blue: 1.0),
-                        Color(red: 0.68, green: 0.85, blue: 1.0),
-                        Color(red: 0.90, green: 0.95, blue: 1.0)
-                    ]
-                )
-                .ignoresSafeArea()
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 3.0).repeatForever(autoreverses: true)) {
-                        animateGlow = true
-                    }
+                // Beige background
+                Color(red: 0.96, green: 0.93, blue: 0.86)
+                    .ignoresSafeArea()
+
+                // Brown lower half — surface the glasses hover above
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: h * 0.52)
+                    Color(red: 0.38, green: 0.24, blue: 0.14)
                 }
+                .ignoresSafeArea(edges: .bottom)
+
+                // Shadow cast by glasses onto the brown surface
+                Ellipse()
+                    .fill(Color.black.opacity(0.30))
+                    .frame(width: w * 0.68, height: 28)
+                    .blur(radius: 22)
+                    .position(x: w / 2, y: h * 0.524)
 
                 // Destination view — fades in after zoom
                 if showDestination {
