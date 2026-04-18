@@ -28,62 +28,26 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Sky — light blue at top fading to warm horizon
+                // Ink wash background
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
-                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                        .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
+                        .init(color: Color(red: 0.80, green: 0.80, blue: 0.80), location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
-                // Grass — rich green bottom half
-                VStack(spacing: 0) {
-                    Color.clear.frame(height: h * 0.50)
-                    LinearGradient(
-                        stops: [
-                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
-                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(maxHeight: .infinity)
-                }
-                .ignoresSafeArea(edges: .bottom)
-
-                // Grass blade texture
-                GrassTextureView()
-                    .frame(width: w, height: h * 0.52)
-                    .position(x: w / 2, y: h * 0.76)
-                    .allowsHitTesting(false)
-
-                // Soft horizon glow where sky meets grass
+                // Shadow — soft charcoal drop shadow
                 Ellipse()
-                    .fill(
-                        RadialGradient(
-                            colors: [Color(red: 1.0, green: 0.95, blue: 0.80).opacity(0.45), Color.clear],
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: w * 0.6
-                        )
-                    )
-                    .frame(width: w * 1.2, height: 90)
-                    .blur(radius: 20)
-                    .position(x: w / 2, y: h * 0.50)
-
-                // Shadow — wide diffuse pool + softer mid layer
-                Ellipse()
-                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.50))
+                    .fill(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.25))
                     .frame(width: w * 1.05, height: 48)
                     .blur(radius: 32)
                     .position(x: w / 2, y: h * 0.52)
 
                 Ellipse()
-                    .fill(Color.black.opacity(0.22))
+                    .fill(Color.black.opacity(0.12))
                     .frame(width: w * 0.58, height: 20)
                     .blur(radius: 18)
                     .position(x: w / 2, y: h * 0.518)
@@ -191,9 +155,8 @@ struct ContentView: View {
                     // Hint text — sits on the grass, white so it reads clearly
                     Text("tap a lens to begin")
                         .font(.custom("CopernicusTrial-Book", size: 13))
-                        .foregroundStyle(.white.opacity(0.82))
+                        .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.55))
                         .tracking(1.2)
-                        .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
                         .scaleEffect(pulseScale > 1.05 ? 1.04 : 1.0)
                         .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                         .position(x: w / 2, y: h * 0.56)

@@ -43,63 +43,27 @@ struct LandingView: View {
             let w = geo.size.width
             let h = geo.size.height
             ZStack {
-                // Sky — light blue at top fading to warm horizon
+                // Ink wash background
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
-                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.52)
+                        .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
+                        .init(color: Color(red: 0.80, green: 0.80, blue: 0.80), location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
-                // Grass — rich green bottom half
-                VStack(spacing: 0) {
-                    Color.clear.frame(height: h * 0.52)
-                    LinearGradient(
-                        stops: [
-                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
-                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(maxHeight: .infinity)
-                }
-                .ignoresSafeArea(edges: .bottom)
-
-                // Grass blade texture
-                GrassTextureView()
-                    .frame(width: w, height: h * 0.50)
-                    .position(x: w / 2, y: h * 0.77)
-                    .allowsHitTesting(false)
-
-                // Soft horizon glow
-                Ellipse()
-                    .fill(
-                        RadialGradient(
-                            colors: [Color(red: 1.0, green: 0.95, blue: 0.80).opacity(0.45), Color.clear],
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: w * 0.6
-                        )
-                    )
-                    .frame(width: w * 1.2, height: 90)
-                    .blur(radius: 20)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.52)
-
                 // Slogan only — title lives in the outer ZStack overlay
                 Text("See the world through expert eyes.")
                     .font(.custom("CopernicusTrial-Book", size: 15))
-                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.08))
+                    .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.65))
                     .tracking(1.0)
                     .position(x: w / 2, y: h * 0.20)
 
-                // Shadow — outer green-tinted glow on grass
+                // Shadow — soft charcoal drop shadow
                 Ellipse()
-                    .fill(Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.52))
+                    .fill(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.30))
                     .frame(width: w * 0.82, height: 58)
                     .blur(radius: 34)
                     .position(x: w / 2 + w * glassesXOffset, y: h * 0.528)
@@ -107,7 +71,7 @@ struct LandingView: View {
 
                 // Shadow — softer mid layer
                 Ellipse()
-                    .fill(Color.black.opacity(0.28))
+                    .fill(Color.black.opacity(0.15))
                     .frame(width: w * 0.44, height: 16)
                     .blur(radius: 10)
                     .position(x: w / 2 + w * glassesXOffset, y: h * 0.524)

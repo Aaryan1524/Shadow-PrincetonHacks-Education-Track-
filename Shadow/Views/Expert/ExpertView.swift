@@ -8,20 +8,10 @@ struct RecordingStep: Identifiable {
     var aiDescription: String
 }
 
-private let skyGradient = LinearGradient(
+private let inkWash = LinearGradient(
     stops: [
-        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
-        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
-    ],
-    startPoint: .top,
-    endPoint: .bottom
-)
-
-private let grassGradient = LinearGradient(
-    stops: [
-        .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
-        .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
+        .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
+        .init(color: Color(red: 0.80, green: 0.80, blue: 0.80), location: 1.0)
     ],
     startPoint: .top,
     endPoint: .bottom
@@ -42,19 +32,14 @@ struct ExpertView: View {
     @State private var isCapturing = false
     @State private var showPublished = false
 
-    private let green     = Color(red: 0.22, green: 0.50, blue: 0.12)
-    private let darkGreen = Color(red: 0.08, green: 0.20, blue: 0.06)
+    private let accent    = Color(red: 0.43, green: 0.51, blue: 0.59)
+    private let charcoal  = Color(red: 0.29, green: 0.29, blue: 0.29)
     private let categories = ["Cooking", "Home", "Fitness", "Tech", "Crafts", "DIY", "Other"]
 
     var body: some View {
         ZStack {
             // Background
-            skyGradient.ignoresSafeArea()
-            VStack(spacing: 0) {
-                Color.clear.frame(height: UIScreen.main.bounds.height * 0.50)
-                grassGradient.frame(maxHeight: .infinity)
-            }
-            .ignoresSafeArea()
+            inkWash.ignoresSafeArea()
 
             if phase == .setup {
                 setupView
@@ -78,10 +63,10 @@ struct ExpertView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("New Tutorial")
                         .font(.custom("CopernicusTrial-Book", size: 28))
-                        .foregroundStyle(darkGreen)
+                        .foregroundStyle(charcoal)
                     Text("Tell us what you're making before you record")
                         .font(.custom("CopernicusTrial-Book", size: 14))
-                        .foregroundStyle(darkGreen.opacity(0.6))
+                        .foregroundStyle(charcoal.opacity(0.6))
                 }
                 .padding(.top, 90)
 
@@ -89,7 +74,7 @@ struct ExpertView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("TITLE")
                         .font(.custom("CopernicusTrial-Book", size: 11))
-                        .foregroundStyle(darkGreen.opacity(0.5))
+                        .foregroundStyle(charcoal.opacity(0.5))
                         .tracking(2)
                     TextField("e.g. How to make pasta from scratch", text: $tutorialTitle)
                         .font(.custom("CopernicusTrial-Book", size: 15))
@@ -102,7 +87,7 @@ struct ExpertView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("WHAT ARE YOU MAKING?")
                         .font(.custom("CopernicusTrial-Book", size: 11))
-                        .foregroundStyle(darkGreen.opacity(0.5))
+                        .foregroundStyle(charcoal.opacity(0.5))
                         .tracking(2)
                     TextField("Brief description of the tutorial", text: $tutorialDescription)
                         .font(.custom("CopernicusTrial-Book", size: 15))
@@ -115,7 +100,7 @@ struct ExpertView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("CATEGORY")
                         .font(.custom("CopernicusTrial-Book", size: 11))
-                        .foregroundStyle(darkGreen.opacity(0.5))
+                        .foregroundStyle(charcoal.opacity(0.5))
                         .tracking(2)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
@@ -127,8 +112,8 @@ struct ExpertView: View {
                                         .font(.custom("CopernicusTrial-Book", size: 14))
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(selectedCategory == cat ? green : Color.white.opacity(0.5))
-                                        .foregroundStyle(selectedCategory == cat ? .white : darkGreen)
+                                        .background(selectedCategory == cat ? accent : Color.white.opacity(0.5))
+                                        .foregroundStyle(selectedCategory == cat ? .white : charcoal)
                                         .clipShape(Capsule())
                                 }
                                 .buttonStyle(.plain)
@@ -148,7 +133,7 @@ struct ExpertView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(canStart ? green : Color.gray.opacity(0.4))
+                    .background(canStart ? accent : Color.gray.opacity(0.4))
                     .foregroundStyle(.white)
                     .clipShape(Capsule())
                 }
@@ -181,11 +166,11 @@ struct ExpertView: View {
                     )
                 Text(isStreaming ? "Streaming from glasses  •  AI capturing steps" : "Not streaming")
                     .font(.custom("CopernicusTrial-Book", size: 13))
-                    .foregroundStyle(darkGreen.opacity(0.8))
+                    .foregroundStyle(charcoal.opacity(0.8))
                 Spacer()
                 Text(tutorialTitle)
                     .font(.custom("CopernicusTrial-Book", size: 12))
-                    .foregroundStyle(darkGreen.opacity(0.5))
+                    .foregroundStyle(charcoal.opacity(0.5))
                     .lineLimit(1)
             }
             .padding(.horizontal, 20)
@@ -200,13 +185,13 @@ struct ExpertView: View {
                         VStack(spacing: 12) {
                             Image(systemName: "glasses")
                                 .font(.system(size: 44))
-                                .foregroundStyle(darkGreen.opacity(0.4))
+                                .foregroundStyle(charcoal.opacity(0.4))
                             Text("Start streaming from your glasses")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
-                                .foregroundStyle(darkGreen.opacity(0.55))
+                                .foregroundStyle(charcoal.opacity(0.55))
                             Text("AI will automatically detect and capture steps")
                                 .font(.custom("CopernicusTrial-Book", size: 13))
-                                .foregroundStyle(darkGreen.opacity(0.35))
+                                .foregroundStyle(charcoal.opacity(0.35))
                                 .multilineTextAlignment(.center)
                         }
                         .padding(.top, 50)
@@ -216,7 +201,7 @@ struct ExpertView: View {
                     ForEach(steps) { step in
                         HStack(spacing: 12) {
                             ZStack {
-                                Circle().fill(green).frame(width: 28, height: 28)
+                                Circle().fill(accent).frame(width: 28, height: 28)
                                 Text("\(step.stepNumber)")
                                     .font(.custom("CopernicusTrial-Book", size: 13))
                                     .foregroundStyle(.white)
@@ -224,16 +209,16 @@ struct ExpertView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Step \(step.stepNumber)")
                                     .font(.custom("CopernicusTrial-Book", size: 11))
-                                    .foregroundStyle(darkGreen.opacity(0.4))
+                                    .foregroundStyle(charcoal.opacity(0.4))
                                     .tracking(1)
                                 Text(step.aiDescription)
                                     .font(.custom("CopernicusTrial-Book", size: 14))
-                                    .foregroundStyle(darkGreen)
+                                    .foregroundStyle(charcoal)
                                     .lineLimit(2)
                             }
                             Spacer()
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(green.opacity(0.7))
+                                .foregroundStyle(accent.opacity(0.7))
                                 .font(.system(size: 16))
                         }
                         .padding(12)
@@ -248,7 +233,7 @@ struct ExpertView: View {
                             ProgressView()
                             Text("AI processing step...")
                                 .font(.custom("CopernicusTrial-Book", size: 14))
-                                .foregroundStyle(darkGreen.opacity(0.7))
+                                .foregroundStyle(charcoal.opacity(0.7))
                         }
                         .padding(14)
                         .background(Color.white.opacity(0.35))
@@ -277,7 +262,7 @@ struct ExpertView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(isStreaming ? Color.red.opacity(0.85) : green)
+                    .background(isStreaming ? Color.red.opacity(0.85) : accent)
                     .foregroundStyle(.white)
                     .clipShape(Capsule())
                 }
@@ -292,7 +277,7 @@ struct ExpertView: View {
                     } label: {
                         Text("Publish Tutorial  (\(steps.count) steps)")
                             .font(.custom("CopernicusTrial-Book", size: 14))
-                            .foregroundStyle(darkGreen.opacity(0.8))
+                            .foregroundStyle(charcoal.opacity(0.8))
                     }
                     .buttonStyle(.plain)
                 }
@@ -345,7 +330,7 @@ struct ExpertView: View {
             Spacer()
         }
         .padding(18)
-        .background(green)
+        .background(accent)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal, 20)
         .padding(.bottom, 30)

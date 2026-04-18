@@ -56,31 +56,15 @@ struct UserView: View {
 
     var body: some View {
         ZStack {
-            // Sky background
+            // Ink wash background
             LinearGradient(
                 stops: [
-                    .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-                    .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
-                    .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                    .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
+                    .init(color: Color(red: 0.80, green: 0.80, blue: 0.80), location: 1.0)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .ignoresSafeArea()
-
-            // Grass bottom half
-            VStack(spacing: 0) {
-                Color.clear.frame(height: UIScreen.main.bounds.height * 0.50)
-                LinearGradient(
-                    stops: [
-                        .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
-                        .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(maxHeight: .infinity)
-            }
             .ignoresSafeArea()
 
             ScrollView {
@@ -88,7 +72,7 @@ struct UserView: View {
                     // Inline search
                     HStack(spacing: 10) {
                         Image(systemName: "magnifyingglass")
-                            .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.6))
+                            .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.5))
                         TextField("Search courses...", text: $searchText)
                             .font(.custom("CopernicusTrial-Book", size: 14))
                     }
@@ -109,10 +93,10 @@ struct UserView: View {
                                         .padding(.vertical, 7)
                                         .background(
                                             selectedCategory == category.name
-                                                ? Color(red: 0.22, green: 0.50, blue: 0.12)
-                                                : Color.white.opacity(0.25)
+                                                ? Color(red: 0.43, green: 0.51, blue: 0.59)
+                                                : Color.white.opacity(0.40)
                                         )
-                                        .foregroundStyle(selectedCategory == category.name ? .white : Color(red: 0.10, green: 0.24, blue: 0.06))
+                                        .foregroundStyle(selectedCategory == category.name ? .white : Color(red: 0.29, green: 0.29, blue: 0.29))
                                         .clipShape(Capsule())
                                 }
                                 .buttonStyle(.plain)
@@ -124,7 +108,7 @@ struct UserView: View {
                     if filteredTutorials.isEmpty {
                         Text("No courses found")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.6))
+                            .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.6))
                             .padding(.top, 40)
                     } else {
                         LazyVGrid(columns: columns, spacing: 12) {
@@ -161,7 +145,7 @@ struct TutorialCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(tutorial.title)
                         .font(.custom("CopernicusTrial-Book", size: 12))
-                        .foregroundStyle(Color(red: 0.08, green: 0.20, blue: 0.06))
+                        .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
@@ -171,7 +155,7 @@ struct TutorialCard: View {
                         Text(tutorial.duration)
                     }
                     .font(.custom("CopernicusTrial-Book", size: 10))
-                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.65))
+                    .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.55))
                 }
                 .padding(10)
             }
@@ -194,8 +178,8 @@ struct AgentLaunchView: View {
         ZStack {
             LinearGradient(
                 stops: [
-                    .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
-                    .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 1.0)
+                    .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
+                    .init(color: Color(red: 0.80, green: 0.80, blue: 0.80), location: 1.0)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -206,34 +190,34 @@ struct AgentLaunchView: View {
                 Spacer()
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: 64))
-                    .foregroundStyle(.white.opacity(0.90))
+                    .foregroundStyle(Color(red: 0.43, green: 0.51, blue: 0.59).opacity(0.90))
 
                 Text(tutorial.title)
                     .font(.custom("CopernicusTrial-Book", size: 22))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
                     .multilineTextAlignment(.center)
                     .tracking(1)
 
                 Text("Your AI guide is ready.\nPut on your Meta glasses.")
                     .font(.custom("CopernicusTrial-Book", size: 15))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.white.opacity(0.75))
+                    .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.65))
 
                 Button { } label: {
                     Text("Start Session")
                         .font(.custom("CopernicusTrial-Book", size: 16))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color(red: 0.18, green: 0.44, blue: 0.10))
+                        .background(Color(red: 0.43, green: 0.51, blue: 0.59))
                         .foregroundStyle(.white)
                         .clipShape(Capsule())
-                        .shadow(color: .black.opacity(0.20), radius: 8, x: 0, y: 4)
+                        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
                 }
                 .padding(.horizontal, 32)
 
                 Button("Cancel") { dismiss() }
                     .font(.custom("CopernicusTrial-Book", size: 14))
-                    .foregroundStyle(.white.opacity(0.70))
+                    .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.55))
 
                 Spacer()
             }
