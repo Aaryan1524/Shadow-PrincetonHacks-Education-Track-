@@ -97,6 +97,25 @@ struct ContentView: View {
                             ExpertView()
                         }
                     }
+                    .overlay(alignment: .topLeading) {
+                        if !isDeepZoom {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.5)) {
+                                    showDestination = false
+                                    isZooming = false
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { zoomTarget = nil }
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .padding(16)
+                                    .glassEffect(.regular.interactive(), in: .circle)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.top, h * 0.06)
+                            .padding(.leading, 12)
+                        }
+                    }
                     .transition(.opacity)
                     .zIndex(1)
                 }
@@ -178,25 +197,6 @@ struct ContentView: View {
                         .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                         .position(x: w / 2, y: h * 0.56)
                         .zIndex(1)
-                }
-
-                // Back button — always on top when destination is showing
-                if showDestination && !isDeepZoom {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            showDestination = false
-                            isZooming = false
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { zoomTarget = nil }
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .semibold))
-                            .padding(16)
-                            .glassEffect(.regular.interactive(), in: .circle)
-                    }
-                    .buttonStyle(.plain)
-                    .position(x: 44, y: h * 0.10)
-                    .zIndex(3)
                 }
 
                 // Deep zoom back button
