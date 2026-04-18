@@ -5,6 +5,8 @@ struct MainAppView: View {
     @StateObject private var wearablesVM: WearablesViewModel
     @StateObject private var streamVM: StreamSessionViewModel
 
+    @State private var selectedLesson: APILesson?
+
     private let wearables: WearablesInterface
 
     init(wearables: WearablesInterface) {
@@ -15,10 +17,19 @@ struct MainAppView: View {
 
     var body: some View {
         Group {
-            if wearablesVM.registrationState == .registered {
+            if wearablesVM.registrationState == .registered, selectedLesson != nil {
                 StreamView(streamVM: streamVM, wearablesVM: wearablesVM)
             } else {
-                HomeScreenView(viewModel: wearablesVM)
+                HomeScreenView(viewModel: wearablesVM) { lesson in
+                    streamVM.setLesson(lesson)
+                    selectedLesson = lesson
+                }
+            }
+        }
+        .onChange(of: streamVM.currentLesson == nil) { lessonCleared in
+            // When returnToMainPage() clears the lesson, navigate back
+            if lessonCleared {
+                selectedLesson = nil
             }
         }
         .onOpenURL { url in

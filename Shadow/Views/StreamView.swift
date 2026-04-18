@@ -5,6 +5,9 @@ struct StreamView: View {
     @ObservedObject var streamVM: StreamSessionViewModel
     @ObservedObject var wearablesVM: WearablesViewModel
 
+    @State private var messageText: String = ""
+    @FocusState private var isMessageFieldFocused: Bool
+
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
@@ -30,7 +33,7 @@ struct StreamView: View {
             }
 
             // Controls overlay
-            VStack {
+            VStack(spacing: 0) {
                 // Top bar
                 HStack {
                     if streamVM.isStreaming {
@@ -59,7 +62,100 @@ struct StreamView: View {
                 }
                 .padding()
 
+                // Step progress bar
+                if let lesson = streamVM.currentLesson, streamVM.isStreaming {
+                    VStack(spacing: 4) {
+                        HStack {
+                            Text(lesson.title)
+                                .font(.caption.bold())
+                                .foregroundColor(.white)
+                            Spacer()
+                            Text("Step \(streamVM.currentStepIndex + 1)/\(streamVM.totalSteps)")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+
+                        ProgressView(value: Double(streamVM.currentStepIndex), total: Double(max(streamVM.totalSteps, 1)))
+                            .tint(.green)
+
+                        if let step = streamVM.currentStep {
+                            Text(step.instruction)
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.9))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                }
+
                 Spacer()
+
+                // Coaching message bubble
+                if !streamVM.coachingMessage.isEmpty, streamVM.isStreaming {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: streamVM.stepCompleted ? "checkmark.circle.fill" : "brain.head.profile")
+                            .foregroundColor(streamVM.stepCompleted ? .green : .blue)
+                        Text(streamVM.coachingMessage)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                }
+
+                // Coach reply bubble
+                if !streamVM.coachReply.isEmpty, streamVM.isStreaming {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "message.fill")
+                            .foregroundColor(.purple)
+                        Text(streamVM.coachReply)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(Color.purple.opacity(0.3))
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                }
+
+                // Message input for coach
+                if streamVM.currentLesson != nil, streamVM.isStreaming {
+                    HStack(spacing: 8) {
+                        TextField("Ask your coach...", text: $messageText)
+                            .textFieldStyle(.plain)
+                            .padding(10)
+                            .background(Color.white.opacity(0.15))
+                            .cornerRadius(20)
+                            .foregroundColor(.white)
+                            .focused($isMessageFieldFocused)
+
+                        Button {
+                            let msg = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            guard !msg.isEmpty else { return }
+                            messageText = ""
+                            isMessageFieldFocused = false
+                            Task { await streamVM.sendCoachMessage(msg) }
+                        } label: {
+                            Image(systemName: streamVM.isSendingMessage ? "ellipsis.circle" : "arrow.up.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(messageText.isEmpty ? .gray : .white)
+                        }
+                        .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || streamVM.isSendingMessage)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                }
 
                 // Bottom controls
                 if streamVM.isStreaming {
