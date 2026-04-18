@@ -1,88 +1,123 @@
-//
-//  ContentView.swift
-//  Shadow
-//
-//  Created by Aaryan Gajula on 4/18/26.
-//
-
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+        NavigationStack {
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+                let lensW = w * 0.42
+                let lensH = h * 0.36
+                let lensY = h * 0.42
+                let leftX = w * 0.25
+                let rightX = w * 0.75
+
+                ZStack {
+                    // Background
+                    Color.black.ignoresSafeArea()
+
+                    // Scene visible through lenses
+                    LinearGradient(
+                        colors: [.blue.opacity(0.6), .cyan.opacity(0.4)],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                    .ignoresSafeArea()
+                    .mask(
+                        ZStack {
+                            Ellipse()
+                                .frame(width: lensW, height: lensH)
+                                .position(x: leftX, y: lensY)
+                            Ellipse()
+                                .frame(width: lensW, height: lensH)
+                                .position(x: rightX, y: lensY)
+                        }
+                    )
+
+                    // Glasses frame
+                    Canvas { ctx, size in
+                        // Left lens frame
+                        let leftLens = CGRect(
+                            x: leftX - lensW / 2, y: lensY - lensH / 2,
+                            width: lensW, height: lensH
+                        )
+                        // Right lens frame
+                        let rightLens = CGRect(
+                            x: rightX - lensW / 2, y: lensY - lensH / 2,
+                            width: lensW, height: lensH
+                        )
+                        var leftPath = Path(ellipseIn: leftLens)
+                        var rightPath = Path(ellipseIn: rightLens)
+
+                        ctx.stroke(leftPath, with: .color(.white.opacity(0.85)),
+                                   style: StrokeStyle(lineWidth: 6))
+                        ctx.stroke(rightPath, with: .color(.white.opacity(0.85)),
+                                   style: StrokeStyle(lineWidth: 6))
+
+                        // Bridge
+                        var bridge = Path()
+                        bridge.move(to: CGPoint(x: leftX + lensW / 2, y: lensY - 4))
+                        bridge.addQuadCurve(
+                            to: CGPoint(x: rightX - lensW / 2, y: lensY - 4),
+                            control: CGPoint(x: w / 2, y: lensY - 24)
+                        )
+                        ctx.stroke(bridge, with: .color(.white.opacity(0.85)),
+                                   style: StrokeStyle(lineWidth: 5))
+
+                        // Left temple arm
+                        var leftArm = Path()
+                        leftArm.move(to: CGPoint(x: leftX - lensW / 2, y: lensY))
+                        leftArm.addLine(to: CGPoint(x: 0, y: lensY - 10))
+                        ctx.stroke(leftArm, with: .color(.white.opacity(0.85)),
+                                   style: StrokeStyle(lineWidth: 5))
+
+                        // Right temple arm
+                        var rightArm = Path()
+                        rightArm.move(to: CGPoint(x: rightX + lensW / 2, y: lensY))
+                        rightArm.addLine(to: CGPoint(x: w, y: lensY - 10))
+                        ctx.stroke(rightArm, with: .color(.white.opacity(0.85)),
+                                   style: StrokeStyle(lineWidth: 5))
                     }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+
+                    // Title
+                    VStack {
+                        Text("Shadow")
+                            .font(.largeTitle)
+                            .bold()
+                            .foregroundColor(.white)
+                        Spacer()
                     }
+                    .padding(.top, 60)
+
+                    // User button — left lens
+                    NavigationLink(destination: UserView()) {
+                        Text("User")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 28)
+                            .padding(.vertical, 12)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(10)
+                    }
+                    .position(x: leftX, y: lensY)
+
+                    // Expert button — right lens
+                    NavigationLink(destination: ExpertView()) {
+                        Text("Expert")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 28)
+                            .padding(.vertical, 12)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(10)
+                    }
+                    .position(x: rightX, y: lensY)
                 }
             }
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+            .navigationBarHidden(true)
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
