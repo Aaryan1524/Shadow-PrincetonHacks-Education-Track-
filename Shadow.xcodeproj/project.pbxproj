@@ -182,11 +182,11 @@
 		527EA40B2F9348520085482E = {
 			isa = PBXGroup;
 			children = (
+				527EA4932F9349090085482E /* meta-wearables-dat-ios */,
 				527EA4162F9348520085482E /* Shadow */,
 				527EA4292F9348530085482E /* ShadowTests */,
 				527EA4332F9348530085482E /* ShadowUITests */,
 				527EA4152F9348520085482E /* Products */,
-				527EA4932F9349090085482E /* meta-wearables-dat-ios */,
 			);
 			sourceTree = "<group>";
 		};
@@ -396,13 +396,6 @@
 			path = "meta-wearables-dat-ios";
 			sourceTree = "<group>";
 		};
-		527EA4942F9349090085482E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -509,12 +502,6 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 527EA4152F9348520085482E /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 527EA4942F9349090085482E /* Products */;
-					ProjectRef = 527EA4872F9349090085482E /* CameraAccess.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				527EA4132F9348520085482E /* Shadow */,
