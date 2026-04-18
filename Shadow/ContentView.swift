@@ -17,7 +17,7 @@ struct ContentView: View {
             let lensY      = h * 0.40
             let leftLensX  = w * 0.30
             let rightLensX = w * 0.68
-            let canvasW    = w * 0.88 * 0.38 * 2.76 + 20
+            let canvasW    = w * 0.88 * 0.38 * 4 + 20
             let lensShift  = canvasW * 0.04
             let zoomX: CGFloat = isZooming
                 ? (zoomTarget == .user ? w / 2 + lensShift : w / 2 - lensShift)
@@ -227,7 +227,7 @@ struct GlassesLensesView: View {
         let outerRadius: CGFloat = 42
         let frameThickness: CGFloat = 16
         let innerRadius: CGFloat = max(outerRadius - frameThickness, 8)
-        let armLen = lensW * 0.38
+        let armLen = lensW * 1.0
         let canvasW = lensW * 2 + gap + armLen * 2
         let offsetX = armLen
 
@@ -284,19 +284,15 @@ struct GlassesLeftArmView: View {
         let lensW = width * 0.38
         let lensH = lensW * 0.68
         let gap: CGFloat = 20
-        let armLen = lensW * 0.38
+        let armLen = lensW * 1.0
         let canvasW = lensW * 2 + gap + armLen * 2
         let offsetX = armLen
         let leftOuter = CGRect(x: offsetX, y: 0, width: lensW, height: lensH)
 
         Canvas { ctx, _ in
             var leftArm = Path()
-            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.35))
-            leftArm.addCurve(
-                to: CGPoint(x: 0, y: lensH * 0.6),
-                control1: CGPoint(x: offsetX * 0.55, y: lensH * 0.35),
-                control2: CGPoint(x: offsetX * 0.15, y: lensH * 0.48)
-            )
+            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.5))
+            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.5))
             ctx.stroke(leftArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)
@@ -311,19 +307,15 @@ struct GlassesRightArmView: View {
         let lensW = width * 0.38
         let lensH = lensW * 0.68
         let gap: CGFloat = 20
-        let armLen = lensW * 0.38
+        let armLen = lensW * 1.0
         let canvasW = lensW * 2 + gap + armLen * 2
         let offsetX = armLen
         let framesRight = offsetX + lensW * 2 + gap
 
         Canvas { ctx, _ in
             var rightArm = Path()
-            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.35))
-            rightArm.addCurve(
-                to: CGPoint(x: canvasW, y: lensH * 0.6),
-                control1: CGPoint(x: framesRight + (canvasW - framesRight) * 0.45, y: lensH * 0.35),
-                control2: CGPoint(x: framesRight + (canvasW - framesRight) * 0.85, y: lensH * 0.48)
-            )
+            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.5))
+            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.5))
             ctx.stroke(rightArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)
