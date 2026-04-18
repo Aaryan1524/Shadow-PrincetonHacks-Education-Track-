@@ -7,57 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		527EA4962F9349090085482E /* getting-started.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4492F9349090085482E /* getting-started.md */; };
-		527EA4982F9349090085482E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4882F9349090085482E /* README.md */; };
-		527EA4992F9349090085482E /* plant.png in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4602F9349090085482E /* plant.png */; };
-		527EA49A2F9349090085482E /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44F2F9349090085482E /* settings.json */; };
-		527EA49D2F9349090085482E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4862F9349090085482E /* .gitignore */; };
-		527EA49E2F9349090085482E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4802F9349090085482E /* Info.plist */; };
-		527EA49F2F9349090085482E /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4902F9349090085482E /* LICENSE */; };
-		527EA4A02F9349090085482E /* dat-conventions.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4452F9349090085482E /* dat-conventions.md */; };
-		527EA4A12F9349090085482E /* build.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4432F9349090085482E /* build.md */; };
-		527EA4A22F9349090085482E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 527EA47D2F9349090085482E /* Assets.xcassets */; };
-		527EA4A42F9349090085482E /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48C2F9349090085482E /* CHANGELOG.md */; };
-		527EA4A52F9349090085482E /* camera-streaming.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4472F9349090085482E /* camera-streaming.md */; };
-		527EA4A62F9349090085482E /* NOTICE in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4912F9349090085482E /* NOTICE */; };
-		527EA4A72F9349090085482E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4922F9349090085482E /* README.md */; };
-		527EA4A82F9349090085482E /* copilot-instructions.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA45B2F9349090085482E /* copilot-instructions.md */; };
-		527EA4AA2F9349090085482E /* debugging.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA4482F9349090085482E /* debugging.md */; };
-		527EA4AB2F9349090085482E /* CODE_OF_CONDUCT.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48D2F9349090085482E /* CODE_OF_CONDUCT.md */; };
-		527EA4AC2F9349090085482E /* permissions-registration.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44B2F9349090085482E /* permissions-registration.md */; };
-		527EA4AD2F9349090085482E /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 527EA45D2F9349090085482E /* settings.json */; };
-		527EA4AE2F9349090085482E /* install-skills.sh in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48F2F9349090085482E /* install-skills.sh */; };
-		527EA4AF2F9349090085482E /* mockdevice-testing.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44A2F9349090085482E /* mockdevice-testing.md */; };
-		527EA4B02F9349090085482E /* session-lifecycle.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44D2F9349090085482E /* session-lifecycle.md */; };
-		527EA4B22F9349090085482E /* plant.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 527EA45F2F9349090085482E /* plant.mp4 */; };
-		527EA4B32F9349090085482E /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48B2F9349090085482E /* AGENTS.md */; };
-		527EA4B42F9349090085482E /* sample-app-guide.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA44C2F9349090085482E /* sample-app-guide.md */; };
-		527EA4B72F9349090085482E /* CONTRIBUTING.md in Resources */ = {isa = PBXBuildFile; fileRef = 527EA48E2F9349090085482E /* CONTRIBUTING.md */; };
-		527EA4B82F9349090085482E /* PhotoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4782F9349090085482E /* PhotoPreviewView.swift */; };
-		527EA4B92F9349090085482E /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46A2F9349090085482E /* CardView.swift */; };
-		527EA4BA2F9349090085482E /* CameraAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4822F9349090085482E /* CameraAccessTests.swift */; };
-		527EA4BB2F9349090085482E /* MockDeviceKitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4622F9349090085482E /* MockDeviceKitViewModel.swift */; };
-		527EA4BC2F9349090085482E /* WearablesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4682F9349090085482E /* WearablesViewModel.swift */; };
-		527EA4BD2F9349090085482E /* MockDeviceKitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4712F9349090085482E /* MockDeviceKitButton.swift */; };
-		527EA4BE2F9349090085482E /* MediaPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46D2F9349090085482E /* MediaPickerView.swift */; };
-		527EA4BF2F9349090085482E /* NonStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4772F9349090085482E /* NonStreamView.swift */; };
-		527EA4C02F9349090085482E /* MainAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4762F9349090085482E /* MainAppView.swift */; };
-		527EA4C12F9349090085482E /* StatusText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46E2F9349090085482E /* StatusText.swift */; };
-		527EA4C22F9349090085482E /* StreamSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA47A2F9349090085482E /* StreamSessionView.swift */; };
-		527EA4C32F9349090085482E /* HomeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4752F9349090085482E /* HomeScreenView.swift */; };
-		527EA4C42F9349090085482E /* DebugMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4742F9349090085482E /* DebugMenuView.swift */; };
-		527EA4C52F9349090085482E /* DeviceSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4662F9349090085482E /* DeviceSessionManager.swift */; };
-		527EA4C62F9349090085482E /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46B2F9349090085482E /* CircleButton.swift */; };
-		527EA4C72F9349090085482E /* StreamSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4672F9349090085482E /* StreamSessionViewModel.swift */; };
-		527EA4C82F9349090085482E /* StreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA47B2F9349090085482E /* StreamView.swift */; };
-		527EA4C92F9349090085482E /* CameraAccessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4842F9349090085482E /* CameraAccessUITests.swift */; };
-		527EA4CA2F9349090085482E /* DebugMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4652F9349090085482E /* DebugMenuViewModel.swift */; };
-		527EA4CB2F9349090085482E /* MockDeviceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4702F9349090085482E /* MockDeviceCardView.swift */; };
-		527EA4CC2F9349090085482E /* MockDeviceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4632F9349090085482E /* MockDeviceViewModel.swift */; };
-		527EA4CD2F9349090085482E /* CameraAccessApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA47F2F9349090085482E /* CameraAccessApp.swift */; };
-		527EA4CE2F9349090085482E /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4792F9349090085482E /* RegistrationView.swift */; };
-		527EA4CF2F9349090085482E /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA46C2F9349090085482E /* CustomButton.swift */; };
-		527EA4D02F9349090085482E /* MockDeviceKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527EA4722F9349090085482E /* MockDeviceKitView.swift */; };
+		522041632F936BFB00FB1520 /* MWDATCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 522041622F936BFB00FB1520 /* MWDATCamera */; };
+		522041652F936BFB00FB1520 /* MWDATCore in Frameworks */ = {isa = PBXBuildFile; productRef = 522041642F936BFB00FB1520 /* MWDATCore */; };
+		522041672F936C0C00FB1520 /* MWDATMockDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 522041662F936C0C00FB1520 /* MWDATMockDevice */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,65 +30,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		522040F72F93656300FB1520 /* CameraAccess.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CameraAccess.xcodeproj; sourceTree = "<group>"; };
 		527EA4142F9348520085482E /* Shadow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shadow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		527EA4262F9348530085482E /* ShadowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		527EA4302F9348530085482E /* ShadowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		527EA4432F9349090085482E /* build.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = build.md; sourceTree = "<group>"; };
-		527EA4452F9349090085482E /* dat-conventions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "dat-conventions.md"; sourceTree = "<group>"; };
-		527EA4472F9349090085482E /* camera-streaming.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "camera-streaming.md"; sourceTree = "<group>"; };
-		527EA4482F9349090085482E /* debugging.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = debugging.md; sourceTree = "<group>"; };
-		527EA4492F9349090085482E /* getting-started.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "getting-started.md"; sourceTree = "<group>"; };
-		527EA44A2F9349090085482E /* mockdevice-testing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "mockdevice-testing.md"; sourceTree = "<group>"; };
-		527EA44B2F9349090085482E /* permissions-registration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "permissions-registration.md"; sourceTree = "<group>"; };
-		527EA44C2F9349090085482E /* sample-app-guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "sample-app-guide.md"; sourceTree = "<group>"; };
-		527EA44D2F9349090085482E /* session-lifecycle.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "session-lifecycle.md"; sourceTree = "<group>"; };
-		527EA44F2F9349090085482E /* settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = settings.json; sourceTree = "<group>"; };
-		527EA45B2F9349090085482E /* copilot-instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "copilot-instructions.md"; sourceTree = "<group>"; };
-		527EA45D2F9349090085482E /* settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = settings.json; sourceTree = "<group>"; };
-		527EA45F2F9349090085482E /* plant.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = plant.mp4; sourceTree = "<group>"; };
-		527EA4602F9349090085482E /* plant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = plant.png; sourceTree = "<group>"; };
-		527EA4622F9349090085482E /* MockDeviceKitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceKitViewModel.swift; sourceTree = "<group>"; };
-		527EA4632F9349090085482E /* MockDeviceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceViewModel.swift; sourceTree = "<group>"; };
-		527EA4652F9349090085482E /* DebugMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuViewModel.swift; sourceTree = "<group>"; };
-		527EA4662F9349090085482E /* DeviceSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSessionManager.swift; sourceTree = "<group>"; };
-		527EA4672F9349090085482E /* StreamSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSessionViewModel.swift; sourceTree = "<group>"; };
-		527EA4682F9349090085482E /* WearablesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearablesViewModel.swift; sourceTree = "<group>"; };
-		527EA46A2F9349090085482E /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
-		527EA46B2F9349090085482E /* CircleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleButton.swift; sourceTree = "<group>"; };
-		527EA46C2F9349090085482E /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
-		527EA46D2F9349090085482E /* MediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerView.swift; sourceTree = "<group>"; };
-		527EA46E2F9349090085482E /* StatusText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusText.swift; sourceTree = "<group>"; };
-		527EA4702F9349090085482E /* MockDeviceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceCardView.swift; sourceTree = "<group>"; };
-		527EA4712F9349090085482E /* MockDeviceKitButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceKitButton.swift; sourceTree = "<group>"; };
-		527EA4722F9349090085482E /* MockDeviceKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceKitView.swift; sourceTree = "<group>"; };
-		527EA4742F9349090085482E /* DebugMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuView.swift; sourceTree = "<group>"; };
-		527EA4752F9349090085482E /* HomeScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenView.swift; sourceTree = "<group>"; };
-		527EA4762F9349090085482E /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
-		527EA4772F9349090085482E /* NonStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonStreamView.swift; sourceTree = "<group>"; };
-		527EA4782F9349090085482E /* PhotoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPreviewView.swift; sourceTree = "<group>"; };
-		527EA4792F9349090085482E /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
-		527EA47A2F9349090085482E /* StreamSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSessionView.swift; sourceTree = "<group>"; };
-		527EA47B2F9349090085482E /* StreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamView.swift; sourceTree = "<group>"; };
-		527EA47D2F9349090085482E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		527EA47E2F9349090085482E /* CameraAccess.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CameraAccess.entitlements; sourceTree = "<group>"; };
-		527EA47F2F9349090085482E /* CameraAccessApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessApp.swift; sourceTree = "<group>"; };
-		527EA4802F9349090085482E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		527EA4822F9349090085482E /* CameraAccessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessTests.swift; sourceTree = "<group>"; };
-		527EA4842F9349090085482E /* CameraAccessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessUITests.swift; sourceTree = "<group>"; };
-		527EA4862F9349090085482E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		527EA4872F9349090085482E /* CameraAccess.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CameraAccess.xcodeproj; sourceTree = "<group>"; };
-		527EA4882F9349090085482E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		527EA48B2F9349090085482E /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
-		527EA48C2F9349090085482E /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
-		527EA48D2F9349090085482E /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
-		527EA48E2F9349090085482E /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
-		527EA48F2F9349090085482E /* install-skills.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-skills.sh"; sourceTree = "<group>"; };
-		527EA4902F9349090085482E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		527EA4912F9349090085482E /* NOTICE */ = {isa = PBXFileReference; lastKnownFileType = text; path = NOTICE; sourceTree = "<group>"; };
-		527EA4922F9349090085482E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		522041032F93656300FB1520 /* meta-wearables-dat-ios */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "meta-wearables-dat-ios";
+			sourceTree = "<group>";
+		};
 		527EA4162F9348520085482E /* Shadow */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Shadow;
@@ -159,6 +64,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				522041632F936BFB00FB1520 /* MWDATCamera in Frameworks */,
+				522041672F936C0C00FB1520 /* MWDATMockDevice in Frameworks */,
+				522041652F936BFB00FB1520 /* MWDATCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,14 +87,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		522041042F93656300FB1520 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		522041612F936BFB00FB1520 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		527EA40B2F9348520085482E = {
 			isa = PBXGroup;
 			children = (
-				527EA4932F9349090085482E /* meta-wearables-dat-ios */,
 				527EA4162F9348520085482E /* Shadow */,
 				527EA4292F9348530085482E /* ShadowTests */,
 				527EA4332F9348530085482E /* ShadowUITests */,
 				527EA4152F9348520085482E /* Products */,
+				522041032F93656300FB1520 /* meta-wearables-dat-ios */,
+				522041612F936BFB00FB1520 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -198,202 +121,6 @@
 				527EA4302F9348530085482E /* ShadowUITests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		527EA4442F9349090085482E /* commands */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4432F9349090085482E /* build.md */,
-			);
-			path = commands;
-			sourceTree = "<group>";
-		};
-		527EA4462F9349090085482E /* rules */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4452F9349090085482E /* dat-conventions.md */,
-			);
-			path = rules;
-			sourceTree = "<group>";
-		};
-		527EA44E2F9349090085482E /* skills */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4472F9349090085482E /* camera-streaming.md */,
-				527EA4482F9349090085482E /* debugging.md */,
-				527EA4492F9349090085482E /* getting-started.md */,
-				527EA44A2F9349090085482E /* mockdevice-testing.md */,
-				527EA44B2F9349090085482E /* permissions-registration.md */,
-				527EA44C2F9349090085482E /* sample-app-guide.md */,
-				527EA44D2F9349090085482E /* session-lifecycle.md */,
-			);
-			path = skills;
-			sourceTree = "<group>";
-		};
-		527EA4502F9349090085482E /* .claude */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4442F9349090085482E /* commands */,
-				527EA4462F9349090085482E /* rules */,
-				527EA44E2F9349090085482E /* skills */,
-				527EA44F2F9349090085482E /* settings.json */,
-			);
-			path = .claude;
-			sourceTree = "<group>";
-		};
-		527EA45C2F9349090085482E /* .github */ = {
-			isa = PBXGroup;
-			children = (
-				527EA45B2F9349090085482E /* copilot-instructions.md */,
-			);
-			path = .github;
-			sourceTree = "<group>";
-		};
-		527EA45E2F9349090085482E /* .claude */ = {
-			isa = PBXGroup;
-			children = (
-				527EA45D2F9349090085482E /* settings.json */,
-			);
-			path = .claude;
-			sourceTree = "<group>";
-		};
-		527EA4612F9349090085482E /* TestResources */ = {
-			isa = PBXGroup;
-			children = (
-				527EA45F2F9349090085482E /* plant.mp4 */,
-				527EA4602F9349090085482E /* plant.png */,
-			);
-			path = TestResources;
-			sourceTree = "<group>";
-		};
-		527EA4642F9349090085482E /* MockDeviceKit */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4622F9349090085482E /* MockDeviceKitViewModel.swift */,
-				527EA4632F9349090085482E /* MockDeviceViewModel.swift */,
-			);
-			path = MockDeviceKit;
-			sourceTree = "<group>";
-		};
-		527EA4692F9349090085482E /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4642F9349090085482E /* MockDeviceKit */,
-				527EA4652F9349090085482E /* DebugMenuViewModel.swift */,
-				527EA4662F9349090085482E /* DeviceSessionManager.swift */,
-				527EA4672F9349090085482E /* StreamSessionViewModel.swift */,
-				527EA4682F9349090085482E /* WearablesViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		527EA46F2F9349090085482E /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				527EA46A2F9349090085482E /* CardView.swift */,
-				527EA46B2F9349090085482E /* CircleButton.swift */,
-				527EA46C2F9349090085482E /* CustomButton.swift */,
-				527EA46D2F9349090085482E /* MediaPickerView.swift */,
-				527EA46E2F9349090085482E /* StatusText.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		527EA4732F9349090085482E /* MockDeviceKit */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4702F9349090085482E /* MockDeviceCardView.swift */,
-				527EA4712F9349090085482E /* MockDeviceKitButton.swift */,
-				527EA4722F9349090085482E /* MockDeviceKitView.swift */,
-			);
-			path = MockDeviceKit;
-			sourceTree = "<group>";
-		};
-		527EA47C2F9349090085482E /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				527EA46F2F9349090085482E /* Components */,
-				527EA4732F9349090085482E /* MockDeviceKit */,
-				527EA4742F9349090085482E /* DebugMenuView.swift */,
-				527EA4752F9349090085482E /* HomeScreenView.swift */,
-				527EA4762F9349090085482E /* MainAppView.swift */,
-				527EA4772F9349090085482E /* NonStreamView.swift */,
-				527EA4782F9349090085482E /* PhotoPreviewView.swift */,
-				527EA4792F9349090085482E /* RegistrationView.swift */,
-				527EA47A2F9349090085482E /* StreamSessionView.swift */,
-				527EA47B2F9349090085482E /* StreamView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		527EA4812F9349090085482E /* CameraAccess */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4612F9349090085482E /* TestResources */,
-				527EA4692F9349090085482E /* ViewModels */,
-				527EA47C2F9349090085482E /* Views */,
-				527EA47D2F9349090085482E /* Assets.xcassets */,
-				527EA47E2F9349090085482E /* CameraAccess.entitlements */,
-				527EA47F2F9349090085482E /* CameraAccessApp.swift */,
-				527EA4802F9349090085482E /* Info.plist */,
-			);
-			path = CameraAccess;
-			sourceTree = "<group>";
-		};
-		527EA4832F9349090085482E /* CameraAccessTests */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4822F9349090085482E /* CameraAccessTests.swift */,
-			);
-			path = CameraAccessTests;
-			sourceTree = "<group>";
-		};
-		527EA4852F9349090085482E /* CameraAccessUITests */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4842F9349090085482E /* CameraAccessUITests.swift */,
-			);
-			path = CameraAccessUITests;
-			sourceTree = "<group>";
-		};
-		527EA4892F9349090085482E /* CameraAccess */ = {
-			isa = PBXGroup;
-			children = (
-				527EA45E2F9349090085482E /* .claude */,
-				527EA4812F9349090085482E /* CameraAccess */,
-				527EA4832F9349090085482E /* CameraAccessTests */,
-				527EA4852F9349090085482E /* CameraAccessUITests */,
-				527EA4862F9349090085482E /* .gitignore */,
-				527EA4872F9349090085482E /* CameraAccess.xcodeproj */,
-				527EA4882F9349090085482E /* README.md */,
-			);
-			path = CameraAccess;
-			sourceTree = "<group>";
-		};
-		527EA48A2F9349090085482E /* samples */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4892F9349090085482E /* CameraAccess */,
-			);
-			path = samples;
-			sourceTree = "<group>";
-		};
-		527EA4932F9349090085482E /* meta-wearables-dat-ios */ = {
-			isa = PBXGroup;
-			children = (
-				527EA4502F9349090085482E /* .claude */,
-				527EA45C2F9349090085482E /* .github */,
-				527EA48A2F9349090085482E /* samples */,
-				527EA48B2F9349090085482E /* AGENTS.md */,
-				527EA48C2F9349090085482E /* CHANGELOG.md */,
-				527EA48D2F9349090085482E /* CODE_OF_CONDUCT.md */,
-				527EA48E2F9349090085482E /* CONTRIBUTING.md */,
-				527EA48F2F9349090085482E /* install-skills.sh */,
-				527EA4902F9349090085482E /* LICENSE */,
-				527EA4912F9349090085482E /* NOTICE */,
-				527EA4922F9349090085482E /* README.md */,
-			);
-			path = "meta-wearables-dat-ios";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -416,6 +143,9 @@
 			);
 			name = Shadow;
 			packageProductDependencies = (
+				522041622F936BFB00FB1520 /* MWDATCamera */,
+				522041642F936BFB00FB1520 /* MWDATCore */,
+				522041662F936C0C00FB1520 /* MWDATMockDevice */,
 			);
 			productName = Shadow;
 			productReference = 527EA4142F9348520085482E /* Shadow.app */;
@@ -499,9 +229,18 @@
 			);
 			mainGroup = 527EA40B2F9348520085482E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				522041602F936BE300FB1520 /* XCRemoteSwiftPackageReference "meta-wearables-dat-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 527EA4152F9348520085482E /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 522041042F93656300FB1520 /* Products */;
+					ProjectRef = 522040F72F93656300FB1520 /* CameraAccess.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				527EA4132F9348520085482E /* Shadow */,
@@ -516,32 +255,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				527EA4962F9349090085482E /* getting-started.md in Resources */,
-				527EA4982F9349090085482E /* README.md in Resources */,
-				527EA4992F9349090085482E /* plant.png in Resources */,
-				527EA49A2F9349090085482E /* settings.json in Resources */,
-				527EA49D2F9349090085482E /* .gitignore in Resources */,
-				527EA49E2F9349090085482E /* Info.plist in Resources */,
-				527EA49F2F9349090085482E /* LICENSE in Resources */,
-				527EA4A02F9349090085482E /* dat-conventions.md in Resources */,
-				527EA4A12F9349090085482E /* build.md in Resources */,
-				527EA4A22F9349090085482E /* Assets.xcassets in Resources */,
-				527EA4A42F9349090085482E /* CHANGELOG.md in Resources */,
-				527EA4A52F9349090085482E /* camera-streaming.md in Resources */,
-				527EA4A62F9349090085482E /* NOTICE in Resources */,
-				527EA4A72F9349090085482E /* README.md in Resources */,
-				527EA4A82F9349090085482E /* copilot-instructions.md in Resources */,
-				527EA4AA2F9349090085482E /* debugging.md in Resources */,
-				527EA4AB2F9349090085482E /* CODE_OF_CONDUCT.md in Resources */,
-				527EA4AC2F9349090085482E /* permissions-registration.md in Resources */,
-				527EA4AD2F9349090085482E /* settings.json in Resources */,
-				527EA4AE2F9349090085482E /* install-skills.sh in Resources */,
-				527EA4AF2F9349090085482E /* mockdevice-testing.md in Resources */,
-				527EA4B02F9349090085482E /* session-lifecycle.md in Resources */,
-				527EA4B22F9349090085482E /* plant.mp4 in Resources */,
-				527EA4B32F9349090085482E /* AGENTS.md in Resources */,
-				527EA4B42F9349090085482E /* sample-app-guide.md in Resources */,
-				527EA4B72F9349090085482E /* CONTRIBUTING.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -566,31 +279,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				527EA4B82F9349090085482E /* PhotoPreviewView.swift in Sources */,
-				527EA4B92F9349090085482E /* CardView.swift in Sources */,
-				527EA4BA2F9349090085482E /* CameraAccessTests.swift in Sources */,
-				527EA4BB2F9349090085482E /* MockDeviceKitViewModel.swift in Sources */,
-				527EA4BC2F9349090085482E /* WearablesViewModel.swift in Sources */,
-				527EA4BD2F9349090085482E /* MockDeviceKitButton.swift in Sources */,
-				527EA4BE2F9349090085482E /* MediaPickerView.swift in Sources */,
-				527EA4BF2F9349090085482E /* NonStreamView.swift in Sources */,
-				527EA4C02F9349090085482E /* MainAppView.swift in Sources */,
-				527EA4C12F9349090085482E /* StatusText.swift in Sources */,
-				527EA4C22F9349090085482E /* StreamSessionView.swift in Sources */,
-				527EA4C32F9349090085482E /* HomeScreenView.swift in Sources */,
-				527EA4C42F9349090085482E /* DebugMenuView.swift in Sources */,
-				527EA4C52F9349090085482E /* DeviceSessionManager.swift in Sources */,
-				527EA4C62F9349090085482E /* CircleButton.swift in Sources */,
-				527EA4C72F9349090085482E /* StreamSessionViewModel.swift in Sources */,
-				527EA4C82F9349090085482E /* StreamView.swift in Sources */,
-				527EA4C92F9349090085482E /* CameraAccessUITests.swift in Sources */,
-				527EA4CA2F9349090085482E /* DebugMenuViewModel.swift in Sources */,
-				527EA4CB2F9349090085482E /* MockDeviceCardView.swift in Sources */,
-				527EA4CC2F9349090085482E /* MockDeviceViewModel.swift in Sources */,
-				527EA4CD2F9349090085482E /* CameraAccessApp.swift in Sources */,
-				527EA4CE2F9349090085482E /* RegistrationView.swift in Sources */,
-				527EA4CF2F9349090085482E /* CustomButton.swift in Sources */,
-				527EA4D02F9349090085482E /* MockDeviceKitView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,6 +441,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -763,7 +452,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -773,13 +462,14 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Debug;
@@ -797,6 +487,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -807,7 +498,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -817,13 +508,14 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Release;
@@ -970,6 +662,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		522041602F936BE300FB1520 /* XCRemoteSwiftPackageReference "meta-wearables-dat-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/meta-wearables-dat-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		522041622F936BFB00FB1520 /* MWDATCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 522041602F936BE300FB1520 /* XCRemoteSwiftPackageReference "meta-wearables-dat-ios" */;
+			productName = MWDATCamera;
+		};
+		522041642F936BFB00FB1520 /* MWDATCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 522041602F936BE300FB1520 /* XCRemoteSwiftPackageReference "meta-wearables-dat-ios" */;
+			productName = MWDATCore;
+		};
+		522041662F936C0C00FB1520 /* MWDATMockDevice */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 522041602F936BE300FB1520 /* XCRemoteSwiftPackageReference "meta-wearables-dat-ios" */;
+			productName = MWDATMockDevice;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 527EA40C2F9348520085482E /* Project object */;
 }
