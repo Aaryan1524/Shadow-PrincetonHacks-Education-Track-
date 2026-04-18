@@ -16,7 +16,7 @@ struct ContentView: View {
             let lensY      = h * 0.40
             let leftLensX  = w * 0.30
             let rightLensX = w * 0.68
-            let canvasW    = w * 0.88 * 0.38 * 4 + 20
+            let canvasW    = w * 0.88 * 0.38 * 2 + 20
             let lensShift  = canvasW * 0.04
             let zoomX: CGFloat = isZooming
                 ? (zoomTarget == .user ? w / 2 + lensShift : w / 2 - lensShift)
@@ -24,23 +24,25 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Beige background
-                Color(red: 0.96, green: 0.93, blue: 0.86)
-                    .ignoresSafeArea()
+                // Beige-to-brown gradient background
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(red: 0.98, green: 0.95, blue: 0.88), location: 0),
+                        .init(color: Color(red: 0.96, green: 0.93, blue: 0.86), location: 0.44),
+                        .init(color: Color(red: 0.60, green: 0.40, blue: 0.24), location: 0.56),
+                        .init(color: Color(red: 0.38, green: 0.24, blue: 0.14), location: 1.0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-                // Brown lower half — surface the glasses hover above
-                VStack(spacing: 0) {
-                    Color.clear.frame(height: h * 0.52)
-                    Color(red: 0.38, green: 0.24, blue: 0.14)
-                }
-                .ignoresSafeArea(edges: .bottom)
-
-                // Shadow cast by glasses onto the brown surface
+                // Shadow cast by glasses onto the surface
                 Ellipse()
-                    .fill(Color.black.opacity(0.60))
-                    .frame(width: w * 0.78, height: 54)
-                    .blur(radius: 30)
-                    .position(x: w / 2, y: h * 0.525)
+                    .fill(Color.black.opacity(0.50))
+                    .frame(width: w * 0.72, height: 44)
+                    .blur(radius: 28)
+                    .position(x: w / 2, y: lensY + 68)
 
                 // Destination view — fades in after zoom
                 if showDestination {
@@ -200,10 +202,7 @@ struct GlassesFrameView: View {
     var color: Color = .black
 
     var body: some View {
-        ZStack {
-            GlassesLensesView(width: width, color: color)
-            GlassesArmsView(width: width, color: color)
-        }
+        GlassesLensesView(width: width, color: color)
     }
 }
 
@@ -218,9 +217,8 @@ struct GlassesLensesView: View {
         let outerRadius: CGFloat = 42
         let frameThickness: CGFloat = 16
         let innerRadius: CGFloat = max(outerRadius - frameThickness, 8)
-        let armLen = lensW * 1.0
-        let canvasW = lensW * 2 + gap + armLen * 2
-        let offsetX = armLen
+        let canvasW = lensW * 2 + gap
+        let offsetX: CGFloat = 0
 
         let leftOuter  = CGRect(x: offsetX, y: 0, width: lensW, height: lensH)
         let rightOuter = CGRect(x: offsetX + lensW + gap, y: 0, width: lensW, height: lensH)
@@ -251,63 +249,6 @@ struct GlassesLensesView: View {
             bridge.addQuadCurve(to: CGPoint(x: rightOuter.minX, y: lensH * 0.22),
                                 control: CGPoint(x: offsetX + lensW + gap / 2, y: lensH * 0.08))
             ctx.stroke(bridge, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
-        }
-        .frame(width: canvasW, height: lensH)
-    }
-}
-
-struct GlassesArmsView: View {
-    let width: CGFloat
-    var color: Color = .black
-    var body: some View {
-        ZStack {
-            GlassesLeftArmView(width: width, color: color)
-            GlassesRightArmView(width: width, color: color)
-        }
-    }
-}
-
-struct GlassesLeftArmView: View {
-    let width: CGFloat
-    var color: Color = .black
-
-    var body: some View {
-        let lensW = width * 0.38
-        let lensH = lensW * 0.68
-        let gap: CGFloat = 20
-        let armLen = lensW * 1.0
-        let canvasW = lensW * 2 + gap + armLen * 2
-        let offsetX = armLen
-        let leftOuter = CGRect(x: offsetX, y: 0, width: lensW, height: lensH)
-
-        Canvas { ctx, _ in
-            var leftArm = Path()
-            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.42))
-            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.08))
-            ctx.stroke(leftArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
-        }
-        .frame(width: canvasW, height: lensH)
-    }
-}
-
-struct GlassesRightArmView: View {
-    let width: CGFloat
-    var color: Color = .black
-
-    var body: some View {
-        let lensW = width * 0.38
-        let lensH = lensW * 0.68
-        let gap: CGFloat = 20
-        let armLen = lensW * 1.0
-        let canvasW = lensW * 2 + gap + armLen * 2
-        let offsetX = armLen
-        let framesRight = offsetX + lensW * 2 + gap
-
-        Canvas { ctx, _ in
-            var rightArm = Path()
-            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.42))
-            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.08))
-            ctx.stroke(rightArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)
     }

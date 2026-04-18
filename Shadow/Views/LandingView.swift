@@ -6,12 +6,6 @@ struct LandingView: View {
 
     // Landing state → ContentView state
     @State private var glassesY3D: Double = 50
-    @State private var leftArmScaleX: Double = 1.7
-    @State private var leftArmScaleY: Double = 0.8
-    @State private var leftArmRotation: Double = 180
-    @State private var rightArmScaleX: Double = 1.8
-    @State private var rightArmScaleY: Double = 0.8
-    @State private var rightArmRotation: Double = 30
     @State private var glassesXOffset: Double = -0.06
     @State private var glassesYFraction: Double = 0.42
     @State private var glassesWidthFraction: Double = 0.90
@@ -94,12 +88,6 @@ struct LandingView: View {
 
                 ZStack {
                     GlassesLensesView(width: w * glassesWidthFraction)
-                    GlassesLeftArmView(width: w * glassesWidthFraction)
-                        .scaleEffect(x: leftArmScaleX, y: leftArmScaleY, anchor: UnitPoint(x: 0.26, y: 0.5))
-                        .rotation3DEffect(.degrees(leftArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.25, y: 0.5), perspective: 0.5)
-                    GlassesRightArmView(width: w * glassesWidthFraction)
-                        .scaleEffect(x: rightArmScaleX, y: rightArmScaleY, anchor: UnitPoint(x: 0.75, y: 0.6))
-                        .rotation3DEffect(.degrees(rightArmRotation), axis: (x: 0, y: 1, z: 0), anchor: UnitPoint(x: 0.75, y: 0.5), perspective: 0.5)
                 }
                 .rotation3DEffect(.degrees(glassesY3D), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
                 .shadow(color: .black.opacity(0.15), radius: 24, x: 0, y: 10)
@@ -133,12 +121,6 @@ struct LandingView: View {
     private func reverseTransition() {
         withAnimation(.easeInOut(duration: 0.55)) {
             glassesY3D = 50
-            leftArmScaleX = 1.8
-            leftArmScaleY = 0.8
-            leftArmRotation = 120
-            rightArmScaleX = 1.8
-            rightArmScaleY = 0.8
-            rightArmRotation = 30
             glassesXOffset = -0.06
             glassesYFraction = 0.42
             glassesWidthFraction = 0.90
@@ -160,12 +142,6 @@ struct LandingView: View {
         }
         withAnimation(.easeInOut(duration: 0.55)) {
             glassesY3D = 0
-            leftArmScaleX = 1.0
-            leftArmScaleY = 1.0
-            leftArmRotation = 0
-            rightArmScaleX = 1.0
-            rightArmScaleY = 1.0
-            rightArmRotation = 0
             glassesXOffset = 0
             glassesYFraction = 0.40
             glassesWidthFraction = 0.88
