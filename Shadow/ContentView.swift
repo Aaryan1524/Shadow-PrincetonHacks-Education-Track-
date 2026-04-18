@@ -112,7 +112,7 @@ struct ContentView: View {
                                     .background(.ultraThinMaterial, in: Circle())
                             }
                             .buttonStyle(.plain)
-                            .padding(.top, h * 0.02)
+                            .padding(.top, 8)
                             .padding(.leading, 12)
                             .zIndex(999)
                         }
