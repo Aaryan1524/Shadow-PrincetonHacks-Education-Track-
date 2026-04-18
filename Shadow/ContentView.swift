@@ -71,19 +71,19 @@ struct ContentView: View {
                     .blur(radius: 20)
                     .position(x: w / 2, y: h * 0.50)
 
-                // Shadow — outer wide green-tinted glow on grass
+                // Shadow — wide, diffuse; glasses are floating ~10% screen above the grass
+                // so no tight contact shadow, just a broad soft pool
                 Ellipse()
-                    .fill(Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.55))
-                    .frame(width: w * 0.88, height: 60)
-                    .blur(radius: 36)
-                    .position(x: w / 2, y: h * 0.505)
+                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.50))
+                    .frame(width: w * 1.05, height: 48)
+                    .blur(radius: 32)
+                    .position(x: w / 2, y: h * 0.52)
 
-                // Shadow — tight contact shadow
                 Ellipse()
-                    .fill(Color.black.opacity(0.45))
-                    .frame(width: w * 0.46, height: 14)
-                    .blur(radius: 10)
-                    .position(x: w / 2, y: h * 0.502)
+                    .fill(Color.black.opacity(0.22))
+                    .frame(width: w * 0.58, height: 20)
+                    .blur(radius: 18)
+                    .position(x: w / 2, y: h * 0.518)
 
                 // Destination view — fades in after zoom
                 if showDestination {
@@ -120,8 +120,8 @@ struct ContentView: View {
                         triggerZoom(target: .user, w: w, h: h)
                     } label: {
                         VStack(spacing: 6) {
-                            Image(systemName: "graduationcap.fill")
-                                .font(.system(size: 22, weight: .semibold))
+                            Image(systemName: "graduationcap")
+                                .font(.system(size: 22, weight: .medium))
                                 .foregroundStyle(.black.opacity(0.75))
                             Text("Student")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
@@ -140,7 +140,7 @@ struct ContentView: View {
                     } label: {
                         VStack(spacing: 6) {
                             Image(systemName: "person.chalkboard")
-                                .font(.system(size: 22, weight: .semibold))
+                                .font(.system(size: 22, weight: .medium))
                                 .foregroundStyle(.black.opacity(0.75))
                             Text("Expert")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
@@ -153,12 +153,13 @@ struct ContentView: View {
                     .position(x: rightLensX, y: lensY)
                     .zIndex(1)
 
-                    // Hint text below glasses
+                    // Hint text — sits on the grass, white so it reads clearly
                     Text("tap a lens to begin")
                         .font(.custom("CopernicusTrial-Book", size: 13))
-                        .foregroundStyle(.black.opacity(0.40))
-                        .tracking(1.0)
-                        .position(x: w / 2, y: lensY + 72)
+                        .foregroundStyle(.white.opacity(0.82))
+                        .tracking(1.2)
+                        .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
+                        .position(x: w / 2, y: h * 0.56)
                         .zIndex(1)
                 }
 
