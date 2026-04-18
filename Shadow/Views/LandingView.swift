@@ -78,7 +78,7 @@ struct LandingView: View {
                     .offset(y: floatOffset * 0.15)
 
                 ZStack {
-                    GlassesLensesView(width: w * glassesWidthFraction)
+                    GlassesLensesView(width: w * glassesWidthFraction, color: Color(red: 0.43, green: 0.51, blue: 0.59))
                 }
                 .rotation3DEffect(.degrees(glassesY3D), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
                 .shadow(color: .black.opacity(0.15), radius: 24, x: 0, y: 10)

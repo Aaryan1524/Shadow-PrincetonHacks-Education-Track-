@@ -107,10 +107,10 @@ struct ContentView: View {
                     let lensInnerH = (lensW * 0.68) - 32
                     ForEach([leftLensX, rightLensX], id: \.self) { lx in
                         RoundedRectangle(cornerRadius: 28)
-                            .stroke(Color.white.opacity(pulseOpacity), lineWidth: 3)
+                            .stroke(Color(red: 0.43, green: 0.51, blue: 0.59).opacity(pulseOpacity), lineWidth: 3)
                             .frame(width: lensInnerW * pulseScale, height: lensInnerH * pulseScale)
                             .position(x: lx, y: lensY)
-                            .blur(radius: 3)
+                            .blur(radius: 4)
                             .allowsHitTesting(false)
                     }
                     .onAppear {
@@ -126,7 +126,7 @@ struct ContentView: View {
                     } label: {
                         Text("Student")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .foregroundStyle(Color(red: 0.43, green: 0.51, blue: 0.59).opacity(pulseScale > 1.05 ? 0.55 : 1.0))
                             .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
                             .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
@@ -142,7 +142,7 @@ struct ContentView: View {
                     } label: {
                         Text("Expert")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .foregroundStyle(Color(red: 0.43, green: 0.51, blue: 0.59).opacity(pulseScale > 1.05 ? 0.55 : 1.0))
                             .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
                             .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
@@ -187,8 +187,8 @@ struct ContentView: View {
                         .scaleEffect(
                             isDeepZoom ? 40.0 : (isZooming ? 10.0 : 1.0),
                             anchor: zoomTarget == .user
-                                ? UnitPoint(x: 0.36, y: 0.5)
-                                : UnitPoint(x: 0.64, y: 0.5)
+                                ? UnitPoint(x: 0.25, y: 0.5)
+                                : UnitPoint(x: 0.75, y: 0.5)
                         )
                         .animation(.easeInOut(duration: 0.6), value: isDeepZoom)
                         .animation(.easeInOut(duration: 0.5), value: isZooming)
@@ -218,7 +218,7 @@ struct ContentView: View {
 
 struct GlassesFrameView: View {
     let width: CGFloat
-    var color: Color = .black
+    var color: Color = Color(red: 0.43, green: 0.51, blue: 0.59)
 
     var body: some View {
         GlassesLensesView(width: width, color: color)
