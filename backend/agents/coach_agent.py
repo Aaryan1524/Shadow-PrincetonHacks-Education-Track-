@@ -1,14 +1,17 @@
 """
-agents/coach_agent.py — Shadow Coach Agent
+agents/coach_agent.py — Shadow Coach Agent (powered by Gemini 2.0 Flash)
 The "Conversationalist": warm, engaging, human-sounding coaching messages.
 
+Uses Google Gemini 2.0 Flash for ultra-low latency — critical for smooth TTS
+voice output through the smart glasses audio system.
+
 Responsibilities:
-1. During verify-step polling: receives a VisionVerdict + step context and
-   generates the coaching_message field in CoachResponse (warm tone, 1 sentence).
+1. During verify-step polling: receives VisionVerdict + step context and generates
+   the coaching_message field in CoachResponse (warm tone, 1–2 sentences).
 2. During /coach endpoint: full conversational back-and-forth with the learner,
    maintaining history, with optional frame context.
 
-Max tokens: 500 for both modes.
+Max output tokens: 200 for coaching messages, 400 for conversations.
 """
 
 from __future__ import annotations
@@ -17,7 +20,8 @@ import base64
 import os
 from typing import List, Optional
 
-import anthropic
+from google import genai
+from google.genai import types
 
 from models import ConversationMessage, Lesson, Step, VisionVerdict
 
@@ -25,9 +29,8 @@ from models import ConversationMessage, Lesson, Step, VisionVerdict
 # Client (single shared instance)
 # ---------------------------------------------------------------------------
 
-_client = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODEL = "claude-sonnet-4-6"
-MAX_TOKENS = 500
+_client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+MODEL = "gemini-2.0-flash"
 
 # ---------------------------------------------------------------------------
 # System prompts
@@ -46,7 +49,7 @@ Rules:
 - Use second-person ("you", "your"). Speak like a patient mentor, not a robot.
 - Never repeat the full step instruction verbatim.
 - Keep it short — this will be spoken aloud over smart glasses audio.
-- Do NOT wrap in quotes or JSON. Just the plain coaching message text.
+- Do NOT wrap in quotes or JSON. Just the plain coaching message text.\
 """
 
 # Used during full conversational turns (/coach endpoint)
@@ -58,7 +61,7 @@ You have context about which step they are on in the lesson.
 Be warm, specific, and encouraging. Answer questions concisely and practically.
 If you see something in their camera frame that is relevant, mention it specifically.
 Keep responses to 2–3 sentences unless the learner explicitly asks for more detail.
-Speak naturally — your response will often be read aloud.
+Speak naturally — your response will be read aloud.\
 """
 
 
@@ -74,39 +77,38 @@ async def generate_message(
 ) -> str:
     """
     Generate a short coaching message for the verify-step polling loop.
-
-    Called in parallel with the Vision Agent via asyncio.gather().
-    Receives the VisionVerdict so it knows what the vision agent decided.
+    Called after Vision Agent returns its verdict.
+    Powered by Gemini 2.0 Flash for minimal latency.
 
     Args:
         step:           The current step being verified
-        lesson:         The full lesson (for context about what's next)
+        lesson:         The full lesson (for next-step context)
         verdict:        The VisionVerdict from the Vision Agent
         recent_history: Optional last 3-4 conversation messages for context
 
     Returns:
         A short coaching message string (1-2 sentences, spoken aloud)
     """
-    # Build context string
     next_step = _get_next_step(step, lesson)
-    status_context = (
-        f"Step {step.order + 1} COMPLETED ✓ (confidence: {verdict.confidence:.0%}). "
-        f"Next step: {next_step.instruction if next_step else 'This was the final step!'}"
-        if verdict.step_completed
-        else (
-            f"Step {step.order + 1} NOT YET COMPLETE (confidence: {verdict.confidence:.0%}). "
-            f"Issue: {verdict.error_detail or 'Could not determine specific issue.'}"
-        )
-    )
 
-    # Optionally include recent conversation context
+    if verdict.step_completed:
+        status_context = (
+            f"Step {step.order + 1} COMPLETED ✓ (confidence: {verdict.confidence:.0%}). "
+            f"Next step: {next_step.instruction if next_step else 'This was the final step — great work!'}"
+        )
+    else:
+        status_context = (
+            f"Step {step.order + 1} NOT YET COMPLETE (confidence: {verdict.confidence:.0%}). "
+            f"Issue observed: {verdict.error_detail or 'Could not determine specific issue.'}"
+        )
+
     history_context = ""
     if recent_history:
-        history_context = "\n\nRecent conversation context:\n" + "\n".join(
+        history_context = "\n\nRecent conversation:\n" + "\n".join(
             f"{m.role.upper()}: {m.content}" for m in recent_history[-4:]
         )
 
-    user_message = (
+    prompt = (
         f"Lesson: {lesson.title}\n"
         f"Current Step: {step.instruction}\n"
         f"Success Criteria: {step.success_criteria}\n"
@@ -115,14 +117,18 @@ async def generate_message(
         f"Write a short coaching message for the learner now."
     )
 
-    response = await _client.messages.create(
+    response = await asyncio.to_thread(
+        _client.models.generate_content,
         model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=COACHING_SYSTEM,
-        messages=[{"role": "user", "content": user_message}],
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=COACHING_SYSTEM,
+            max_output_tokens=200,
+            temperature=0.7,
+        ),
     )
 
-    return response.content[0].text.strip()
+    return response.text.strip()
 
 
 async def converse(
@@ -133,20 +139,19 @@ async def converse(
     frame_b64: Optional[str] = None,
 ) -> tuple[str, List[ConversationMessage]]:
     """
-    Handle a full conversational turn with the learner.
-    Used by the /coach endpoint.
+    Handle a full conversational turn with the learner (/coach endpoint).
+    Powered by Gemini 2.0 Flash for instant voice-ready responses.
 
     Args:
         step:                 Current step the learner is on
         lesson:               Full lesson
-        conversation_history: Full conversation so far
+        conversation_history: Full conversation history so far
         user_message:         What the learner just said/asked
         frame_b64:            Optional base64 JPEG frame for visual context
 
     Returns:
         Tuple of (reply_text, updated_conversation_history)
     """
-    # Build system message with lesson context
     system_with_context = (
         f"{CONVERSATION_SYSTEM}\n\n"
         f"Current Lesson: {lesson.title}\n"
@@ -155,38 +160,38 @@ async def converse(
         f"Success Criteria: {step.success_criteria}"
     )
 
-    # Build the message content (with optional frame)
+    # Build Gemini chat history
+    gemini_history = _history_to_gemini(conversation_history)
+
+    # Build the new user message content (with optional frame)
     if frame_b64:
-        user_content: list = [
-            {
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": "image/jpeg",
-                    "data": frame_b64,
-                },
-            },
-            {"type": "text", "text": user_message},
+        image_bytes = base64.b64decode(frame_b64)
+        user_parts = [
+            types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
+            types.Part.from_text(text=user_message),
         ]
     else:
-        user_content = user_message  # type: ignore[assignment]
+        user_parts = [types.Part.from_text(text=user_message)]
 
-    # Append new user message to history
+    # Append new user message to history before generating
     new_user_msg = ConversationMessage(role="user", content=user_message)
     updated_history = list(conversation_history) + [new_user_msg]
 
-    # Convert history to Anthropic message format
-    anthropic_messages = _history_to_anthropic(conversation_history)
-    anthropic_messages.append({"role": "user", "content": user_content})
+    # Run Gemini chat in thread pool (SDK is sync)
+    def _run_chat() -> str:
+        chat = _client.chats.create(
+            model=MODEL,
+            config=types.GenerateContentConfig(
+                system_instruction=system_with_context,
+                max_output_tokens=400,
+                temperature=0.8,
+            ),
+            history=gemini_history,
+        )
+        response = chat.send_message(user_parts)
+        return response.text.strip()
 
-    response = await _client.messages.create(
-        model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=system_with_context,
-        messages=anthropic_messages,
-    )
-
-    reply_text = response.content[0].text.strip()
+    reply_text = await asyncio.to_thread(_run_chat)
 
     # Append assistant reply to history
     updated_history.append(ConversationMessage(role="assistant", content=reply_text))
@@ -201,13 +206,20 @@ async def converse(
 def _get_next_step(current_step: Step, lesson: Lesson) -> Optional[Step]:
     """Return the step after the current one, or None if last step."""
     try:
-        return next(
-            s for s in lesson.steps if s.order == current_step.order + 1
-        )
+        return next(s for s in lesson.steps if s.order == current_step.order + 1)
     except StopIteration:
         return None
 
 
-def _history_to_anthropic(history: List[ConversationMessage]) -> list:
-    """Convert our ConversationMessage list to Anthropic API message format."""
-    return [{"role": m.role, "content": m.content} for m in history]
+def _history_to_gemini(history: List[ConversationMessage]) -> list:
+    """Convert ConversationMessage list to Gemini SDK Content format."""
+    gemini_history = []
+    for msg in history:
+        role = "user" if msg.role == "user" else "model"
+        gemini_history.append(
+            types.Content(
+                role=role,
+                parts=[types.Part.from_text(text=msg.content)],
+            )
+        )
+    return gemini_history
