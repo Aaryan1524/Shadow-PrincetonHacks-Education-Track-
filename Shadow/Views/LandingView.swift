@@ -97,30 +97,21 @@ struct LandingView: View {
                     .tracking(1.0)
                     .position(x: w / 2, y: h * 0.20)
 
-                // Shadow — 3-layer stack tracking the float animation
-                // 1: wide ambient pool
+                // Shadow — outer green-tinted glow on grass
                 Ellipse()
-                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.32))
-                    .frame(width: w * 1.15, height: 64)
-                    .blur(radius: 42)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.530)
-                    .offset(y: floatOffset * 0.12)
+                    .fill(Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.52))
+                    .frame(width: w * 0.82, height: 58)
+                    .blur(radius: 34)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.528)
+                    .offset(y: floatOffset * 0.15)
 
-                // 2: mid-range shadow
+                // Shadow — softer mid layer
                 Ellipse()
-                    .fill(Color(red: 0.02, green: 0.08, blue: 0.01).opacity(0.52))
-                    .frame(width: w * 0.65, height: 24)
-                    .blur(radius: 14)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.525)
-                    .offset(y: floatOffset * 0.12)
-
-                // 3: tight dark core
-                Ellipse()
-                    .fill(Color.black.opacity(0.62))
-                    .frame(width: w * 0.28, height: 9)
-                    .blur(radius: 5)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.521)
-                    .offset(y: floatOffset * 0.12)
+                    .fill(Color.black.opacity(0.28))
+                    .frame(width: w * 0.44, height: 16)
+                    .blur(radius: 10)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.524)
+                    .offset(y: floatOffset * 0.15)
 
                 ZStack {
                     GlassesLensesView(width: w * glassesWidthFraction)

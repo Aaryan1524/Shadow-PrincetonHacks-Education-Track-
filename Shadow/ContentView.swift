@@ -75,27 +75,18 @@ struct ContentView: View {
                     .blur(radius: 20)
                     .position(x: w / 2, y: h * 0.50)
 
-                // Shadow — 3-layer stack for depth
-                // 1: wide ambient pool
+                // Shadow — wide diffuse pool + softer mid layer
                 Ellipse()
-                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.32))
-                    .frame(width: w * 1.25, height: 64)
-                    .blur(radius: 42)
-                    .position(x: w / 2, y: h * 0.523)
+                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.50))
+                    .frame(width: w * 1.05, height: 48)
+                    .blur(radius: 32)
+                    .position(x: w / 2, y: h * 0.52)
 
-                // 2: mid-range shadow
                 Ellipse()
-                    .fill(Color(red: 0.02, green: 0.08, blue: 0.01).opacity(0.50))
-                    .frame(width: w * 0.70, height: 26)
-                    .blur(radius: 16)
-                    .position(x: w / 2, y: h * 0.519)
-
-                // 3: tight dark core
-                Ellipse()
-                    .fill(Color.black.opacity(0.60))
-                    .frame(width: w * 0.30, height: 9)
-                    .blur(radius: 6)
-                    .position(x: w / 2, y: h * 0.516)
+                    .fill(Color.black.opacity(0.22))
+                    .frame(width: w * 0.58, height: 20)
+                    .blur(radius: 18)
+                    .position(x: w / 2, y: h * 0.518)
 
                 // Destination view — fades in after zoom
                 if showDestination {
