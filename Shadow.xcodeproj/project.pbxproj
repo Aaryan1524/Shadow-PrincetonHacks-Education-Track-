@@ -29,9 +29,30 @@
 		527EA4302F9348530085482E /* ShadowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		67F4C73E2F93935500F40E9F /* Exceptions for "Shadow" folder in "ShadowUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/CopernicusTrial-Book-BF66160450c2e92.ttf",
+			);
+			target = 527EA42F2F9348530085482E /* ShadowUITests */;
+		};
+		67F4C7412F9395DF00F40E9F /* Exceptions for "Shadow" folder in "ShadowTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/CopernicusTrial-Book-BF66160450c2e92.ttf",
+			);
+			target = 527EA4252F9348530085482E /* ShadowTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		527EA4162F9348520085482E /* Shadow */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				67F4C7412F9395DF00F40E9F /* Exceptions for "Shadow" folder in "ShadowTests" target */,
+				67F4C73E2F93935500F40E9F /* Exceptions for "Shadow" folder in "ShadowUITests" target */,
+			);
 			path = Shadow;
 			sourceTree = "<group>";
 		};
