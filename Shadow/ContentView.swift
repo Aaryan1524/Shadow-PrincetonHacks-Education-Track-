@@ -198,22 +198,6 @@ struct ContentView: View {
                     .position(x: 44, y: 70)
                     .zIndex(3)
 
-                    // View / Record button
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.6)) { isDeepZoom = true }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "record.circle")
-                                .font(.system(size: 18, weight: .semibold))
-                            Text("View / Record")
-                                .font(.custom("CopernicusTrial-Book", size: 16))
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.glass)
-                    .position(x: w / 2, y: h * 0.5)
-                    .zIndex(3)
                 }
 
                 // Deep zoom back button

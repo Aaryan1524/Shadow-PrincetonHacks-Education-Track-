@@ -56,51 +56,91 @@ struct UserView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(mockCategories) { category in
-                                Button(action: { selectedCategory = category.name }) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: category.icon)
-                                            .font(.system(size: 12))
-                                        Text(category.name)
-                                            .font(.system(size: 13, weight: .medium, design: .monospaced))
+            ZStack {
+                // Sky background
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
+                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
+                // Grass bottom half
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: UIScreen.main.bounds.height * 0.50)
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
+                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(maxHeight: .infinity)
+                }
+                .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Category pills
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(mockCategories) { category in
+                                    Button(action: { selectedCategory = category.name }) {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: category.icon)
+                                                .font(.system(size: 12))
+                                            Text(category.name)
+                                                .font(.custom("CopernicusTrial-Book", size: 13))
+                                        }
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            selectedCategory == category.name
+                                                ? Color(red: 0.22, green: 0.50, blue: 0.12)
+                                                : Color.white.opacity(0.25)
+                                        )
+                                        .foregroundStyle(selectedCategory == category.name ? .white : Color(red: 0.10, green: 0.24, blue: 0.06))
+                                        .clipShape(Capsule())
                                     }
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(selectedCategory == category.name ? Color.blue : Color(.secondarySystemBackground))
-                                    .foregroundStyle(selectedCategory == category.name ? .white : .primary)
-                                    .clipShape(Capsule())
+                                    .buttonStyle(.plain)
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
-                    }
 
-                    if filteredTutorials.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 40))
-                                .foregroundStyle(.secondary)
-                            Text("No tutorials found")
-                                .font(.system(.body, design: .monospaced))
-                        }
-                        .padding(.top, 60)
-                    } else {
-                        LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach(filteredTutorials) { tutorial in
-                                TutorialCard(tutorial: tutorial)
+                        if filteredTutorials.isEmpty {
+                            VStack(spacing: 12) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.5))
+                                Text("No tutorials found")
+                                    .font(.custom("CopernicusTrial-Book", size: 15))
+                                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.7))
                             }
+                            .padding(.top, 60)
+                        } else {
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                ForEach(filteredTutorials) { tutorial in
+                                    TutorialCard(tutorial: tutorial)
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                     }
+                    .padding(.top, 8)
+                    .padding(.bottom, 40)
                 }
-                .padding(.top, 8)
             }
             .navigationTitle("Learn")
-            .searchable(text: $searchText, prompt: "Search...")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.clear, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .searchable(text: $searchText, prompt: "Search courses...")
         }
     }
 }
@@ -114,17 +154,17 @@ struct TutorialCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(tutorial.thumbnailColor.gradient)
+                        .fill(tutorial.thumbnailColor.opacity(0.75).gradient)
                         .frame(height: 110)
                     Image(systemName: "play.circle.fill")
                         .font(.system(size: 32))
-                        .foregroundStyle(.white.opacity(0.8))
+                        .foregroundStyle(.white.opacity(0.85))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(tutorial.title)
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.primary)
+                        .font(.custom("CopernicusTrial-Book", size: 12))
+                        .foregroundStyle(Color(red: 0.08, green: 0.20, blue: 0.06))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
@@ -133,13 +173,14 @@ struct TutorialCard: View {
                         Spacer()
                         Text(tutorial.duration)
                     }
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundStyle(.secondary)
+                    .font(.custom("CopernicusTrial-Book", size: 10))
+                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.06).opacity(0.65))
                 }
                 .padding(10)
             }
-            .background(Color(.secondarySystemBackground))
+            .background(Color.white.opacity(0.55))
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.10), radius: 6, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showAgentSheet) {
@@ -153,38 +194,54 @@ struct AgentLaunchView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-            Image(systemName: "brain.head.profile")
-                .font(.system(size: 64))
-                .foregroundStyle(.blue)
+        ZStack {
+            LinearGradient(
+                stops: [
+                    .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                    .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-            Text(tutorial.title)
-                .font(.system(size: 20, weight: .bold, design: .monospaced))
-                .multilineTextAlignment(.center)
+            VStack(spacing: 24) {
+                Spacer()
+                Image(systemName: "brain.head.profile")
+                    .font(.system(size: 64))
+                    .foregroundStyle(.white.opacity(0.90))
 
-            Text("Your AI guide is ready.\nPut on your Meta glasses.")
-                .font(.system(size: 14, design: .monospaced))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-
-            Button { } label: {
-                Text("Start Session")
-                    .font(.system(size: 16, weight: .bold, design: .monospaced))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
+                Text(tutorial.title)
+                    .font(.custom("CopernicusTrial-Book", size: 22))
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .multilineTextAlignment(.center)
+                    .tracking(1)
+
+                Text("Your AI guide is ready.\nPut on your Meta glasses.")
+                    .font(.custom("CopernicusTrial-Book", size: 15))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.75))
+
+                Button { } label: {
+                    Text("Start Session")
+                        .font(.custom("CopernicusTrial-Book", size: 16))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color(red: 0.18, green: 0.44, blue: 0.10))
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
+                        .shadow(color: .black.opacity(0.20), radius: 8, x: 0, y: 4)
+                }
+                .padding(.horizontal, 32)
+
+                Button("Cancel") { dismiss() }
+                    .font(.custom("CopernicusTrial-Book", size: 14))
+                    .foregroundStyle(.white.opacity(0.70))
+
+                Spacer()
             }
-            .padding(.horizontal, 32)
-
-            Button("Cancel") { dismiss() }
-                .font(.system(size: 14, design: .monospaced))
-
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 }
 
