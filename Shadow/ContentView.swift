@@ -214,7 +214,9 @@ struct ContentView: View {
                     .buttonStyle(.plain)
                     .position(x: 44, y: h * 0.10)
                     .zIndex(3)
-                } — always on top during zoom
+                }
+
+                // Glasses frame — always on top during zoom
                 if zoomTarget != nil {
                     GlassesFrameView(width: w * 0.88)
                         .position(x: zoomX, y: zoomY)
