@@ -8,6 +8,8 @@ struct ContentView: View {
     @State private var isZooming = false
     @State private var showDestination = false
     @State private var isDeepZoom = false
+    @State private var pulseScale: CGFloat = 1.0
+    @State private var pulseOpacity: Double = 0.55
 
     var body: some View {
         GeometryReader { geo in
@@ -73,8 +75,7 @@ struct ContentView: View {
                     .blur(radius: 20)
                     .position(x: w / 2, y: h * 0.50)
 
-                // Shadow — wide, diffuse; glasses are floating ~10% screen above the grass
-                // so no tight contact shadow, just a broad soft pool
+                // Shadow — wide diffuse pool + softer mid layer
                 Ellipse()
                     .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.50))
                     .frame(width: w * 1.05, height: 48)
@@ -103,19 +104,37 @@ struct ContentView: View {
                 // Main content — hidden when destination is showing
                 if !showDestination {
 
-                    // Log out button — top right
+                    // Log out button — top right, same row as the Shadow title
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
                     } label: {
                         Text("Log out")
-                            .font(.custom("CopernicusTrial-Book", size: 15))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
+                            .font(.custom("CopernicusTrial-Book", size: 14))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
                             .glassEffect(.regular.interactive(), in: .capsule)
                     }
                     .buttonStyle(.plain)
-                    .position(x: w - 60, y: 110)
+                    .position(x: w - 58, y: h * 0.10)
                     .zIndex(1)
+
+                    // Pulsing glow rings behind each lens
+                    let lensInnerW = lensW - 32
+                    let lensInnerH = (lensW * 0.68) - 32
+                    ForEach([leftLensX, rightLensX], id: \.self) { lx in
+                        RoundedRectangle(cornerRadius: 28)
+                            .stroke(Color.white.opacity(pulseOpacity), lineWidth: 3)
+                            .frame(width: lensInnerW * pulseScale, height: lensInnerH * pulseScale)
+                            .position(x: lx, y: lensY)
+                            .blur(radius: 3)
+                            .allowsHitTesting(false)
+                    }
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+                            pulseScale = 1.10
+                            pulseOpacity = 0.0
+                        }
+                    }
 
                     // Left lens label — Student
                     Button {
@@ -123,7 +142,9 @@ struct ContentView: View {
                     } label: {
                         Text("Student")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(0.80))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
                             .contentShape(Rectangle())
                     }
@@ -137,7 +158,9 @@ struct ContentView: View {
                     } label: {
                         Text("Expert")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(0.80))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
                             .contentShape(Rectangle())
                     }
@@ -151,6 +174,8 @@ struct ContentView: View {
                         .foregroundStyle(.white.opacity(0.82))
                         .tracking(1.2)
                         .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
+                        .scaleEffect(pulseScale > 1.05 ? 1.04 : 1.0)
+                        .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                         .position(x: w / 2, y: h * 0.56)
                         .zIndex(1)
                 }
@@ -272,8 +297,8 @@ struct GlassesLensesView: View {
         let rightInner = rightOuter.insetBy(dx: frameThickness, dy: frameThickness)
 
         Canvas { ctx, _ in
-            ctx.fill(Path(roundedRect: leftInner,  cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.5)))
-            ctx.fill(Path(roundedRect: rightInner, cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.5)))
+            ctx.fill(Path(roundedRect: leftInner,  cornerRadius: innerRadius), with: .color(Color(white: 0.90).opacity(0.08)))
+            ctx.fill(Path(roundedRect: rightInner, cornerRadius: innerRadius), with: .color(Color(white: 0.90).opacity(0.08)))
 
             ctx.fill(Path(roundedRect: CGRect(x: leftInner.minX + 6, y: leftInner.minY + 4,
                                               width: leftInner.width * 0.45, height: leftInner.height * 0.28),
