@@ -1,5 +1,40 @@
 import SwiftUI
 
+// MARK: - Models
+struct TutorialCategory: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let icon: String
+}
+
+struct Tutorial: Identifiable {
+    let id = UUID()
+    let title: String
+    let expertName: String
+    let thumbnailColor: Color
+    let category: String
+    let duration: String
+}
+
+// MARK: - Mock Data
+let mockCategories: [TutorialCategory] = [
+    .init(name: "All", icon: "square.grid.2x2"),
+    .init(name: "Home", icon: "house"),
+    .init(name: "Cooking", icon: "fork.knife"),
+    .init(name: "Fitness", icon: "figure.run"),
+    .init(name: "Tech", icon: "laptopcomputer"),
+    .init(name: "Crafts", icon: "scissors"),
+]
+
+let mockTutorials: [Tutorial] = [
+    .init(title: "How to Tie a Shoe", expertName: "Jordan M.", thumbnailColor: .blue, category: "Home", duration: "3 min"),
+    .init(title: "Perfect Scrambled Eggs", expertName: "Sara K.", thumbnailColor: .orange, category: "Cooking", duration: "5 min"),
+    .init(title: "Fix a Leaky Faucet", expertName: "Mike T.", thumbnailColor: .teal, category: "Home", duration: "8 min"),
+    .init(title: "Morning Stretch Routine", expertName: "Lia R.", thumbnailColor: .green, category: "Fitness", duration: "10 min"),
+    .init(title: "Set Up Your Router", expertName: "Dev P.", thumbnailColor: .purple, category: "Tech", duration: "6 min"),
+    .init(title: "Knit a Basic Stitch", expertName: "Anna W.", thumbnailColor: .pink, category: "Crafts", duration: "12 min"),
+]
+
 struct UserView: View {
     @State private var fillScreen = false
     @State private var showContent = false
