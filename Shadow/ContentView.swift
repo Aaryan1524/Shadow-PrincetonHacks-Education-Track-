@@ -24,25 +24,24 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Beige-to-brown gradient background
-                LinearGradient(
-                    stops: [
-                        .init(color: Color(red: 0.98, green: 0.95, blue: 0.88), location: 0),
-                        .init(color: Color(red: 0.96, green: 0.93, blue: 0.86), location: 0.44),
-                        .init(color: Color(red: 0.60, green: 0.40, blue: 0.24), location: 0.56),
-                        .init(color: Color(red: 0.38, green: 0.24, blue: 0.14), location: 1.0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                // Beige top block
+                Color(red: 0.96, green: 0.93, blue: 0.86)
+                    .ignoresSafeArea()
 
-                // Shadow cast by glasses onto the surface
+                // Brown bottom block
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: h * 0.50)
+                    Color(red: 0.38, green: 0.24, blue: 0.14)
+                        .frame(maxHeight: .infinity)
+                }
+                .ignoresSafeArea(edges: .bottom)
+
+                // Shadow cast by glasses onto the brown surface
                 Ellipse()
-                    .fill(Color.black.opacity(0.50))
+                    .fill(Color.black.opacity(0.55))
                     .frame(width: w * 0.72, height: 44)
-                    .blur(radius: 28)
-                    .position(x: w / 2, y: lensY + 68)
+                    .blur(radius: 26)
+                    .position(x: w / 2, y: h * 0.50)
 
                 // Destination view — fades in after zoom
                 if showDestination {
