@@ -1,0 +1,3 @@
+[submodule "meta-wearables-dat-ios"]
+	path = meta-wearables-dat-ios
+	url = https://github.com/facebook/meta-wearables-dat-ios.git
