@@ -51,6 +51,12 @@ struct ContentView: View {
                 }
                 .ignoresSafeArea(edges: .bottom)
 
+                // Grass blade texture
+                GrassTextureView()
+                    .frame(width: w, height: h * 0.52)
+                    .position(x: w / 2, y: h * 0.76)
+                    .allowsHitTesting(false)
+
                 // Soft horizon glow where sky meets grass
                 Ellipse()
                     .fill(
@@ -291,4 +297,47 @@ struct GlassesLensesView: View {
 
 #Preview {
     ContentView(isPresented: .constant(true))
+}
+
+struct GrassTextureView: View {
+    var body: some View {
+        Canvas { ctx, size in
+            // Deterministic pseudo-random using a simple LCG so blades don't
+            // jump every render, but vary visually across the surface.
+            var seed: UInt64 = 42
+            func rand() -> CGFloat {
+                seed = seed &* 6364136223846793005 &+ 1442695040888963407
+                return CGFloat(seed >> 33) / CGFloat(UInt32.max)
+            }
+
+            let cols = 55
+            let spacing = size.width / CGFloat(cols)
+
+            for i in 0..<cols * 6 {
+                let col = i % cols
+                let row = i / cols
+                let baseX = CGFloat(col) * spacing + rand() * spacing
+                let baseY = CGFloat(row) * (size.height / 6.0) + rand() * (size.height / 6.0)
+
+                // Blade height: taller near the top (horizon), shorter deeper in
+                let depthFraction = baseY / size.height
+                let bladeH = 22 - depthFraction * 14 + rand() * 10
+                let lean = (rand() - 0.5) * 14   // ±7 pt lean
+                let shade = 0.52 + rand() * 0.22  // green channel variation
+                let alpha = 0.55 + rand() * 0.35
+
+                var blade = Path()
+                blade.move(to: CGPoint(x: baseX, y: baseY))
+                blade.addQuadCurve(
+                    to: CGPoint(x: baseX + lean, y: baseY - bladeH),
+                    control: CGPoint(x: baseX + lean * 0.4, y: baseY - bladeH * 0.5)
+                )
+                ctx.stroke(
+                    blade,
+                    with: .color(Color(red: 0.14 + rand() * 0.12, green: shade, blue: 0.10).opacity(alpha)),
+                    style: StrokeStyle(lineWidth: 1.2 + rand() * 0.8, lineCap: .round)
+                )
+            }
+        }
+    }
 }

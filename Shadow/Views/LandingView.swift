@@ -70,6 +70,12 @@ struct LandingView: View {
                 }
                 .ignoresSafeArea(edges: .bottom)
 
+                // Grass blade texture
+                GrassTextureView()
+                    .frame(width: w, height: h * 0.50)
+                    .position(x: w / 2, y: h * 0.77)
+                    .allowsHitTesting(false)
+
                 // Soft horizon glow
                 Ellipse()
                     .fill(
