@@ -105,7 +105,7 @@ struct ContentView: View {
                 // Main content — hidden when destination is showing
                 if !showDestination {
 
-                    // Log out button — top right, above the Shadow title
+                    // Log out button — top right, same row as the Shadow title
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
                     } label: {
@@ -116,7 +116,7 @@ struct ContentView: View {
                             .glassEffect(.regular.interactive(), in: .capsule)
                     }
                     .buttonStyle(.plain)
-                    .position(x: w - 58, y: 58)
+                    .position(x: w - 58, y: h * 0.10)
                     .zIndex(1)
 
                     // Pulsing glow rings behind each lens

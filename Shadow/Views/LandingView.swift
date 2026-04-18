@@ -23,9 +23,9 @@ struct LandingView: View {
             // Persistent title — sits outside the transition so it never moves
             GeometryReader { geo in
                 Text("Shadow")
-                    .font(.custom("CopernicusTrial-Book", size: 52))
+                    .font(.custom("CopernicusTrial-Book", size: 42))
                     .foregroundStyle(.black)
-                    .position(x: geo.size.width / 2, y: geo.size.height * 0.14)
+                    .position(x: geo.size.width / 2, y: geo.size.height * 0.10)
             }
             .allowsHitTesting(false)
             .ignoresSafeArea()
