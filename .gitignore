@@ -1,5 +1,32 @@
-# Secrets - never commit
+# ──────────────────────────────────────────────────────────────────────────
+# SECRETS — NEVER COMMIT API KEYS, CREDENTIALS, OR SENSITIVE DATA
+# ──────────────────────────────────────────────────────────────────────────
+
+# Environment variables (contains API keys)
+.env
+.env.local
+.env.*.local
+
+# iOS Info.plist (contains app IDs)
 Info.plist
+
+# Backend
+backend/.env
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.egg-info/
+backend/dist/
+backend/build/
+backend/lessons/  # Local lesson storage (runtime-generated)
+
+# IDE and editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # Xcode
 *.xcuserstate
