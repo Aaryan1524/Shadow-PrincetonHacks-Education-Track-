@@ -8,6 +8,8 @@ struct ContentView: View {
     @State private var isZooming = false
     @State private var showDestination = false
     @State private var isDeepZoom = false
+    @State private var pulseScale: CGFloat = 1.0
+    @State private var pulseOpacity: Double = 0.55
 
     var body: some View {
         GeometryReader { geo in
@@ -117,6 +119,24 @@ struct ContentView: View {
                     .position(x: w - 60, y: 110)
                     .zIndex(1)
 
+                    // Pulsing glow rings behind each lens
+                    let lensInnerW = lensW - 32
+                    let lensInnerH = (lensW * 0.68) - 32
+                    ForEach([leftLensX, rightLensX], id: \.self) { lx in
+                        RoundedRectangle(cornerRadius: 28)
+                            .stroke(Color.white.opacity(pulseOpacity), lineWidth: 3)
+                            .frame(width: lensInnerW * pulseScale, height: lensInnerH * pulseScale)
+                            .position(x: lx, y: lensY)
+                            .blur(radius: 3)
+                            .allowsHitTesting(false)
+                    }
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+                            pulseScale = 1.10
+                            pulseOpacity = 0.0
+                        }
+                    }
+
                     // Left lens label — Student
                     Button {
                         triggerZoom(target: .user, w: w, h: h)
@@ -151,6 +171,8 @@ struct ContentView: View {
                         .foregroundStyle(.white.opacity(0.82))
                         .tracking(1.2)
                         .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
+                        .scaleEffect(pulseScale > 1.05 ? 1.04 : 1.0)
+                        .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                         .position(x: w / 2, y: h * 0.56)
                         .zIndex(1)
                 }
