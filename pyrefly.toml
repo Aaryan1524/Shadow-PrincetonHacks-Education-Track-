@@ -1,0 +1,17 @@
+# Pyrefly configuration for Shadow backend
+# https://github.com/facebook/pyrefly
+
+[project]
+# Point Pyrefly to the venv interpreter
+python_interpreter = "backend/venv/bin/python3"
+
+# Only type-check Python files in backend/
+source_roots = ["backend"]
+
+# Exclude non-Python files and generated dirs
+exclude = [
+  "backend/venv",
+  "backend/lessons",
+  "backend/__pycache__",
+  "meta-wearables-dat-ios",
+]
