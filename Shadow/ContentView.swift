@@ -119,16 +119,11 @@ struct ContentView: View {
                     Button {
                         triggerZoom(target: .user, w: w, h: h)
                     } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: "graduationcap")
-                                .font(.system(size: 22, weight: .medium))
-                                .foregroundStyle(.black.opacity(0.75))
-                            Text("Student")
-                                .font(.custom("CopernicusTrial-Book", size: 15))
-                                .foregroundStyle(.black.opacity(0.80))
-                        }
-                        .frame(width: w * 0.30, height: h * 0.12)
-                        .contentShape(Rectangle())
+                        Text("Student")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .foregroundStyle(.black.opacity(0.80))
+                            .frame(width: w * 0.30, height: h * 0.12)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .position(x: leftLensX, y: lensY)
@@ -138,16 +133,11 @@ struct ContentView: View {
                     Button {
                         triggerZoom(target: .expert, w: w, h: h)
                     } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: "person.chalkboard")
-                                .font(.system(size: 22, weight: .medium))
-                                .foregroundStyle(.black.opacity(0.75))
-                            Text("Expert")
-                                .font(.custom("CopernicusTrial-Book", size: 15))
-                                .foregroundStyle(.black.opacity(0.80))
-                        }
-                        .frame(width: w * 0.30, height: h * 0.12)
-                        .contentShape(Rectangle())
+                        Text("Expert")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .foregroundStyle(.black.opacity(0.80))
+                            .frame(width: w * 0.30, height: h * 0.12)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .position(x: rightLensX, y: lensY)
