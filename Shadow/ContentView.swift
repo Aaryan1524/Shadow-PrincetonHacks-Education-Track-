@@ -28,58 +28,64 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Paper base
+                // Sky — light blue at top fading to warm horizon
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
-                        .init(color: Color(red: 0.93, green: 0.93, blue: 0.90), location: 1.0)
+                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
+                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.48)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
-                // Ink wash blobs
-                let blue = Color(red: 0.43, green: 0.51, blue: 0.59)
-                Circle()
-                    .fill(blue.opacity(0.20))
-                    .frame(width: w * 1.25)
-                    .blur(radius: 90)
-                    .position(x: w * 0.88, y: h * 0.07)
+                // Grass — rich green bottom half
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: h * 0.50)
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
+                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(maxHeight: .infinity)
+                }
+                .ignoresSafeArea(edges: .bottom)
 
-                Circle()
-                    .fill(blue.opacity(0.15))
-                    .frame(width: w * 1.05)
-                    .blur(radius: 78)
-                    .position(x: w * 0.10, y: h * 0.88)
-
-                Circle()
-                    .fill(blue.opacity(0.09))
-                    .frame(width: w * 0.72)
-                    .blur(radius: 56)
-                    .position(x: w * 0.05, y: h * 0.48)
-
-                // Glasses glow halo
-                let glassW = w * 0.88
-                let glassH = glassW * 0.38 * 0.68
-                RoundedRectangle(cornerRadius: 46)
-                    .fill(blue.opacity(0.16))
-                    .frame(width: glassW + 52, height: glassH + 52)
-                    .blur(radius: 32)
-                    .position(x: w / 2, y: lensY)
+                // Grass blade texture
+                GrassTextureView()
+                    .frame(width: w, height: h * 0.52)
+                    .position(x: w / 2, y: h * 0.76)
                     .allowsHitTesting(false)
 
-                // Drop shadow (blue-tinted)
+                // Soft horizon glow where sky meets grass
                 Ellipse()
-                    .fill(blue.opacity(0.18))
+                    .fill(
+                        RadialGradient(
+                            colors: [Color(red: 1.0, green: 0.95, blue: 0.80).opacity(0.45), Color.clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: w * 0.6
+                        )
+                    )
+                    .frame(width: w * 1.2, height: 90)
+                    .blur(radius: 20)
+                    .position(x: w / 2, y: h * 0.50)
+
+                // Shadow — wide diffuse pool + softer mid layer
+                Ellipse()
+                    .fill(Color(red: 0.04, green: 0.14, blue: 0.02).opacity(0.50))
                     .frame(width: w * 1.05, height: 48)
-                    .blur(radius: 28)
+                    .blur(radius: 32)
                     .position(x: w / 2, y: h * 0.52)
 
                 Ellipse()
-                    .fill(Color.black.opacity(0.10))
-                    .frame(width: w * 0.58, height: 18)
-                    .blur(radius: 14)
+                    .fill(Color.black.opacity(0.22))
+                    .frame(width: w * 0.58, height: 20)
+                    .blur(radius: 18)
                     .position(x: w / 2, y: h * 0.518)
 
                 // Destination view — fades in after zoom
@@ -117,98 +123,80 @@ struct ContentView: View {
 
                 // Main content — hidden when destination is showing
                 if !showDestination {
-                    let blue     = Color(red: 0.43, green: 0.51, blue: 0.59)
-                    let charcoal = Color(red: 0.29, green: 0.29, blue: 0.29)
-                    let lensH    = lensW * 0.68
-                    let cardY    = lensY + lensH / 2 + 42
 
-                    // Log out button
+                    // Log out button — top right, same row as the Shadow title
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
                     } label: {
                         Text("Log out")
                             .font(.custom("CopernicusTrial-Book", size: 14))
-                            .foregroundStyle(charcoal.opacity(0.65))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.60))
-                            .overlay(Capsule().stroke(blue.opacity(0.28), lineWidth: 1))
-                            .clipShape(Capsule())
+                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
                     .buttonStyle(.plain)
                     .position(x: w - 58, y: h * 0.10)
                     .zIndex(1)
 
-                    // Pulsing glow rings
-                    let lensInnerW = lensW - 26
-                    let lensInnerH = lensH - 26
+                    // Pulsing glow rings behind each lens
+                    let lensInnerW = lensW - 32
+                    let lensInnerH = (lensW * 0.68) - 32
                     ForEach([leftLensX, rightLensX], id: \.self) { lx in
                         RoundedRectangle(cornerRadius: 28)
-                            .stroke(blue.opacity(pulseOpacity), lineWidth: 5)
+                            .stroke(Color.white.opacity(pulseOpacity), lineWidth: 3)
                             .frame(width: lensInnerW * pulseScale, height: lensInnerH * pulseScale)
                             .position(x: lx, y: lensY)
-                            .blur(radius: 6)
+                            .blur(radius: 3)
                             .allowsHitTesting(false)
                     }
                     .onAppear {
                         withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
-                            pulseScale = 1.12
+                            pulseScale = 1.10
                             pulseOpacity = 0.0
                         }
                     }
 
-                    // Student card
+                    // Left lens label — Student
                     Button {
                         triggerZoom(target: .user, w: w, h: h)
                     } label: {
-                        VStack(spacing: 4) {
-                            Text("Student")
-                                .font(.custom("CopernicusTrial-Book", size: 16))
-                                .foregroundStyle(blue)
-                            Text("Learn from experts")
-                                .font(.custom("CopernicusTrial-Book", size: 11))
-                                .foregroundStyle(charcoal.opacity(0.50))
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(blue.opacity(0.10))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(blue.opacity(0.30), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        Text("Student")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
+                            .frame(width: w * 0.30, height: h * 0.12)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .position(x: leftLensX, y: cardY)
+                    .position(x: leftLensX, y: lensY)
                     .zIndex(1)
 
-                    // Expert card
+                    // Right lens label — Expert
                     Button {
                         triggerZoom(target: .expert, w: w, h: h)
                     } label: {
-                        VStack(spacing: 4) {
-                            Text("Expert")
-                                .font(.custom("CopernicusTrial-Book", size: 16))
-                                .foregroundStyle(blue)
-                            Text("Share your craft")
-                                .font(.custom("CopernicusTrial-Book", size: 11))
-                                .foregroundStyle(charcoal.opacity(0.50))
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(blue.opacity(0.10))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(blue.opacity(0.30), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        Text("Expert")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
+                            .frame(width: w * 0.30, height: h * 0.12)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .position(x: rightLensX, y: cardY)
+                    .position(x: rightLensX, y: lensY)
                     .zIndex(1)
 
-                    // Hint text
+                    // Hint text — sits on the grass, white so it reads clearly
                     Text("tap a lens to begin")
-                        .font(.custom("CopernicusTrial-Book", size: 12))
-                        .foregroundStyle(blue.opacity(0.50))
-                        .tracking(1.8)
-                        .scaleEffect(pulseScale > 1.05 ? 1.03 : 1.0)
+                        .font(.custom("CopernicusTrial-Book", size: 13))
+                        .foregroundStyle(.white.opacity(0.82))
+                        .tracking(1.2)
+                        .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
+                        .scaleEffect(pulseScale > 1.05 ? 1.04 : 1.0)
                         .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
-                        .position(x: w / 2, y: cardY + 56)
+                        .position(x: w / 2, y: h * 0.56)
                         .zIndex(1)
                 }
 
@@ -236,8 +224,8 @@ struct ContentView: View {
                         .scaleEffect(
                             isDeepZoom ? 40.0 : (isZooming ? 10.0 : 1.0),
                             anchor: zoomTarget == .user
-                                ? UnitPoint(x: 0.25, y: 0.5)
-                                : UnitPoint(x: 0.75, y: 0.5)
+                                ? UnitPoint(x: 0.36, y: 0.5)
+                                : UnitPoint(x: 0.64, y: 0.5)
                         )
                         .animation(.easeInOut(duration: 0.6), value: isDeepZoom)
                         .animation(.easeInOut(duration: 0.5), value: isZooming)
@@ -267,7 +255,7 @@ struct ContentView: View {
 
 struct GlassesFrameView: View {
     let width: CGFloat
-    var color: Color = Color(red: 0.43, green: 0.51, blue: 0.59)
+    var color: Color = .black
 
     var body: some View {
         GlassesLensesView(width: width, color: color)

@@ -42,112 +42,97 @@ struct LandingView: View {
         GeometryReader { geo in
             let w = geo.size.width
             let h = geo.size.height
-            let blue     = Color(red: 0.43, green: 0.51, blue: 0.59)
-            let charcoal = Color(red: 0.29, green: 0.29, blue: 0.29)
-            let gW = w * glassesWidthFraction
-            let gH = gW * 0.38 * 0.68
-
             ZStack {
-                // Paper base
+                // Sky — light blue at top fading to warm horizon
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
-                        .init(color: Color(red: 0.93, green: 0.93, blue: 0.90), location: 1.0)
+                        .init(color: Color(red: 0.53, green: 0.81, blue: 0.98), location: 0.0),
+                        .init(color: Color(red: 0.78, green: 0.91, blue: 1.00), location: 0.38),
+                        .init(color: Color(red: 0.95, green: 0.88, blue: 0.74), location: 0.52)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
-                // Ink wash blob — top right
-                Circle()
-                    .fill(blue.opacity(0.22))
-                    .frame(width: w * 1.25)
-                    .blur(radius: 90)
-                    .position(x: w * 0.88, y: h * 0.07)
+                // Grass — rich green bottom half
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: h * 0.52)
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(red: 0.35, green: 0.62, blue: 0.22), location: 0.0),
+                            .init(color: Color(red: 0.20, green: 0.42, blue: 0.12), location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(maxHeight: .infinity)
+                }
+                .ignoresSafeArea(edges: .bottom)
 
-                // Ink wash blob — bottom left
-                Circle()
-                    .fill(blue.opacity(0.18))
-                    .frame(width: w * 1.05)
-                    .blur(radius: 78)
-                    .position(x: w * 0.10, y: h * 0.88)
-
-                // Ink wash blob — center left accent
-                Circle()
-                    .fill(blue.opacity(0.10))
-                    .frame(width: w * 0.72)
-                    .blur(radius: 56)
-                    .position(x: w * 0.05, y: h * 0.46)
-
-                // Blue glow halo around glasses
-                RoundedRectangle(cornerRadius: 46)
-                    .fill(blue.opacity(0.24))
-                    .frame(width: gW + 52, height: gH + 52)
-                    .blur(radius: 32)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * glassesYFraction)
-                    .offset(y: floatOffset)
+                // Grass blade texture
+                GrassTextureView()
+                    .frame(width: w, height: h * 0.50)
+                    .position(x: w / 2, y: h * 0.77)
                     .allowsHitTesting(false)
 
-                // Slogan
+                // Soft horizon glow
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [Color(red: 1.0, green: 0.95, blue: 0.80).opacity(0.45), Color.clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: w * 0.6
+                        )
+                    )
+                    .frame(width: w * 1.2, height: 90)
+                    .blur(radius: 20)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.52)
+
+                // Slogan only — title lives in the outer ZStack overlay
                 Text("See the world through expert eyes.")
                     .font(.custom("CopernicusTrial-Book", size: 15))
-                    .foregroundStyle(blue.opacity(0.80))
-                    .tracking(1.2)
+                    .foregroundStyle(Color(red: 0.10, green: 0.24, blue: 0.08))
+                    .tracking(1.0)
                     .position(x: w / 2, y: h * 0.20)
 
-                // Drop shadow (blue-tinted)
+                // Shadow — outer green-tinted glow on grass
                 Ellipse()
-                    .fill(blue.opacity(0.22))
-                    .frame(width: w * 0.84, height: 52)
-                    .blur(radius: 28)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.530)
+                    .fill(Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.52))
+                    .frame(width: w * 0.82, height: 58)
+                    .blur(radius: 34)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.528)
                     .offset(y: floatOffset * 0.15)
 
+                // Shadow — softer mid layer
                 Ellipse()
-                    .fill(Color.black.opacity(0.12))
-                    .frame(width: w * 0.44, height: 14)
+                    .fill(Color.black.opacity(0.28))
+                    .frame(width: w * 0.44, height: 16)
                     .blur(radius: 10)
-                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.526)
+                    .position(x: w / 2 + w * glassesXOffset, y: h * 0.524)
                     .offset(y: floatOffset * 0.15)
 
-                // Glasses
                 ZStack {
-                    GlassesLensesView(width: w * glassesWidthFraction, color: blue)
+                    GlassesLensesView(width: w * glassesWidthFraction)
                 }
                 .rotation3DEffect(.degrees(glassesY3D), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
-                .shadow(color: blue.opacity(0.35), radius: 28, x: 0, y: 12)
+                .shadow(color: .black.opacity(0.15), radius: 24, x: 0, y: 10)
                 .offset(y: floatOffset)
                 .position(x: w / 2 + w * glassesXOffset, y: h * glassesYFraction)
 
-                // Bottom panel
                 if !isTransitioning {
-                    VStack(spacing: 12) {
-                        Button {
-                            startTransition(w: w, h: h)
-                        } label: {
-                            HStack(spacing: 10) {
-                                Text("Get Started")
-                                    .font(.custom("CopernicusTrial-Book", size: 18))
-                                    .foregroundStyle(.white)
-                                Image(systemName: "arrow.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(.white.opacity(0.85))
-                            }
-                            .padding(.horizontal, 48)
+                    Button {
+                        startTransition(w: w, h: h)
+                    } label: {
+                        Text("Get Started")
+                            .font(.custom("CopernicusTrial-Book", size: 18))
+                            .padding(.horizontal, 36)
                             .padding(.vertical, 18)
-                            .background(blue)
-                            .clipShape(Capsule())
-                            .shadow(color: blue.opacity(0.45), radius: 18, x: 0, y: 8)
-                        }
-                        .buttonStyle(.plain)
-
-                        Text("student or expert — your choice")
-                            .font(.custom("CopernicusTrial-Book", size: 12))
-                            .foregroundStyle(charcoal.opacity(0.40))
-                            .tracking(0.8)
+                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
-                    .position(x: w / 2, y: h * 0.74)
+                    .buttonStyle(.plain)
+                    .position(x: w / 2, y: h * 0.72)
                     .transition(.opacity)
                 }
             }
