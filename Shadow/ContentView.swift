@@ -143,7 +143,9 @@ struct ContentView: View {
                     } label: {
                         Text("Student")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(0.80))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
                             .contentShape(Rectangle())
                     }
@@ -157,7 +159,9 @@ struct ContentView: View {
                     } label: {
                         Text("Expert")
                             .font(.custom("CopernicusTrial-Book", size: 15))
-                            .foregroundStyle(.black.opacity(0.80))
+                            .foregroundStyle(.black.opacity(pulseScale > 1.05 ? 0.55 : 0.90))
+                            .tracking(pulseScale > 1.05 ? 2.0 : 0.5)
+                            .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
                             .frame(width: w * 0.30, height: h * 0.12)
                             .contentShape(Rectangle())
                     }
