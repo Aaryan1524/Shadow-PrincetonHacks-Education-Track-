@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var isZooming = false
     @State private var showDestination = false
     @State private var isDeepZoom = false
+    @State private var animateGlow = false
 
     var body: some View {
         GeometryReader { geo in
@@ -24,7 +25,31 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                Color.white.ignoresSafeArea()
+                MeshGradient(
+                    width: 3, height: 3,
+                    points: [
+                        .init(0, 0), .init(0.5, 0), .init(1, 0),
+                        .init(0, 0.4), .init(0.5, 0.38), .init(1, 0.4),
+                        .init(0, 1), .init(0.5, 1), .init(1, 1)
+                    ],
+                    colors: [
+                        Color.white,
+                        Color(red: 0.92, green: 0.96, blue: 1.0),
+                        Color.white,
+                        Color(red: 0.80, green: 0.91, blue: 1.0),
+                        animateGlow ? Color(red: 0.38, green: 0.68, blue: 0.98) : Color(red: 0.52, green: 0.78, blue: 1.0),
+                        Color(red: 0.80, green: 0.91, blue: 1.0),
+                        Color(red: 0.90, green: 0.95, blue: 1.0),
+                        Color(red: 0.68, green: 0.85, blue: 1.0),
+                        Color(red: 0.90, green: 0.95, blue: 1.0)
+                    ]
+                )
+                .ignoresSafeArea()
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 3.0).repeatForever(autoreverses: true)) {
+                        animateGlow = true
+                    }
+                }
 
                 // Destination view — fades in after zoom
                 if showDestination {
@@ -41,27 +66,20 @@ struct ContentView: View {
 
                 // Main content — hidden when destination is showing
                 if !showDestination {
-                    VStack {
-                        Text("Shadow")
-                            .font(.custom("FiraCode-Bold", size: 36))
-                            .foregroundStyle(.black)
-                        Spacer()
-                    }
-                    .padding(.top, 64)
-                    .zIndex(0)
 
-                    // Logout button — top right
+
+                    // Log out button — top right
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
                     } label: {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.black)
-                            .padding(16)
-                            .background(Color.white.opacity(0.8))
-                            .clipShape(Circle())
+                        Text("Log out")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
-                    .position(x: w - 44, y: 70)
+                    .buttonStyle(.plain)
+                    .position(x: w - 60, y: 110)
                     .zIndex(1)
 
                     // Tap zones over lenses
@@ -82,16 +100,16 @@ struct ContentView: View {
                         HStack(spacing: 24) {
                             Button { triggerZoom(target: .user, w: w, h: h) } label: {
                                 Text("User")
-                                    .font(.custom("FiraCode-SemiBold", size: 17))
+                                    .font(.custom("CopernicusTrial-Book", size: 17))
                                     .frame(width: 120, height: 50)
                             }
-                            .buttonStyle(.glassProminent)
+                            .buttonStyle(.glass)
                             Button { triggerZoom(target: .expert, w: w, h: h) } label: {
                                 Text("Expert")
-                                    .font(.custom("FiraCode-SemiBold", size: 17))
+                                    .font(.custom("CopernicusTrial-Book", size: 17))
                                     .frame(width: 120, height: 50)
                             }
-                            .buttonStyle(.glassProminent)
+                            .buttonStyle(.glass)
                         }
                         .padding(.bottom, 60)
                     }
@@ -109,11 +127,10 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.black)
                             .padding(16)
-                            .background(Color.white.opacity(0.8))
-                            .clipShape(Circle())
+                            .glassEffect(.regular.interactive(), in: .circle)
                     }
+                    .buttonStyle(.plain)
                     .position(x: 44, y: 70)
                     .zIndex(3)
 
@@ -125,7 +142,7 @@ struct ContentView: View {
                             Image(systemName: "record.circle")
                                 .font(.system(size: 18, weight: .semibold))
                             Text("View / Record")
-                                .font(.custom("FiraCode-SemiBold", size: 16))
+                                .font(.custom("CopernicusTrial-Book", size: 16))
                         }
                         .padding(.horizontal, 24)
                         .padding(.vertical, 14)
@@ -189,6 +206,19 @@ struct ContentView: View {
 
 struct GlassesFrameView: View {
     let width: CGFloat
+    var color: Color = .black
+
+    var body: some View {
+        ZStack {
+            GlassesLensesView(width: width, color: color)
+            GlassesArmsView(width: width, color: color)
+        }
+    }
+}
+
+struct GlassesLensesView: View {
+    let width: CGFloat
+    var color: Color = .black
 
     var body: some View {
         let lensW = width * 0.38
@@ -205,7 +235,6 @@ struct GlassesFrameView: View {
         let rightOuter = CGRect(x: offsetX + lensW + gap, y: 0, width: lensW, height: lensH)
         let leftInner  = leftOuter.insetBy(dx: frameThickness, dy: frameThickness)
         let rightInner = rightOuter.insetBy(dx: frameThickness, dy: frameThickness)
-        let framesRight = offsetX + lensW * 2 + gap
 
         Canvas { ctx, _ in
             ctx.fill(Path(roundedRect: leftInner,  cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.5)))
@@ -220,27 +249,74 @@ struct GlassesFrameView: View {
 
             var leftFrame = Path(roundedRect: leftOuter, cornerRadius: outerRadius)
             leftFrame.addPath(Path(roundedRect: leftInner, cornerRadius: innerRadius))
-            ctx.fill(leftFrame, with: .color(.black), style: FillStyle(eoFill: true))
+            ctx.fill(leftFrame, with: .color(color), style: FillStyle(eoFill: true))
 
             var rightFrame = Path(roundedRect: rightOuter, cornerRadius: outerRadius)
             rightFrame.addPath(Path(roundedRect: rightInner, cornerRadius: innerRadius))
-            ctx.fill(rightFrame, with: .color(.black), style: FillStyle(eoFill: true))
+            ctx.fill(rightFrame, with: .color(color), style: FillStyle(eoFill: true))
 
             var bridge = Path()
             bridge.move(to: CGPoint(x: leftOuter.maxX, y: lensH * 0.22))
             bridge.addQuadCurve(to: CGPoint(x: rightOuter.minX, y: lensH * 0.22),
                                 control: CGPoint(x: offsetX + lensW + gap / 2, y: lensH * 0.08))
-            ctx.stroke(bridge, with: .color(.black), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+            ctx.stroke(bridge, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+        }
+        .frame(width: canvasW, height: lensH)
+    }
+}
 
+struct GlassesArmsView: View {
+    let width: CGFloat
+    var color: Color = .black
+    var body: some View {
+        ZStack {
+            GlassesLeftArmView(width: width, color: color)
+            GlassesRightArmView(width: width, color: color)
+        }
+    }
+}
+
+struct GlassesLeftArmView: View {
+    let width: CGFloat
+    var color: Color = .black
+
+    var body: some View {
+        let lensW = width * 0.38
+        let lensH = lensW * 0.68
+        let gap: CGFloat = 20
+        let armLen = lensW * 1.0
+        let canvasW = lensW * 2 + gap + armLen * 2
+        let offsetX = armLen
+        let leftOuter = CGRect(x: offsetX, y: 0, width: lensW, height: lensH)
+
+        Canvas { ctx, _ in
             var leftArm = Path()
-            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.22))
-            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.22))
-            ctx.stroke(leftArm, with: .color(.black), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+            leftArm.move(to: CGPoint(x: leftOuter.minX + 4, y: lensH * 0.5))
+            leftArm.addLine(to: CGPoint(x: 0, y: lensH * 0.5))
+            ctx.stroke(leftArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+        }
+        .frame(width: canvasW, height: lensH)
+    }
+}
 
+struct GlassesRightArmView: View {
+    let width: CGFloat
+    var color: Color = .black
+
+    var body: some View {
+        let lensW = width * 0.38
+        let lensH = lensW * 0.68
+        let gap: CGFloat = 20
+        let armLen = lensW * 1.0
+        let canvasW = lensW * 2 + gap + armLen * 2
+        let offsetX = armLen
+        let framesRight = offsetX + lensW * 2 + gap
+
+        Canvas { ctx, _ in
             var rightArm = Path()
-            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.22))
-            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.22))
-            ctx.stroke(rightArm, with: .color(.black), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+            rightArm.move(to: CGPoint(x: framesRight - 4, y: lensH * 0.5))
+            rightArm.addLine(to: CGPoint(x: canvasW, y: lensH * 0.5))
+            ctx.stroke(rightArm, with: .color(color), style: StrokeStyle(lineWidth: 11, lineCap: .round))
         }
         .frame(width: canvasW, height: lensH)
     }
