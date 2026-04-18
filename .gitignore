@@ -25,11 +25,3 @@ Pods/
 
 # macOS
 .DS_Store
-
-# Backend secrets
-backend/.env
-backend/lessons/
-backend/__pycache__/
-backend/**/__pycache__/
-backend/**/*.pyc
-backend/venv/
