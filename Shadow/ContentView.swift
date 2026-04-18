@@ -105,19 +105,28 @@ struct ContentView: View {
                 // Main content — hidden when destination is showing
                 if !showDestination {
 
-                    // Log out button — top right
+                    // Log out button — top right, above the Shadow title
                     Button {
                         withAnimation(.easeInOut(duration: 0.5)) { isPresented = false }
                     } label: {
                         Text("Log out")
-                            .font(.custom("CopernicusTrial-Book", size: 15))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
+                            .font(.custom("CopernicusTrial-Book", size: 14))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
                             .glassEffect(.regular.interactive(), in: .capsule)
                     }
                     .buttonStyle(.plain)
-                    .position(x: w - 60, y: 110)
+                    .position(x: w - 58, y: 58)
                     .zIndex(1)
+
+                    // Shadow brand title
+                    Text("Shadow")
+                        .font(.custom("CopernicusTrial-Book", size: 28))
+                        .foregroundStyle(Color(red: 0.08, green: 0.20, blue: 0.06).opacity(0.85))
+                        .tracking(4)
+                        .shadow(color: .white.opacity(0.6), radius: 4, x: 0, y: 1)
+                        .position(x: w / 2, y: 95)
+                        .zIndex(1)
 
                     // Pulsing glow rings behind each lens
                     let lensInnerW = lensW - 32
@@ -298,8 +307,8 @@ struct GlassesLensesView: View {
         let rightInner = rightOuter.insetBy(dx: frameThickness, dy: frameThickness)
 
         Canvas { ctx, _ in
-            ctx.fill(Path(roundedRect: leftInner,  cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.5)))
-            ctx.fill(Path(roundedRect: rightInner, cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.5)))
+            ctx.fill(Path(roundedRect: leftInner,  cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.22)))
+            ctx.fill(Path(roundedRect: rightInner, cornerRadius: innerRadius), with: .color(Color(white: 0.82).opacity(0.22)))
 
             ctx.fill(Path(roundedRect: CGRect(x: leftInner.minX + 6, y: leftInner.minY + 4,
                                               width: leftInner.width * 0.45, height: leftInner.height * 0.28),
