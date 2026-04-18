@@ -10,8 +10,6 @@ struct ContentView: View {
     @State private var isDeepZoom = false
     @State private var pulseScale: CGFloat = 1.0
     @State private var pulseOpacity: Double = 0.55
-    @State private var outerRingScale: CGFloat = 1.0
-    @State private var outerRingOpacity: Double = 0.45
 
     var body: some View {
         GeometryReader { geo in
@@ -30,11 +28,11 @@ struct ContentView: View {
             let zoomY: CGFloat = isZooming ? h / 2 : lensY
 
             ZStack {
-                // Cream base
+                // Paper base
                 LinearGradient(
                     stops: [
                         .init(color: Color(red: 1.00, green: 1.00, blue: 0.89), location: 0.0),
-                        .init(color: Color(red: 0.92, green: 0.92, blue: 0.88), location: 1.0)
+                        .init(color: Color(red: 0.93, green: 0.93, blue: 0.90), location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -42,77 +40,40 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
                 // Ink wash blobs
-                let blue     = Color(red: 0.43, green: 0.51, blue: 0.59)
-                let deepBlue = Color(red: 0.28, green: 0.36, blue: 0.48)
-
+                let blue = Color(red: 0.43, green: 0.51, blue: 0.59)
                 Circle()
-                    .fill(blue.opacity(0.34))
-                    .frame(width: w * 1.45)
-                    .blur(radius: 88)
-                    .position(x: w * 0.96, y: h * 0.05)
-
-                Circle()
-                    .fill(deepBlue.opacity(0.28))
+                    .fill(blue.opacity(0.20))
                     .frame(width: w * 1.25)
-                    .blur(radius: 80)
-                    .position(x: w * 0.04, y: h * 0.93)
+                    .blur(radius: 90)
+                    .position(x: w * 0.88, y: h * 0.07)
 
                 Circle()
-                    .fill(blue.opacity(0.18))
-                    .frame(width: w * 0.82)
-                    .blur(radius: 62)
-                    .position(x: w * 0.06, y: h * 0.46)
+                    .fill(blue.opacity(0.15))
+                    .frame(width: w * 1.05)
+                    .blur(radius: 78)
+                    .position(x: w * 0.10, y: h * 0.88)
 
-                // Particle field
-                Canvas { ctx, size in
-                    var seed: UInt64 = 54321
-                    func rand() -> CGFloat {
-                        seed = seed &* 6364136223846793005 &+ 1442695040888963407
-                        return CGFloat(seed >> 33) / CGFloat(UInt32.max)
-                    }
-                    for _ in 0..<55 {
-                        let x = rand() * size.width
-                        let y = rand() * size.height
-                        let r = 1.0 + rand() * 2.8
-                        let op = 0.10 + rand() * 0.28
-                        ctx.fill(
-                            Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)),
-                            with: .color(blue.opacity(op))
-                        )
-                    }
-                }
-                .ignoresSafeArea()
+                Circle()
+                    .fill(blue.opacity(0.09))
+                    .frame(width: w * 0.72)
+                    .blur(radius: 56)
+                    .position(x: w * 0.05, y: h * 0.48)
 
-                // Triple glow behind glasses
+                // Glasses glow halo
                 let glassW = w * 0.88
                 let glassH = glassW * 0.38 * 0.68
-
-                RoundedRectangle(cornerRadius: 56)
+                RoundedRectangle(cornerRadius: 46)
                     .fill(blue.opacity(0.16))
-                    .frame(width: glassW + 130, height: glassH + 96)
-                    .blur(radius: 65)
+                    .frame(width: glassW + 52, height: glassH + 52)
+                    .blur(radius: 32)
                     .position(x: w / 2, y: lensY)
                     .allowsHitTesting(false)
 
-                RoundedRectangle(cornerRadius: 52)
-                    .fill(blue.opacity(0.24))
-                    .frame(width: glassW + 70, height: glassH + 52)
-                    .blur(radius: 36)
-                    .position(x: w / 2, y: lensY)
-                    .allowsHitTesting(false)
-
-                RoundedRectangle(cornerRadius: 47)
-                    .fill(blue.opacity(0.36))
-                    .frame(width: glassW + 30, height: glassH + 22)
-                    .blur(radius: 18)
-                    .position(x: w / 2, y: lensY)
-                    .allowsHitTesting(false)
-
-                // Drop shadow
+                // Drop shadow (blue-tinted)
                 Ellipse()
-                    .fill(blue.opacity(0.26))
-                    .frame(width: w * 1.05, height: 50)
-                    .blur(radius: 30)
+                    .fill(blue.opacity(0.18))
+                    .frame(width: w * 1.05, height: 48)
+                    .blur(radius: 28)
                     .position(x: w / 2, y: h * 0.52)
 
                 Ellipse()
@@ -157,10 +118,9 @@ struct ContentView: View {
                 // Main content — hidden when destination is showing
                 if !showDestination {
                     let blue     = Color(red: 0.43, green: 0.51, blue: 0.59)
-                    let deepBlue = Color(red: 0.28, green: 0.36, blue: 0.48)
                     let charcoal = Color(red: 0.29, green: 0.29, blue: 0.29)
                     let lensH    = lensW * 0.68
-                    let cardY    = lensY + lensH / 2 + 52
+                    let cardY    = lensY + lensH / 2 + 42
 
                     // Log out button
                     Button {
@@ -171,33 +131,17 @@ struct ContentView: View {
                             .foregroundStyle(charcoal.opacity(0.65))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.65))
-                            .overlay(Capsule().stroke(blue.opacity(0.35), lineWidth: 1))
+                            .background(Color.white.opacity(0.60))
+                            .overlay(Capsule().stroke(blue.opacity(0.28), lineWidth: 1))
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
                     .position(x: w - 58, y: h * 0.10)
                     .zIndex(1)
 
-                    // Outer ripple rings (wide, slow fade)
-                    ForEach([leftLensX, rightLensX], id: \.self) { lx in
-                        RoundedRectangle(cornerRadius: 32)
-                            .stroke(blue.opacity(outerRingOpacity), lineWidth: 3)
-                            .frame(width: lensW * outerRingScale, height: lensH * outerRingScale)
-                            .position(x: lx, y: lensY)
-                            .blur(radius: 8)
-                            .allowsHitTesting(false)
-                    }
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) {
-                            outerRingScale   = 1.24
-                            outerRingOpacity = 0.0
-                        }
-                    }
-
-                    // Inner pulse rings (tighter, faster)
-                    let lensInnerW = lensW - 22
-                    let lensInnerH = lensH - 22
+                    // Pulsing glow rings
+                    let lensInnerW = lensW - 26
+                    let lensInnerH = lensH - 26
                     ForEach([leftLensX, rightLensX], id: \.self) { lx in
                         RoundedRectangle(cornerRadius: 28)
                             .stroke(blue.opacity(pulseOpacity), lineWidth: 5)
@@ -208,7 +152,7 @@ struct ContentView: View {
                     }
                     .onAppear {
                         withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
-                            pulseScale   = 1.12
+                            pulseScale = 1.12
                             pulseOpacity = 0.0
                         }
                     }
@@ -217,7 +161,7 @@ struct ContentView: View {
                     Button {
                         triggerZoom(target: .user, w: w, h: h)
                     } label: {
-                        VStack(spacing: 3) {
+                        VStack(spacing: 4) {
                             Text("Student")
                                 .font(.custom("CopernicusTrial-Book", size: 16))
                                 .foregroundStyle(blue)
@@ -225,23 +169,11 @@ struct ContentView: View {
                                 .font(.custom("CopernicusTrial-Book", size: 11))
                                 .foregroundStyle(charcoal.opacity(0.50))
                         }
-                        .padding(.horizontal, 22)
-                        .padding(.vertical, 11)
-                        .background(
-                            LinearGradient(colors: [blue.opacity(0.20), deepBlue.opacity(0.12)],
-                                           startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(
-                                    LinearGradient(colors: [blue.opacity(0.65), blue.opacity(0.18)],
-                                                   startPoint: .topLeading, endPoint: .bottomTrailing),
-                                    lineWidth: 1.5
-                                )
-                        )
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(blue.opacity(0.10))
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(blue.opacity(0.30), lineWidth: 1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(color: blue.opacity(0.38), radius: 14, x: 0, y: 6)
-                        .shadow(color: deepBlue.opacity(0.20), radius: 26, x: 0, y: 10)
                     }
                     .buttonStyle(.plain)
                     .position(x: leftLensX, y: cardY)
@@ -251,7 +183,7 @@ struct ContentView: View {
                     Button {
                         triggerZoom(target: .expert, w: w, h: h)
                     } label: {
-                        VStack(spacing: 3) {
+                        VStack(spacing: 4) {
                             Text("Expert")
                                 .font(.custom("CopernicusTrial-Book", size: 16))
                                 .foregroundStyle(blue)
@@ -259,23 +191,11 @@ struct ContentView: View {
                                 .font(.custom("CopernicusTrial-Book", size: 11))
                                 .foregroundStyle(charcoal.opacity(0.50))
                         }
-                        .padding(.horizontal, 22)
-                        .padding(.vertical, 11)
-                        .background(
-                            LinearGradient(colors: [blue.opacity(0.20), deepBlue.opacity(0.12)],
-                                           startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(
-                                    LinearGradient(colors: [blue.opacity(0.65), blue.opacity(0.18)],
-                                                   startPoint: .topLeading, endPoint: .bottomTrailing),
-                                    lineWidth: 1.5
-                                )
-                        )
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(blue.opacity(0.10))
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(blue.opacity(0.30), lineWidth: 1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(color: blue.opacity(0.38), radius: 14, x: 0, y: 6)
-                        .shadow(color: deepBlue.opacity(0.20), radius: 26, x: 0, y: 10)
                     }
                     .buttonStyle(.plain)
                     .position(x: rightLensX, y: cardY)
@@ -284,12 +204,11 @@ struct ContentView: View {
                     // Hint text
                     Text("tap a lens to begin")
                         .font(.custom("CopernicusTrial-Book", size: 12))
-                        .foregroundStyle(blue.opacity(0.58))
-                        .tracking(2.2)
-                        .shadow(color: blue.opacity(0.45), radius: 8, x: 0, y: 1)
-                        .scaleEffect(pulseScale > 1.05 ? 1.04 : 1.0)
+                        .foregroundStyle(blue.opacity(0.50))
+                        .tracking(1.8)
+                        .scaleEffect(pulseScale > 1.05 ? 1.03 : 1.0)
                         .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulseScale)
-                        .position(x: w / 2, y: cardY + 58)
+                        .position(x: w / 2, y: cardY + 56)
                         .zIndex(1)
                 }
 
@@ -330,8 +249,7 @@ struct ContentView: View {
                 if zoomTarget == nil {
                     GlassesFrameView(width: w * 0.88)
                         .position(x: w / 2, y: lensY)
-                        .shadow(color: Color(red: 0.43, green: 0.51, blue: 0.59).opacity(0.60), radius: 36, x: 0, y: 16)
-                        .shadow(color: Color(red: 0.28, green: 0.36, blue: 0.48).opacity(0.35), radius: 64, x: 0, y: 24)
+                        .shadow(color: .black.opacity(0.25), radius: 20, x: 0, y: 12)
                         .zIndex(0)
                 }
             }
