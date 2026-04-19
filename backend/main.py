@@ -43,6 +43,7 @@ async def create_knot_session(body: CreateSessionRequest):
             json={
                 "type": "transaction_link",
                 "external_user_id": body.external_user_id,
+                "merchant_ids": [41],
             },
         )
 
