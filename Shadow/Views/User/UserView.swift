@@ -44,11 +44,11 @@ let mockCategories: [TutorialCategory] = [
 ]
 
 let mockWalmartTransactions: [WalmartTransaction] = [
-    WalmartTransaction(id: "t1", amount: 47.23, date: "Apr 16, 2026", name: "Grocery Pickup - Walmart", merchantName: "Walmart"),
-    WalmartTransaction(id: "t2", amount: 12.99, date: "Apr 14, 2026", name: "Great Value Milk & Eggs", merchantName: "Walmart"),
-    WalmartTransaction(id: "t3", amount: 89.50, date: "Apr 11, 2026", name: "Electronics - USB Cable & Case", merchantName: "Walmart"),
-    WalmartTransaction(id: "t4", amount: 33.15, date: "Apr 8, 2026", name: "Household Essentials", merchantName: "Walmart"),
-    WalmartTransaction(id: "t5", amount: 21.75, date: "Apr 4, 2026", name: "Pharmacy - OTC Meds", merchantName: "Walmart"),
+    WalmartTransaction(id: "t1", amount: 34.99, date: "Apr 17, 2026", name: "Chipotle Mexican Grill", merchantName: "DoorDash"),
+    WalmartTransaction(id: "t2", amount: 22.50, date: "Apr 15, 2026", name: "Chick-fil-A", merchantName: "DoorDash"),
+    WalmartTransaction(id: "t3", amount: 41.10, date: "Apr 12, 2026", name: "Shake Shack", merchantName: "DoorDash"),
+    WalmartTransaction(id: "t4", amount: 18.75, date: "Apr 9, 2026", name: "Sweetgreen", merchantName: "DoorDash"),
+    WalmartTransaction(id: "t5", amount: 27.30, date: "Apr 5, 2026", name: "Five Guys Burgers", merchantName: "DoorDash"),
 ]
 
 let mockTutorials: [Tutorial] = [
@@ -133,9 +133,11 @@ struct UserView: View {
                                 sessionId: sessionId,
                                 clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
                                 onSuccess: { _ in
+                                    // Show mock data immediately so user sees history right away
+                                    transactions = mockWalmartTransactions
                                     Task { @MainActor in
                                         let fetched = await fetchTransactions(userId: "user_001")
-                                        transactions = fetched.isEmpty ? mockWalmartTransactions : fetched
+                                        if !fetched.isEmpty { transactions = fetched }
                                     }
                                 },
                                 onExitHandler: {
