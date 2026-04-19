@@ -16,21 +16,67 @@ struct Tutorial: Identifiable {
     let duration: String
 }
 
-struct WalmartTransaction: Codable, Identifiable {
+// MARK: - Knot Transaction Models
+struct KnotTransaction: Codable, Identifiable {
     let id: String
-    let amount: Double
-    let date: String
-    let name: String
-    let merchantName: String?
+    let datetime: String
+    let orderStatus: String
+    let price: KnotPrice
+    let products: [KnotProduct]
 
     enum CodingKeys: String, CodingKey {
-        case id, amount, date, name
-        case merchantName = "merchant_name"
+        case id, datetime, products, price
+        case orderStatus = "order_status"
+    }
+
+    var displayName: String {
+        guard !products.isEmpty else { return "DoorDash Order" }
+        return products.prefix(2).map { $0.name }.joined(separator: ", ")
+    }
+
+    var restaurantName: String {
+        products.first?.seller?.name ?? "DoorDash"
+    }
+
+    var displayDate: String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        if let date = formatter.date(from: datetime) {
+            let display = DateFormatter()
+            display.dateStyle = .medium
+            return display.string(from: date)
+        }
+        return datetime
+    }
+
+    var amount: Double {
+        Double(price.total) ?? 0
     }
 }
 
-struct TransactionsResponse: Codable {
-    let transactions: [WalmartTransaction]
+struct KnotPrice: Codable {
+    let total: String
+    let currency: String?
+}
+
+struct KnotProduct: Codable {
+    let name: String
+    let quantity: Int
+    let seller: KnotSeller?
+    let imageUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, quantity, seller
+        case imageUrl = "image_url"
+    }
+}
+
+struct KnotSeller: Codable {
+    let name: String
+}
+
+struct KnotTransactionsResponse: Codable {
+    let transactions: [KnotTransaction]
 }
 
 // MARK: - Mock Data
@@ -43,12 +89,16 @@ let mockCategories: [TutorialCategory] = [
     .init(name: "Crafts", icon: "scissors"),
 ]
 
-let mockWalmartTransactions: [WalmartTransaction] = [
-    WalmartTransaction(id: "t1", amount: 34.99, date: "Apr 17, 2026", name: "Chipotle Mexican Grill", merchantName: "DoorDash"),
-    WalmartTransaction(id: "t2", amount: 22.50, date: "Apr 15, 2026", name: "Chick-fil-A", merchantName: "DoorDash"),
-    WalmartTransaction(id: "t3", amount: 41.10, date: "Apr 12, 2026", name: "Shake Shack", merchantName: "DoorDash"),
-    WalmartTransaction(id: "t4", amount: 18.75, date: "Apr 9, 2026", name: "Sweetgreen", merchantName: "DoorDash"),
-    WalmartTransaction(id: "t5", amount: 27.30, date: "Apr 5, 2026", name: "Five Guys Burgers", merchantName: "DoorDash"),
+let mockKnotTransactions: [KnotTransaction] = [
+    KnotTransaction(id: "m1", datetime: "2026-04-17T12:00:00+00:00", orderStatus: "COMPLETED",
+        price: KnotPrice(total: "34.99", currency: "USD"),
+        products: [KnotProduct(name: "Burrito Bowl", quantity: 1, seller: KnotSeller(name: "Chipotle"), imageUrl: nil)]),
+    KnotTransaction(id: "m2", datetime: "2026-04-15T18:30:00+00:00", orderStatus: "COMPLETED",
+        price: KnotPrice(total: "22.50", currency: "USD"),
+        products: [KnotProduct(name: "Chicken Sandwich", quantity: 1, seller: KnotSeller(name: "Chick-fil-A"), imageUrl: nil)]),
+    KnotTransaction(id: "m3", datetime: "2026-04-12T20:00:00+00:00", orderStatus: "COMPLETED",
+        price: KnotPrice(total: "41.10", currency: "USD"),
+        products: [KnotProduct(name: "ShackBurger", quantity: 2, seller: KnotSeller(name: "Shake Shack"), imageUrl: nil)]),
 ]
 
 let mockTutorials: [Tutorial] = [
@@ -66,7 +116,7 @@ struct UserView: View {
     @State private var showWalmartLogin = false
     @State private var knotSessionId: String? = nil
     @State private var isLoadingSession = false
-    @State private var transactions: [WalmartTransaction] = []
+    @State private var transactions: [KnotTransaction] = []
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -134,7 +184,7 @@ struct UserView: View {
                                 clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
                                 onSuccess: { _ in
                                     // Show mock data immediately so user sees history right away
-                                    transactions = mockWalmartTransactions
+                                    transactions = mockKnotTransactions
                                     Task { @MainActor in
                                         let fetched = await fetchTransactions(userId: "user_001")
                                         if !fetched.isEmpty { transactions = fetched }
@@ -170,15 +220,19 @@ struct UserView: View {
                                 .padding(.horizontal)
 
                             ForEach(transactions) { txn in
-                                HStack {
+                                HStack(spacing: 10) {
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(txn.name)
+                                        Text(txn.restaurantName)
                                             .font(.custom("CopernicusTrial-Book", size: 13))
                                             .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
                                             .lineLimit(1)
-                                        Text(txn.date)
+                                        Text(txn.displayName)
                                             .font(.custom("CopernicusTrial-Book", size: 11))
                                             .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.6))
+                                            .lineLimit(1)
+                                        Text(txn.displayDate)
+                                            .font(.custom("CopernicusTrial-Book", size: 10))
+                                            .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.45))
                                     }
                                     Spacer()
                                     Text(String(format: "$%.2f", txn.amount))
@@ -271,7 +325,7 @@ private func fetchKnotSession(userId: String) async throws -> String {
 }
 
 // MARK: - Knot transactions fetch
-private func fetchTransactions(userId: String) async -> [WalmartTransaction] {
+private func fetchTransactions(userId: String) async -> [KnotTransaction] {
     guard let url = URL(string: "http://localhost:8000/knot/transactions/\(userId)") else { return [] }
     do {
         let (data, response) = try await URLSession.shared.data(from: url)
@@ -279,11 +333,10 @@ private func fetchTransactions(userId: String) async -> [WalmartTransaction] {
             print("[Knot] Transactions request failed with status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
             return []
         }
-        // Print raw JSON response
         if let raw = String(data: data, encoding: .utf8) {
             print("[Knot] Raw transactions JSON:\n\(raw)")
         }
-        let decoded = try JSONDecoder().decode(TransactionsResponse.self, from: data)
+        let decoded = try JSONDecoder().decode(KnotTransactionsResponse.self, from: data)
         print("[Knot] Decoded \(decoded.transactions.count) transactions")
         return decoded.transactions
     } catch {
