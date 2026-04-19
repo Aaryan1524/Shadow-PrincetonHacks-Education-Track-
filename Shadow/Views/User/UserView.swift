@@ -115,7 +115,7 @@ struct UserView: View {
                                 ProgressView().tint(.white)
                             } else {
                                 Image(systemName: "bag.fill")
-                                Text("Connect GoPuff Account")
+                                Text("Connect DoorDash Account")
                                     .font(.custom("CopernicusTrial-Book", size: 14))
                             }
                         }
@@ -160,7 +160,7 @@ struct UserView: View {
                         .padding(.horizontal)
                     } else {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Recent GoPuff Purchases")
+                            Text("Recent DoorDash Orders")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
                                 .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
                                 .padding(.horizontal)

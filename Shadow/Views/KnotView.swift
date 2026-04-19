@@ -25,8 +25,8 @@ struct KnotView: UIViewControllerRepresentable {
             environment: .production,
             entryPoint: "onboarding",
             useCategories: false,
-            useSearch: true,
-            merchantIds: []
+            useSearch: false,
+            merchantIds: [19]
         )
 
         DispatchQueue.main.async {

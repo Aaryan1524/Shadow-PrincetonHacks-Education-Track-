@@ -43,6 +43,7 @@ async def create_knot_session(body: CreateSessionRequest):
             json={
                 "type": "transaction_link",
                 "external_user_id": body.external_user_id,
+                "merchant_ids": [19],
             },
         )
 
@@ -63,13 +64,16 @@ async def knot_webhook(request: Request):
 @app.get("/knot/transactions/{external_user_id}")
 async def get_transactions(external_user_id: str):
     async with httpx.AsyncClient() as client:
-        response = await client.get(
-            f"{KNOT_BASE_URL}/transactions",
-            headers={"Authorization": _basic_auth_header()},
-            params={"external_user_id": external_user_id},
+        response = await client.post(
+            f"{KNOT_BASE_URL}/transactions/sync",
+            headers={
+                "Authorization": _basic_auth_header(),
+                "Content-Type": "application/json",
+            },
+            json={"external_user_id": external_user_id, "merchant_id": 19},
         )
 
-    if response.status_code != 200:
+    if response.status_code not in (200, 201):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return response.json()
