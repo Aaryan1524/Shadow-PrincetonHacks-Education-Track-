@@ -210,6 +210,14 @@ struct UserView: View {
                                 },
                                 onExitHandler: {
                                     showWalmartLogin = false
+                                    // onExit = user closed Knot (may have successfully authed)
+                                    // For transaction-fetch use case, onSuccess never fires — only onExit does
+                                    print("[Debug] 6️⃣ onExit: showing mock + fetching real transactions")
+                                    transactions = mockKnotTransactions
+                                    Task { @MainActor in
+                                        let fetched = await fetchTransactions(userId: "user_001")
+                                        if !fetched.isEmpty { transactions = fetched }
+                                    }
                                 }
                             )
                         }
