@@ -22,7 +22,7 @@ struct KnotView: UIViewControllerRepresentable {
         let config = KnotConfiguration(
             sessionId: sessionId,
             clientId: clientId,
-            environment: .development,
+            environment: .production,
             entryPoint: "onboarding",
             useCategories: false,
             useSearch: true,

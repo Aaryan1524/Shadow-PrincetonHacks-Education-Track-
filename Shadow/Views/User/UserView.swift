@@ -131,7 +131,7 @@ struct UserView: View {
                         if let sessionId = knotSessionId {
                             KnotView(
                                 sessionId: sessionId,
-                                clientId: "dda0778d-9486-47f8-bd80-6f2512f9bcdb",
+                                clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
                                 onSuccess: { _ in
                                     showWalmartLogin = false
                                     Task { @MainActor in
@@ -144,7 +144,21 @@ struct UserView: View {
                     }
 
                     // Transactions section
-                    if !transactions.isEmpty {
+                    if transactions.isEmpty {
+                        VStack(spacing: 6) {
+                            Image(systemName: "bag")
+                                .font(.system(size: 28))
+                                .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.35))
+                            Text("Purchase history will appear here")
+                                .font(.custom("CopernicusTrial-Book", size: 13))
+                                .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.45))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 18)
+                        .background(Color.white.opacity(0.3))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal)
+                    } else {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Recent GoPuff Purchases")
                                 .font(.custom("CopernicusTrial-Book", size: 15))

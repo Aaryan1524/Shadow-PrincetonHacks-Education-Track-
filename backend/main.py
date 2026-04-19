@@ -16,7 +16,7 @@ app.add_middleware(
 
 KNOT_CLIENT_ID = os.environ.get("KNOT_CLIENT_ID", "")
 KNOT_SECRET_KEY = os.environ.get("KNOT_SECRET_KEY", "")
-KNOT_BASE_URL = "https://development.knotapi.com"
+KNOT_BASE_URL = "https://production.knotapi.com"
 
 
 def _basic_auth_header() -> str:
