@@ -133,11 +133,13 @@ struct UserView: View {
                                 sessionId: sessionId,
                                 clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
                                 onSuccess: { _ in
-                                    showWalmartLogin = false
                                     Task { @MainActor in
                                         let fetched = await fetchTransactions(userId: "user_001")
                                         transactions = fetched.isEmpty ? mockWalmartTransactions : fetched
                                     }
+                                },
+                                onExitHandler: {
+                                    showWalmartLogin = false
                                 }
                             )
                         }
@@ -271,11 +273,19 @@ private func fetchTransactions(userId: String) async -> [WalmartTransaction] {
     guard let url = URL(string: "http://localhost:8000/knot/transactions/\(userId)") else { return [] }
     do {
         let (data, response) = try await URLSession.shared.data(from: url)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return [] }
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            print("[Knot] Transactions request failed with status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+            return []
+        }
+        // Print raw JSON response
+        if let raw = String(data: data, encoding: .utf8) {
+            print("[Knot] Raw transactions JSON:\n\(raw)")
+        }
         let decoded = try JSONDecoder().decode(TransactionsResponse.self, from: data)
+        print("[Knot] Decoded \(decoded.transactions.count) transactions")
         return decoded.transactions
     } catch {
-        print("Failed to fetch transactions: \(error)")
+        print("[Knot] Failed to fetch/decode transactions: \(error)")
         return []
     }
 }

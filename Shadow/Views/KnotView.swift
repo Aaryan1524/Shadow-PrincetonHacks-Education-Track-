@@ -36,6 +36,8 @@ struct KnotView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, KnotEventDelegate {
         var hasOpened = false
+        var hasSucceeded = false
+        var hasDismissed = false
         var onSuccess: ((String) -> Void)?
         var onExitHandler: (() -> Void)?
 
@@ -45,11 +47,23 @@ struct KnotView: UIViewControllerRepresentable {
         }
 
         func onSuccess(merchant: String) {
+            hasSucceeded = true
+            print("[Knot] ✅ User logged in successfully. Merchant: \(merchant)")
             onSuccess?(merchant)
+            // Dismiss after a short delay so Knot can animate its success screen
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.dismiss()
+            }
         }
 
         func onExit() {
-            // Don't close the sheet on onExit — let the user swipe down or succeed
+            dismiss()
+        }
+
+        private func dismiss() {
+            guard !hasDismissed else { return }
+            hasDismissed = true
+            onExitHandler?()
         }
 
         func onError(error: KnotError) {
