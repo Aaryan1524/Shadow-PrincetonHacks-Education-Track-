@@ -64,6 +64,8 @@ struct UserView: View {
     @State private var searchText = ""
     @State private var selectedCategory = "All"
     @State private var showWalmartLogin = false
+    @State private var knotSessionId: String? = nil
+    @State private var isLoadingSession = false
     @State private var transactions: [WalmartTransaction] = []
 
     private let columns = [
@@ -97,11 +99,25 @@ struct UserView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     // Connect Walmart button
-                    Button(action: { showWalmartLogin = true }) {
+                    Button(action: {
+                        guard !isLoadingSession else { return }
+                        isLoadingSession = true
+                        Task { @MainActor in
+                            if let sessionId = try? await fetchKnotSession(userId: "user_001") {
+                                knotSessionId = sessionId
+                                showWalmartLogin = true
+                            }
+                            isLoadingSession = false
+                        }
+                    }) {
                         HStack {
-                            Image(systemName: "cart.fill")
-                            Text("Connect Walmart Account")
-                                .font(.custom("CopernicusTrial-Book", size: 14))
+                            if isLoadingSession {
+                                ProgressView().tint(.white)
+                            } else {
+                                Image(systemName: "cart.fill")
+                                Text("Connect Walmart Account")
+                                    .font(.custom("CopernicusTrial-Book", size: 14))
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -112,10 +128,20 @@ struct UserView: View {
                     .buttonStyle(.plain)
                     .padding(.horizontal)
                     .sheet(isPresented: $showWalmartLogin) {
-                        WalmartLoginSheet(onConnected: {
-                            showWalmartLogin = false
-                            transactions = mockWalmartTransactions
-                        })
+                        if let sessionId = knotSessionId {
+                            KnotView(
+                                sessionId: sessionId,
+                                clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
+                                onSuccess: { _ in
+                                    showWalmartLogin = false
+                                    Task { @MainActor in
+                                        let fetched = await fetchTransactions(userId: "user_001")
+                                        transactions = fetched.isEmpty ? mockWalmartTransactions : fetched
+                                    }
+                                },
+                                onExitHandler: { showWalmartLogin = false }
+                            )
+                        }
                     }
 
                     // Transactions section

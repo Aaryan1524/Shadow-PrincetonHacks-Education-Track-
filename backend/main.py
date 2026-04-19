@@ -16,7 +16,7 @@ app.add_middleware(
 
 KNOT_CLIENT_ID = os.environ.get("KNOT_CLIENT_ID", "")
 KNOT_SECRET_KEY = os.environ.get("KNOT_SECRET_KEY", "")
-KNOT_BASE_URL = "https://development.knotapi.com"
+KNOT_BASE_URL = "https://production.knotapi.com"
 
 
 def _basic_auth_header() -> str:
@@ -73,6 +73,25 @@ async def get_transactions(external_user_id: str):
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
+    return response.json()
+
+
+@app.get("/knot/merchants")
+async def list_merchants(type: str = "transaction_link", platform: str = "ios", search: str = None):
+    params = {"type": type, "platform": platform}
+    if search:
+        params["search"] = search
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{KNOT_BASE_URL}/merchants/list",
+            headers={
+                "Authorization": _basic_auth_header(),
+                "Content-Type": "application/json",
+            },
+            json=params,
+        )
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
     return response.json()
 
 
