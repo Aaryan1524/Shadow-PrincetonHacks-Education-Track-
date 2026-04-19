@@ -25,7 +25,7 @@ struct KnotView: UIViewControllerRepresentable {
             environment: .development,
             entryPoint: "onboarding",
             useCategories: false,
-            useSearch: true,
+            useSearch: false,
             merchantIds: [41]
         )
 
