@@ -12,22 +12,40 @@ import os
 import wave
 from typing import Optional
 
-import google.generativeai as genai
-from google.generativeai import protos
+from google import genai
+from google.genai import types
 
 # ── API key configuration ──────────────────────────────────────────────────────
 # load_dotenv() has already run in main.py before this module is imported,
 # so GOOGLE_API_KEY is in os.environ.
-genai.configure(api_key=os.environ.get("GOOGLE_API_KEY", ""))
+_client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY", ""))
 
-_MODEL_NAME = "gemini-3.1-flash-lite-preview"
+_MODEL_NAME = "gemini-2.0-flash"
 
-_SYSTEM_INSTRUCTION = (
-    "You are a voice coaching assistant for a hands-on learning task. "
-    "The learner is wearing AR glasses and you are their real-time audio guide. "
-    "Be conversational, encouraging, and concise. "
-    "Speak naturally as if talking to the learner in person."
-)
+_SYSTEM_INSTRUCTION = """
+You are Alex, a warm, funny, and genuinely helpful coach guiding someone through a hands-on task in real time. They're wearing AR glasses and can't look at a screen — you're their voice in their ear.
+
+Your personality:
+- Talk like a real person. Casual, natural, contractions. Not a robot, not a manual.
+- Use humor when it fits. If they mess up: "Ha, okay — not quite, but you're close!" If they get it: "Yes! Exactly like that, nice work."
+- Be warm and patient. Never make them feel dumb. If they're stuck: "This one's tricky, everyone fumbles it at first."
+- Keep it SHORT. They have their hands full. 1-3 sentences max. Get to the point fast.
+- Be SPECIFIC. Don't say "good job" — say what exactly was good or what exactly needs fixing.
+- Vary your language. Never start replies the same way twice.
+- You can hear their voice — respond to what they actually said, not a generic script.
+
+What you never do:
+- Never say "Certainly!", "Of course!", "Great question!" or any assistant-speak.
+- Never lecture. Quick coaching moments only.
+- Never repeat the step instruction back word for word.
+
+Examples:
+- "Hmm, tilt it a little more to the right — yeah, there you go."
+- "Ha, happens to everyone. Make sure the lid clicks before you move on."
+- "Okay that's perfect actually, you can move to the next one."
+- "So the trick here is to go slow — if you rush this part, it gets messy later."
+"""
+
 
 
 # ── WAV builder ───────────────────────────────────────────────────────────────
@@ -57,8 +75,7 @@ def build_wav_from_pcm(pcm_bytes: bytes, sample_rate: int = 16000) -> bytes:
 def transcribe_and_coach(
     wav_bytes: bytes,
     lesson_title: str,
-    step_instruction: str,
-    success_criteria: str,
+    step: any,
     step_index: int,
     total_steps: int,
     conversation_history: list[dict],
@@ -99,44 +116,66 @@ def transcribe_and_coach(
     else:
         visual_context = "No visual analysis available yet."
 
+    blueprint_parts = [
+        f"LESSON: {lesson_title}",
+        f"CURRENT STEP ({step_index + 1} of {total_steps}): {getattr(step, 'instruction', str(step))}",
+    ]
+    
+    # Extract rich metadata from the master blueprint schema if available
+    meta_fields = {
+        "EXPERT TECHNIQUE": getattr(step, 'technique_notes', ""),
+        "PACE/TEMPO": getattr(step, 'tempo_description', ""),
+        "SUCCESS LOOK": getattr(step, 'success_criteria', ""),
+        "POTENTIAL MISTAKES": getattr(step, 'common_failure_points', ""),
+        "FAILURE TRIGGERS": getattr(step, 'failure_triggers', ""),
+    }
+    for label, val in meta_fields.items():
+        if val and str(val).strip():
+            blueprint_parts.append(f"{label}: {val}")
+    
+    blueprint_parts.append(f"AI VISUAL ANALYSIS: {visual_context}")
+    
     context_prompt = (
-        f"Lesson: {lesson_title}\n"
-        f"Current step ({step_index + 1} of {total_steps}): {step_instruction}\n"
-        f"Success criteria: {success_criteria}\n"
-        f"{visual_context}\n\n"
+        "--- MASTER KNOWLEDGE BLUEPRINT ---\n" +
+        "\n".join(blueprint_parts) +
+        "\n----------------------------------\n\n"
         "The learner just said something (listen to the audio above). "
         "Respond as their coach — answer their question, give guidance, or "
-        "encourage them. Keep your response to 1-3 sentences."
+        "encourage them using the blueprint details above. Keep it to 1-3 sentences."
     )
 
     # ── 2. Build Gemini content list ──────────────────────────────────────────
     # Previous turns from conversation_history (stored as Gemini-native dicts)
     gemini_history = []
     for turn in conversation_history:
-        gemini_history.append({
-            "role": turn["role"],          # "user" or "model"
-            "parts": [turn["content"]],    # Gemini parts are lists
-        })
+        gemini_history.append(
+            types.Content(
+                role=turn["role"],          # "user" or "model"
+                parts=[types.Part(text=turn["content"])],
+            )
+        )
 
-    # Current user turn: audio blob + text context (both in the same Content)
+    # Current user turn: audio blob + text context
     current_parts = [
-        protos.Part(inline_data=protos.Blob(mime_type="audio/wav", data=wav_bytes)),
-        protos.Part(text=context_prompt),
+        types.Part(
+            inline_data=types.Blob(mime_type="audio/wav", data=wav_bytes)
+        ),
+        types.Part(text=context_prompt),
     ]
-    current_content = protos.Content(role="user", parts=current_parts)
+    current_content = types.Content(role="user", parts=current_parts)
 
     all_contents = gemini_history + [current_content]
 
     # ── 3. Call Gemini ────────────────────────────────────────────────────────
-    model = genai.GenerativeModel(
-        model_name=_MODEL_NAME,
-        system_instruction=_SYSTEM_INSTRUCTION,
-    )
-
     try:
-        response = model.generate_content(
+        response = _client.models.generate_content(
+            model=_MODEL_NAME,
             contents=all_contents,
-            generation_config={"max_output_tokens": 200, "temperature": 0.7},
+            config=types.GenerateContentConfig(
+                system_instruction=_SYSTEM_INSTRUCTION,
+                max_output_tokens=10000,
+                temperature=0.9,
+            ),
         )
         reply = response.text.strip()
     except Exception as exc:

@@ -31,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		522040F72F93656300FB1520 /* CameraAccess.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CameraAccess.xcodeproj; sourceTree = "<group>"; };
+		5220425D2F941CBD00FB1520 /* CameraAccess.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CameraAccess.xcodeproj; sourceTree = "<group>"; };
 		527EA4142F9348520085482E /* Shadow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shadow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		527EA4262F9348530085482E /* ShadowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		527EA4302F9348530085482E /* ShadowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +100,13 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		522042692F941CBD00FB1520 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		527EA40B2F9348520085482E = {
@@ -236,6 +244,10 @@
 			productRefGroup = 527EA4152F9348520085482E /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 522042692F941CBD00FB1520 /* Products */;
+					ProjectRef = 5220425D2F941CBD00FB1520 /* CameraAccess.xcodeproj */;
+				},
 				{
 					ProductGroup = 522041042F93656300FB1520 /* Products */;
 					ProjectRef = 522040F72F93656300FB1520 /* CameraAccess.xcodeproj */;

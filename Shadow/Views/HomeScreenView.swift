@@ -3,6 +3,7 @@ import SwiftUI
 
 struct HomeScreenView: View {
     @ObservedObject var viewModel: WearablesViewModel
+    var onBack: (() -> Void)? = nil
     var onSelectLesson: (APILesson) -> Void
 
     @State private var lessons: [APILesson] = []
@@ -11,24 +12,63 @@ struct HomeScreenView: View {
 
     var body: some View {
         ZStack {
-            Color(.systemBackground).edgesIgnoringSafeArea(.all)
+            Color.shadowCream.ignoresSafeArea()
 
-            if viewModel.registrationState != .registered {
-                connectView
-            } else if isLoading {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                    Text("Loading lessons...")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+            VStack(spacing: 0) {
+                // Navigation bar
+                HStack {
+                    if let onBack {
+                        Button(action: onBack) {
+                            HStack(spacing: 5) {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Back")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(.shadowOrange)
+                        }
+                    }
+                    Spacer()
                 }
-            } else if let error = loadError {
-                errorView(error)
-            } else if lessons.isEmpty {
-                emptyView
-            } else {
-                lessonListView
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
+
+                // Glasses connection banner
+                if viewModel.registrationState != .registered {
+                    HStack(spacing: 8) {
+                        Image(systemName: "eyeglasses")
+                            .foregroundColor(.white)
+                        Text("Connect Meta glasses to start a session")
+                            .font(.caption.bold())
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button("Connect") { viewModel.connectGlasses() }
+                            .font(.caption.bold())
+                            .foregroundColor(.white.opacity(0.85))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color.shadowOrange)
+                }
+
+                if isLoading {
+                    Spacer()
+                    VStack(spacing: 14) {
+                        ProgressView()
+                            .tint(.shadowOrange)
+                        Text("Loading lessons...")
+                            .font(.subheadline)
+                            .foregroundColor(.shadowSecondary)
+                    }
+                    Spacer()
+                } else if let error = loadError {
+                    errorView(error)
+                } else if lessons.isEmpty {
+                    emptyView
+                } else {
+                    lessonListView
+                }
             }
         }
         .alert("Error", isPresented: $viewModel.showError) {
@@ -36,95 +76,39 @@ struct HomeScreenView: View {
         } message: {
             Text(viewModel.errorMessage)
         }
-        .onChange(of: viewModel.registrationState) { newState in
-            if newState == .registered {
-                Task { await fetchLessons() }
-            }
+        .task {
+            guard lessons.isEmpty else { return }
+            await fetchLessons()
         }
-    }
-
-    // MARK: - Connect View (pre-registration)
-
-    private var connectView: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            Image(systemName: "eyeglasses")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 100)
-                .foregroundColor(.accentColor)
-
-            VStack(spacing: 8) {
-                Text("Shadow")
-                    .font(.largeTitle.bold())
-                Text("Connect your Meta glasses to get started")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-
-            VStack(alignment: .leading, spacing: 16) {
-                FeatureRow(icon: "video.fill", title: "Live Streaming", subtitle: "Stream video from your glasses in real-time")
-                FeatureRow(icon: "camera.fill", title: "Photo Capture", subtitle: "Capture photos directly from your glasses")
-                FeatureRow(icon: "hand.raised.fill", title: "Hands-Free", subtitle: "Stay connected without reaching for your phone")
-            }
-            .padding(.horizontal)
-
-            Spacer()
-
-            VStack(spacing: 12) {
-                Text("You'll be redirected to Meta AI to confirm your connection.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-
-                Button {
-                    viewModel.connectGlasses()
-                } label: {
-                    Text(viewModel.registrationState == .registering ? "Connecting..." : "Connect My Glasses")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(viewModel.registrationState == .registering ? Color.gray : Color.accentColor)
-                        .foregroundColor(.white)
-                        .cornerRadius(14)
-                }
-                .disabled(viewModel.registrationState == .registering)
-            }
-            .padding(.horizontal)
-        }
-        .padding(.vertical, 24)
     }
 
     // MARK: - Lesson List
 
     private var lessonListView: some View {
         VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Text("Choose a Lesson")
-                    .font(.title2.bold())
+                    .font(.system(size: 26, weight: .light, design: .serif))
+                    .foregroundColor(.shadowPrimary)
                 Text("Select what you'd like to learn today")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14))
+                    .foregroundColor(.shadowSecondary)
             }
-            .padding(.top, 24)
-            .padding(.bottom, 16)
+            .padding(.top, 28)
+            .padding(.bottom, 20)
 
             ScrollView {
-                LazyVStack(spacing: 16) {
+                LazyVStack(spacing: 14) {
                     ForEach(lessons) { lesson in
                         LessonCard(lesson: lesson) {
                             onSelectLesson(lesson)
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 24)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 28)
             }
 
-            // Refresh button at bottom
             Button {
                 Task { await fetchLessons() }
             } label: {
@@ -133,7 +117,7 @@ struct HomeScreenView: View {
                     Text("Refresh")
                 }
                 .font(.subheadline)
-                .foregroundColor(.accentColor)
+                .foregroundColor(.shadowOrange)
             }
             .padding(.bottom, 16)
         }
@@ -144,13 +128,14 @@ struct HomeScreenView: View {
     private var emptyView: some View {
         VStack(spacing: 16) {
             Image(systemName: "book.closed")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            Text("No Lessons Available")
-                .font(.title3.bold())
+                .font(.system(size: 44))
+                .foregroundColor(.shadowOrange.opacity(0.5))
+            Text("No Lessons Yet")
+                .font(.system(size: 20, weight: .light, design: .serif))
+                .foregroundColor(.shadowPrimary)
             Text("Create a lesson from the backend to get started.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.shadowSecondary)
                 .multilineTextAlignment(.center)
             Button {
                 Task { await fetchLessons() }
@@ -159,15 +144,15 @@ struct HomeScreenView: View {
                     Image(systemName: "arrow.clockwise")
                     Text("Refresh")
                 }
-                .font(.headline)
+                .font(.subheadline.bold())
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(Color.accentColor)
+                .background(Color.shadowOrange)
                 .foregroundColor(.white)
                 .cornerRadius(12)
             }
         }
-        .padding()
+        .padding(32)
     }
 
     // MARK: - Error View
@@ -175,13 +160,14 @@ struct HomeScreenView: View {
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "wifi.exclamationmark")
-                .font(.system(size: 48))
-                .foregroundColor(.red)
-            Text("Failed to Load Lessons")
-                .font(.title3.bold())
+                .font(.system(size: 44))
+                .foregroundColor(.shadowOrange.opacity(0.6))
+            Text("Couldn't Load Lessons")
+                .font(.system(size: 20, weight: .light, design: .serif))
+                .foregroundColor(.shadowPrimary)
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.shadowSecondary)
                 .multilineTextAlignment(.center)
             Button {
                 Task { await fetchLessons() }
@@ -190,15 +176,15 @@ struct HomeScreenView: View {
                     Image(systemName: "arrow.clockwise")
                     Text("Retry")
                 }
-                .font(.headline)
+                .font(.subheadline.bold())
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(Color.accentColor)
+                .background(Color.shadowOrange)
                 .foregroundColor(.white)
                 .cornerRadius(12)
             }
         }
-        .padding()
+        .padding(32)
     }
 
     // MARK: - Fetch
@@ -222,42 +208,45 @@ struct LessonCard: View {
     let onStart: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(lesson.title)
-                        .font(.headline)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.shadowPrimary)
                     Text(lesson.description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 13))
+                        .foregroundColor(.shadowSecondary)
                         .lineLimit(2)
                 }
                 Spacer()
                 Text("\(lesson.steps.count) steps")
-                    .font(.caption)
+                    .font(.system(size: 11, weight: .medium))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(Color.accentColor.opacity(0.15))
-                    .foregroundColor(.accentColor)
+                    .background(Color.shadowOrange.opacity(0.1))
+                    .foregroundColor(.shadowOrange)
                     .cornerRadius(8)
             }
 
             Button(action: onStart) {
-                HStack {
+                HStack(spacing: 8) {
                     Image(systemName: "play.fill")
+                        .font(.system(size: 12))
                     Text("Start Learning")
+                        .font(.system(size: 14, weight: .semibold))
                 }
-                .font(.subheadline.bold())
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(Color.accentColor)
+                .padding(.vertical, 11)
+                .background(Color.shadowOrange)
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemBackground))
+        .padding(18)
+        .background(Color.shadowCard)
         .cornerRadius(16)
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 }
 
@@ -270,13 +259,14 @@ struct FeatureRow: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .frame(width: 28)
-                .foregroundColor(.accentColor)
+                .foregroundColor(.shadowOrange)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.shadowPrimary)
                 Text(subtitle)
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 13))
+                    .foregroundColor(.shadowSecondary)
             }
             Spacer()
         }
