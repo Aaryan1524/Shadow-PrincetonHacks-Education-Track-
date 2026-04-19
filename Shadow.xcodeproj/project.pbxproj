@@ -23,6 +23,10 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXBuildFile section */
+		6755D6262F94470000534FC5 /* KnotAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 6755D6252F94470000534FC5 /* KnotAPI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		527EA4142F9348520085482E /* Shadow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shadow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		527EA4262F9348530085482E /* ShadowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6755D6262F94470000534FC5 /* KnotAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +138,7 @@
 			);
 			name = Shadow;
 			packageProductDependencies = (
+				6755D6252F94470000534FC5 /* KnotAPI */,
 			);
 			productName = Shadow;
 			productReference = 527EA4142F9348520085482E /* Shadow.app */;
@@ -650,6 +656,14 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6755D6252F94470000534FC5 /* KnotAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6755D6242F94470000534FC5 /* XCRemoteSwiftPackageReference "knot-api-ios" */;
+			productName = KnotAPI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 527EA40C2F9348520085482E /* Project object */;
 }

@@ -137,7 +137,7 @@ struct UserView: View {
                                     isFetchingTransactions = false
                                 }
                             },
-                                onExit: { showKnot = false }
+                            onExitHandler: { showKnot = false }
                             )
                         }
                     }

@@ -5,63 +5,57 @@ struct KnotView: UIViewControllerRepresentable {
     let sessionId: String
     let clientId: String
     var onSuccess: ((String) -> Void)?
-    var onExit: (() -> Void)?
+    var onExitHandler: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onSuccess: onSuccess, onExit: onExit)
+        Coordinator(onSuccess: onSuccess, onExitHandler: onExitHandler)
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-        return vc
+        UIViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         guard !context.coordinator.hasOpened else { return }
         context.coordinator.hasOpened = true
 
-        let customerConfiguration = CustomerConfiguration(
-            cardName: "Card Name",
-            customerName: "Customer Name",
-            logoId: "LogoId"
-        )
-
         let config = KnotConfiguration(
             sessionId: sessionId,
             clientId: clientId,
             environment: .development,
             entryPoint: "onboarding",
-            useCategories: true,
+            useCategories: false,
             useSearch: true,
-            merchantIds: [52],
-            metadata: ["reference_token": "your-token"],
-            customerConfiguration: customerConfiguration,
-            locale: "es-US"
+            merchantIds: [41]
         )
 
         Knot.open(configuration: config, delegate: context.coordinator)
     }
 
-    class Coordinator: NSObject, KnotDelegate {
+    class Coordinator: NSObject, KnotEventDelegate {
         var hasOpened = false
         var onSuccess: ((String) -> Void)?
-        var onExit: (() -> Void)?
+        var onExitHandler: (() -> Void)?
 
-        init(onSuccess: ((String) -> Void)?, onExit: (() -> Void)?) {
+        init(onSuccess: ((String) -> Void)?, onExitHandler: (() -> Void)?) {
             self.onSuccess = onSuccess
-            self.onExit = onExit
+            self.onExitHandler = onExitHandler
         }
 
-        func onSuccess(institutionId: String) {
-            onSuccess?(institutionId)
+        func onSuccess(merchant: String) {
+            onSuccess?(merchant)
         }
 
         func onExit() {
-            onExit?()
+            onExitHandler?()
         }
 
-        func onEvent(name: String, metadata: [String: Any]) {
-            print("Knot event: \(name), metadata: \(metadata)")
+        func onError(error: KnotError) {
+            print("Knot error: \(error)")
+        }
+
+        func onEvent(event: KnotEvent) {
+            print("Knot event: \(event)")
         }
     }
 }
