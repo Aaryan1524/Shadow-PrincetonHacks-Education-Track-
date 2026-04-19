@@ -16,6 +16,23 @@ struct Tutorial: Identifiable {
     let duration: String
 }
 
+struct WalmartTransaction: Codable, Identifiable {
+    let id: String
+    let amount: Double
+    let date: String
+    let name: String
+    let merchantName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, amount, date, name
+        case merchantName = "merchant_name"
+    }
+}
+
+struct TransactionsResponse: Codable {
+    let transactions: [WalmartTransaction]
+}
+
 // MARK: - Mock Data
 let mockCategories: [TutorialCategory] = [
     .init(name: "All", icon: "square.grid.2x2"),
@@ -38,6 +55,11 @@ let mockTutorials: [Tutorial] = [
 struct UserView: View {
     @State private var searchText = ""
     @State private var selectedCategory = "All"
+    @State private var showKnot = false
+    @State private var knotSessionId: String? = nil
+    @State private var isFetchingSession = false
+    @State private var transactions: [WalmartTransaction] = []
+    @State private var isFetchingTransactions = false
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -69,6 +91,93 @@ struct UserView: View {
 
             ScrollView {
                 VStack(spacing: 14) {
+                    // Connect card button
+                    Button(action: {
+                        guard !isFetchingSession else { return }
+                        isFetchingSession = true
+                        Task {
+                            do {
+                                let id = try await fetchKnotSession(userId: "user_001")
+                                knotSessionId = id
+                                showKnot = true
+                            } catch {
+                                print("Failed to fetch Knot session: \(error)")
+                            }
+                            isFetchingSession = false
+                        }
+                    }) {
+                        HStack {
+                            if isFetchingSession {
+                                ProgressView().tint(.white)
+                            } else {
+                                Image(systemName: "creditcard.fill")
+                            }
+                            Text(isFetchingSession ? "Loading..." : "Connect Your Card")
+                                .font(.custom("CopernicusTrial-Book", size: 14))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color(red: 0.43, green: 0.51, blue: 0.59))
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal)
+                    .sheet(isPresented: $showKnot) {
+                        if let sessionId = knotSessionId {
+                            KnotView(
+                                sessionId: sessionId,
+                                clientId: "dda0778d-9486-47f8-bd80-6f2512f9bcdb",
+                                onSuccess: { _ in
+                                showKnot = false
+                                Task {
+                                    isFetchingTransactions = true
+                                    let txns = await fetchTransactions(userId: "user_001")
+                                    transactions = txns
+                                    isFetchingTransactions = false
+                                }
+                            },
+                                onExit: { showKnot = false }
+                            )
+                        }
+                    }
+
+                    // Transactions section
+                    if isFetchingTransactions {
+                        ProgressView("Loading Walmart purchases...")
+                            .padding()
+                    } else if !transactions.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Recent Walmart Purchases")
+                                .font(.custom("CopernicusTrial-Book", size: 15))
+                                .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
+                                .padding(.horizontal)
+
+                            ForEach(transactions) { txn in
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(txn.name)
+                                            .font(.custom("CopernicusTrial-Book", size: 13))
+                                            .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
+                                            .lineLimit(1)
+                                        Text(txn.date)
+                                            .font(.custom("CopernicusTrial-Book", size: 11))
+                                            .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29).opacity(0.6))
+                                    }
+                                    Spacer()
+                                    Text(String(format: "$%.2f", txn.amount))
+                                        .font(.custom("CopernicusTrial-Book", size: 13))
+                                        .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(0.45))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.horizontal)
+                            }
+                        }
+                    }
+
                     // Inline search
                     HStack(spacing: 10) {
                         Image(systemName: "magnifyingglass")
@@ -123,6 +232,39 @@ struct UserView: View {
                 .padding(.bottom, 40)
             }
         }
+    }
+}
+
+// MARK: - Knot session fetch
+private func fetchKnotSession(userId: String) async throws -> String {
+    let url = URL(string: "http://localhost:8000/knot/session")!
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpBody = try JSONEncoder().encode(["external_user_id": userId])
+
+    let (data, response) = try await URLSession.shared.data(for: request)
+    guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+        throw URLError(.badServerResponse)
+    }
+    let json = try JSONDecoder().decode([String: String].self, from: data)
+    guard let sessionId = json["session_id"] else {
+        throw URLError(.cannotParseResponse)
+    }
+    return sessionId
+}
+
+// MARK: - Knot transactions fetch
+private func fetchTransactions(userId: String) async -> [WalmartTransaction] {
+    guard let url = URL(string: "http://localhost:8000/knot/transactions/\(userId)") else { return [] }
+    do {
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return [] }
+        let decoded = try JSONDecoder().decode(TransactionsResponse.self, from: data)
+        return decoded.transactions
+    } catch {
+        print("Failed to fetch transactions: \(error)")
+        return []
     }
 }
 
