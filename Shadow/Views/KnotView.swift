@@ -29,7 +29,9 @@ struct KnotView: UIViewControllerRepresentable {
             merchantIds: []
         )
 
-        Knot.open(configuration: config, delegate: context.coordinator)
+        DispatchQueue.main.async {
+            Knot.open(configuration: config, delegate: context.coordinator)
+        }
     }
 
     class Coordinator: NSObject, KnotEventDelegate {
@@ -47,7 +49,7 @@ struct KnotView: UIViewControllerRepresentable {
         }
 
         func onExit() {
-            onExitHandler?()
+            // Don't close the sheet on onExit — let the user swipe down or succeed
         }
 
         func onError(error: KnotError) {

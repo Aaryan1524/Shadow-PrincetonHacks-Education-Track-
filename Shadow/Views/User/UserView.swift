@@ -138,8 +138,7 @@ struct UserView: View {
                                         let fetched = await fetchTransactions(userId: "user_001")
                                         transactions = fetched.isEmpty ? mockWalmartTransactions : fetched
                                     }
-                                },
-                                onExitHandler: { showWalmartLogin = false }
+                                }
                             )
                         }
                     }
