@@ -30,6 +30,7 @@ struct KnotView: UIViewControllerRepresentable {
         )
 
         DispatchQueue.main.async {
+            print("[Debug] 🔵 Calling Knot.open with session: \(sessionId)")
             Knot.open(configuration: config, delegate: context.coordinator)
         }
     }
@@ -59,6 +60,7 @@ struct KnotView: UIViewControllerRepresentable {
         }
 
         func onExit() {
+            print("[Debug] ⚠️ Knot onExit called (user cancelled or SDK closed)")
             DispatchQueue.main.async {
                 self.dismiss()
             }

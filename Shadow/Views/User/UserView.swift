@@ -152,10 +152,16 @@ struct UserView: View {
                     Button(action: {
                         guard !isLoadingSession else { return }
                         isLoadingSession = true
+                        print("[Debug] 1️⃣ Button tapped — fetching session")
                         Task { @MainActor in
-                            if let sessionId = try? await fetchKnotSession(userId: "user_001") {
+                            do {
+                                let sessionId = try await fetchKnotSession(userId: "user_001")
+                                print("[Debug] 2️⃣ Got session ID: \(sessionId)")
                                 knotSessionId = sessionId
                                 showWalmartLogin = true
+                                print("[Debug] 3️⃣ showWalmartLogin set to true")
+                            } catch {
+                                print("[Debug] ❌ Session fetch failed: \(error)")
                             }
                             isLoadingSession = false
                         }
@@ -177,14 +183,26 @@ struct UserView: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal)
+
+                    // DEBUG: test button — remove before shipping
+                    Button("Show Test Data") {
+                        transactions = mockKnotTransactions
+                        print("[Debug] 🧪 Loaded \(transactions.count) mock transactions directly")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom, 4)
+
                     .sheet(isPresented: $showWalmartLogin) {
                         if let sessionId = knotSessionId {
                             KnotView(
                                 sessionId: sessionId,
                                 clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
-                                onSuccess: { _ in
+                                onSuccess: { merchant in
+                                    print("[Debug] 4️⃣ onSuccess fired for: \(merchant)")
                                     // Show mock data immediately so user sees history right away
                                     transactions = mockKnotTransactions
+                                    print("[Debug] 5️⃣ Set \(transactions.count) mock transactions")
                                     Task { @MainActor in
                                         let fetched = await fetchTransactions(userId: "user_001")
                                         if !fetched.isEmpty { transactions = fetched }
