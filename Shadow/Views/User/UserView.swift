@@ -114,8 +114,8 @@ struct UserView: View {
                             if isLoadingSession {
                                 ProgressView().tint(.white)
                             } else {
-                                Image(systemName: "cart.fill")
-                                Text("Connect Walmart Account")
+                                Image(systemName: "bag.fill")
+                                Text("Connect GoPuff Account")
                                     .font(.custom("CopernicusTrial-Book", size: 14))
                             }
                         }
@@ -131,7 +131,7 @@ struct UserView: View {
                         if let sessionId = knotSessionId {
                             KnotView(
                                 sessionId: sessionId,
-                                clientId: "a390e79d-2920-4440-9ba1-b747bc92790b",
+                                clientId: "dda0778d-9486-47f8-bd80-6f2512f9bcdb",
                                 onSuccess: { _ in
                                     showWalmartLogin = false
                                     Task { @MainActor in
@@ -147,7 +147,7 @@ struct UserView: View {
                     // Transactions section
                     if !transactions.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Recent Walmart Purchases")
+                            Text("Recent GoPuff Purchases")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
                                 .foregroundStyle(Color(red: 0.29, green: 0.29, blue: 0.29))
                                 .padding(.horizontal)

@@ -22,11 +22,11 @@ struct KnotView: UIViewControllerRepresentable {
         let config = KnotConfiguration(
             sessionId: sessionId,
             clientId: clientId,
-            environment: .production,
+            environment: .development,
             entryPoint: "onboarding",
             useCategories: false,
-            useSearch: false,
-            merchantIds: [41]
+            useSearch: true,
+            merchantIds: []
         )
 
         Knot.open(configuration: config, delegate: context.coordinator)

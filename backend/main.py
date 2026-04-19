@@ -16,7 +16,7 @@ app.add_middleware(
 
 KNOT_CLIENT_ID = os.environ.get("KNOT_CLIENT_ID", "")
 KNOT_SECRET_KEY = os.environ.get("KNOT_SECRET_KEY", "")
-KNOT_BASE_URL = "https://production.knotapi.com"
+KNOT_BASE_URL = "https://development.knotapi.com"
 
 
 def _basic_auth_header() -> str:
@@ -43,7 +43,6 @@ async def create_knot_session(body: CreateSessionRequest):
             json={
                 "type": "transaction_link",
                 "external_user_id": body.external_user_id,
-                "merchant_ids": [41],
             },
         )
 
