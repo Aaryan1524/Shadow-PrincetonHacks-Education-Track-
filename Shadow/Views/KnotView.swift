@@ -49,7 +49,9 @@ struct KnotView: UIViewControllerRepresentable {
         func onSuccess(merchant: String) {
             hasSucceeded = true
             print("[Knot] ✅ User logged in successfully. Merchant: \(merchant)")
-            onSuccess?(merchant)
+            DispatchQueue.main.async {
+                self.onSuccess?(merchant)
+            }
             // Dismiss after a short delay so Knot can animate its success screen
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 self.dismiss()
@@ -57,7 +59,9 @@ struct KnotView: UIViewControllerRepresentable {
         }
 
         func onExit() {
-            dismiss()
+            DispatchQueue.main.async {
+                self.dismiss()
+            }
         }
 
         private func dismiss() {
