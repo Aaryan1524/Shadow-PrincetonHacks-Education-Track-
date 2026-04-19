@@ -4,9 +4,19 @@ import SwiftUI
 struct StreamView: View {
     @ObservedObject var streamVM: StreamSessionViewModel
     @ObservedObject var wearablesVM: WearablesViewModel
+    var onBack: (() -> Void)? = nil
 
-    @State private var messageText: String = ""
-    @FocusState private var isMessageFieldFocused: Bool
+    @ObservedObject private var voiceVM: VoiceSessionManager
+
+    @State private var unifiedMessage: String = ""
+    @State private var isVoiceMessage: Bool = false
+
+    init(streamVM: StreamSessionViewModel, wearablesVM: WearablesViewModel, onBack: (() -> Void)? = nil) {
+        self.streamVM = streamVM
+        self.wearablesVM = wearablesVM
+        self.onBack = onBack
+        self.voiceVM = streamVM.voiceVM
+    }
 
     var body: some View {
         ZStack {
@@ -36,14 +46,24 @@ struct StreamView: View {
             VStack(spacing: 0) {
                 // Top bar
                 HStack {
-                    if streamVM.isStreaming {
-                        Button {
-                            wearablesVM.disconnectGlasses()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
+                    // Back button — stops stream and returns to lesson selection
+                    Button {
+                        Task {
+                            await streamVM.stopSession()
+                            onBack?()
                         }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text("Back")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(20)
                     }
                     Spacer()
                     // Status indicator
@@ -94,65 +114,56 @@ struct StreamView: View {
 
                 Spacer()
 
-                // Coaching message bubble
-                if !streamVM.coachingMessage.isEmpty, streamVM.isStreaming {
+                // Unified Coaching Bubble
+                if !unifiedMessage.isEmpty, streamVM.isStreaming {
                     HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: streamVM.stepCompleted ? "checkmark.circle.fill" : "brain.head.profile")
-                            .foregroundColor(streamVM.stepCompleted ? .green : .blue)
-                        Text(streamVM.coachingMessage)
+                        Image(systemName: isVoiceMessage ? "waveform" : (streamVM.stepCompleted ? "checkmark.circle.fill" : "brain.head.profile"))
+                            .foregroundColor(isVoiceMessage ? .purple : (streamVM.stepCompleted ? .green : .blue))
+                        Text(unifiedMessage)
                             .font(.subheadline)
                             .foregroundColor(.white)
                         Spacer()
                     }
                     .padding(12)
-                    .background(.ultraThinMaterial)
+                    .background(isVoiceMessage ? AnyShapeStyle(Color.purple.opacity(0.25)) : AnyShapeStyle(.ultraThinMaterial))
                     .cornerRadius(12)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
                 }
 
-                // Coach reply bubble
-                if !streamVM.coachReply.isEmpty, streamVM.isStreaming {
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "message.fill")
-                            .foregroundColor(.purple)
-                        Text(streamVM.coachReply)
+                // Live transcript
+                if !voiceVM.liveTranscript.isEmpty, streamVM.isStreaming {
+                    HStack(alignment: .top, spacing: 6) {
+                        Image(systemName: "mic.fill")
+                            .foregroundColor(.orange)
+                        Text(voiceVM.liveTranscript)
                             .font(.subheadline)
-                            .foregroundColor(.white)
+                            .foregroundColor(.white.opacity(0.8))
+                            .italic()
                         Spacer()
                     }
-                    .padding(12)
-                    .background(Color.purple.opacity(0.3))
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(12)
+                    .padding(10)
+                    .background(Color.orange.opacity(0.15))
+                    .cornerRadius(10)
                     .padding(.horizontal)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
                 }
 
-                // Message input for coach
+                // Voice coach status
                 if streamVM.currentLesson != nil, streamVM.isStreaming {
                     HStack(spacing: 8) {
-                        TextField("Ask your coach...", text: $messageText)
-                            .textFieldStyle(.plain)
-                            .padding(10)
-                            .background(Color.white.opacity(0.15))
-                            .cornerRadius(20)
+                        Circle()
+                            .fill(voiceVM.isConnected ? (voiceVM.isListening ? Color.green : Color.yellow) : Color.gray)
+                            .frame(width: 8, height: 8)
+                        Text(voiceStatusText)
+                            .font(.caption.bold())
                             .foregroundColor(.white)
-                            .focused($isMessageFieldFocused)
-
-                        Button {
-                            let msg = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !msg.isEmpty else { return }
-                            messageText = ""
-                            isMessageFieldFocused = false
-                            Task { await streamVM.sendCoachMessage(msg) }
-                        } label: {
-                            Image(systemName: streamVM.isSendingMessage ? "ellipsis.circle" : "arrow.up.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(messageText.isEmpty ? .gray : .white)
-                        }
-                        .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || streamVM.isSendingMessage)
+                        Spacer()
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(10)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
                 }
@@ -201,7 +212,7 @@ struct StreamView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(streamVM.hasActiveDevice ? Color.accentColor : Color.gray)
+                        .background(streamVM.hasActiveDevice ? Color.shadowOrange : Color.gray.opacity(0.5))
                         .foregroundColor(.white)
                         .cornerRadius(14)
                     }
@@ -209,6 +220,18 @@ struct StreamView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 32)
                 }
+            }
+        }
+        .onChange(of: streamVM.coachingMessage) { _, newValue in
+            if !newValue.isEmpty {
+                unifiedMessage = newValue
+                isVoiceMessage = false
+            }
+        }
+        .onChange(of: voiceVM.lastReply) { _, newValue in
+            if !newValue.isEmpty {
+                unifiedMessage = newValue
+                isVoiceMessage = true
             }
         }
         .onDisappear {
@@ -238,6 +261,13 @@ struct StreamView: View {
         case .waiting: return .yellow
         case .stopped: return .red
         }
+    }
+
+    private var voiceStatusText: String {
+        if voiceVM.isProcessing { return "Coach is thinking..." }
+        if voiceVM.isListening { return "Listening..." }
+        if voiceVM.isConnected { return "Ready — just speak" }
+        return "Voice offline"
     }
 
     private var statusText: String {

@@ -17,6 +17,10 @@ from fastapi import FastAPI, Form, HTTPException, UploadFile, WebSocket, WebSock
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import anthropic
+import tempfile
+import time
+from google import genai
+from google.genai import types
 
 from agents.conversation_coach import coach_conversation
 from agents.voice_coach import build_wav_from_pcm, transcribe_and_coach
@@ -58,7 +62,16 @@ class Step(BaseModel):
     id: str
     order: int
     instruction: str
+    timestamp_start: str = ""
+    timestamp_end: str = ""
+    tempo_description: str = ""
+    technique_notes: str = ""
+    context: str = ""
     success_criteria: str
+    visual_landmarks: str = ""
+    common_failure_points: str = ""
+    failure_triggers: str = ""
+    ar_overlay_anchor: str = ""
     reference_image_b64: Optional[str] = None
 
 
@@ -85,7 +98,16 @@ class ConversationMessage(BaseModel):
 
 class StepCreateRequest(BaseModel):
     instruction: str
+    timestamp_start: str = ""
+    timestamp_end: str = ""
+    tempo_description: str = ""
+    technique_notes: str = ""
+    context: str = ""
     success_criteria: str
+    visual_landmarks: str = ""
+    common_failure_points: str = ""
+    failure_triggers: str = ""
+    ar_overlay_anchor: str = ""
 
 
 class LessonCreateRequest(BaseModel):
@@ -105,6 +127,7 @@ class CoachRequest(BaseModel):
 class CoachConversationResponse(BaseModel):
     reply: str
     updated_history: List[ConversationMessage]
+    advance_step: bool = False
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -171,7 +194,16 @@ async def create_lesson(request: LessonCreateRequest) -> Lesson:
             id=str(uuid.uuid4()),
             order=idx,
             instruction=step.instruction,
+            timestamp_start=step.timestamp_start,
+            timestamp_end=step.timestamp_end,
+            tempo_description=step.tempo_description,
+            technique_notes=step.technique_notes,
+            context=step.context,
             success_criteria=step.success_criteria,
+            visual_landmarks=step.visual_landmarks,
+            common_failure_points=step.common_failure_points,
+            failure_triggers=step.failure_triggers,
+            ar_overlay_anchor=step.ar_overlay_anchor,
             reference_image_b64=None,
         )
         for idx, step in enumerate(request.steps)
@@ -197,98 +229,98 @@ async def get_lessons() -> List[Lesson]:
 
 @app.post("/lessons/generate-steps")
 async def generate_steps(
-    frames: List[UploadFile],
+    video: UploadFile,
     task_description: str = Form(...),
 ) -> dict:
     """
-    Accept keyframes from an expert recording and ask Claude to segment
-    the task into discrete verifiable steps.
-
-    Request: multipart/form-data
-      - frames: one or more JPEG files (field name 'frames', repeated)
-      - task_description: string describing the task
-
-    Response: {"suggested_steps": [Step]}
+    Accept an expert recording (.mp4) and ask Gemini to segment
+    the task into the Master Knowledge Blueprint schema.
     """
-    # Read and base64-encode each uploaded frame
-    content = []
-    for idx, frame_file in enumerate(frames):
-        frame_bytes = await frame_file.read()
-        frame_b64 = base64.b64encode(frame_bytes).decode("utf-8")
-        content.append({"type": "text", "text": f"Frame {idx + 1}:"})
-        content.append(
-            {
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": "image/jpeg",
-                    "data": frame_b64,
-                },
-            }
-        )
+    genai_client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY", ""))
 
-    # Append the instruction prompt
-    prompt = (
-        f"Task description: {task_description}\n\n"
-        "The frames above show an expert performing this task in sequence. "
-        "Analyze the frames and break the task into discrete, verifiable steps.\n\n"
-        "Respond ONLY with a valid JSON array. No explanation, no markdown, no "
-        "extra text before or after. Each element must have exactly these two fields:\n"
-        "[\n"
-        '  {\n'
-        '    "instruction": "Clear, actionable description of what the learner should do",\n'
-        '    "success_criteria": "Visual description of what it looks like when this step is done correctly"\n'
-        "  }\n"
-        "]"
-    )
-    content.append({"type": "text", "text": prompt})
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_video:
+        content = await video.read()
+        tmp_video.write(content)
+        tmp_video_path = tmp_video.name
 
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=1000,
-        system=(
-            "You are an expert task decomposition assistant. You analyze images "
-            "of someone performing a task and break it into discrete, verifiable steps."
-        ),
-        messages=[{"role": "user", "content": content}],
-    )
-
-    raw_text = response.content[0].text.strip()
-
-    # Parse Claude's response as a JSON array.
     try:
-        steps_data = json.loads(raw_text)
-    except json.JSONDecodeError:
-        match = re.search(r"\[.*\]", raw_text, re.DOTALL)
-        if not match:
-            raise HTTPException(
-                status_code=500,
-                detail=(
-                    "Claude did not return a valid JSON array. "
-                    f"Raw response: {raw_text[:200]}"
-                ),
-            )
-        try:
-            steps_data = json.loads(match.group())
-        except json.JSONDecodeError as exc:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Failed to parse extracted JSON: {exc}",
-            )
+        # 1. Upload Video to Gemini
+        print("[Shadow] Uploading video to Gemini File API...")
+        video_file = genai_client.files.upload(file=tmp_video_path)
 
-    # Convert raw dicts to Step objects with generated IDs
-    suggested_steps = [
-        Step(
-            id=str(uuid.uuid4()),
-            order=idx,
-            instruction=item["instruction"],
-            success_criteria=item["success_criteria"],
-            reference_image_b64=None,
+        # 2. Wait for Processing
+        print("[Shadow] Processing video in Gemini Engine...")
+        while video_file.state.name == "PROCESSING":
+            time.sleep(3)
+            video_file = genai_client.files.get(name=video_file.name)
+        
+        if video_file.state.name == "FAILED":
+            raise HTTPException(status_code=500, detail="Gemini failed to process the video.")
+
+        # 3. Create the prompt
+        prompt = f"""You are an expert Instructional Designer for AR coaching systems. Your goal is to analyze the provided expert video and transcript for the task: "{task_description}".
+
+You must create a single, valid JSON document called master_knowledge_blueprint.json. This document must be a single array of objects, where each object represents a distinct, verifiable 'Step' in the process.
+
+For every single step, you must extract and provide the following detailed fields:
+step_id: A unique, sequential integer (1, 2, 3...).
+instruction: A clear, concise, and imperative command (e.g., 'Place filter.').
+timestamp_start: The exact time (HH:MM:SS) in the video where this step begins.
+timestamp_end: The exact time (HH:MM:SS) where this step is considered complete.
+tempo_description: (VERY IMPORTANT) Describe the expert's pace (e.g., 'A slow, steady, even pour,' or 'A fast, aggressive insertion.').
+technique_notes: Detailed notes on how they are performing the action (e.g., 'Use a circular motion, not a straight line,').
+context: Describe the required visual environmental state before the step begins (e.g., 'The dripper must be empty and centered on the mug.').
+success_criteria: Define exactly what the final, complete visual state must look like. This must be a 'camera verifiable' state (e.g., 'The white filter cone is seated flush against the ceramic walls with no gaps.').
+visual_landmarks: Name 2-3 specific points of interest a camera can track (e.g., 'top_rim_of_dripper', 'filter_edge').
+common_failure_points: What a beginner is likely to do wrong in this specific step.
+failure_triggers: Describe 1-2 specific visual cues that indicate the user is about to fail (e.g., 'filter_leaning', 'liquid_over_rim').
+ar_overlay_anchor: A single key for a location to draw a guide (e.g., 'dripper_center').
+
+Return ONLY valid, minified JSON matching the requested schema. Do not include any introductory or explanatory text. This JSON will be ingested directly into a real-time system.
+"""
+        
+        print("[Shadow] Starting generation against Gemini 2.5 Flash...")
+        response = genai_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[video_file, prompt],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=list[StepCreateRequest],
+                temperature=0.2
+            )
         )
-        for idx, item in enumerate(steps_data)
-    ]
 
-    return {"suggested_steps": [s.model_dump() for s in suggested_steps]}
+        steps_data = json.loads(response.text)
+        
+        # Convert raw dicts to Step objects
+        suggested_steps = [
+            Step(
+                id=str(uuid.uuid4()),
+                order=idx,
+                instruction=item.get("instruction", ""),
+                timestamp_start=item.get("timestamp_start", ""),
+                timestamp_end=item.get("timestamp_end", ""),
+                tempo_description=item.get("tempo_description", ""),
+                technique_notes=item.get("technique_notes", ""),
+                context=item.get("context", ""),
+                success_criteria=item.get("success_criteria", ""),
+                visual_landmarks=item.get("visual_landmarks", ""),
+                common_failure_points=item.get("common_failure_points", ""),
+                failure_triggers=item.get("failure_triggers", ""),
+                ar_overlay_anchor=item.get("ar_overlay_anchor", ""),
+                reference_image_b64=None,
+            )
+            for idx, item in enumerate(steps_data)
+        ]
+
+        # 4. Cleanup API State
+        genai_client.files.delete(name=video_file.name)
+
+        return {"suggested_steps": [s.model_dump() for s in suggested_steps]}
+
+    finally:
+        if os.path.exists(tmp_video_path):
+            os.remove(tmp_video_path)
 
 
 @app.get("/lessons/{lesson_id}", response_model=Lesson)
@@ -376,60 +408,56 @@ async def verify_step(
     )
     content.append({"type": "text", "text": prompt_text})
 
-    # Call Claude
+    # Call Gemini 2.5 Flash for multimodal analysis
+    genai_client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY", ""))
+    
+    # Build contents for Gemini
+    contents = []
+    if step.reference_image_b64:
+        ref_bytes = base64.b64decode(step.reference_image_b64)
+        contents.append(types.Part.from_bytes(data=ref_bytes, mime_type="image/jpeg"))
+        contents.append(types.Part.from_text(text="Above: Reference image showing a PERFECT completion of this step."))
+
+    contents.append(types.Part.from_bytes(data=frame_bytes, mime_type="image/jpeg"))
+    
+    blueprint_context = f"""--- MASTER KNOWLEDGE BLUEPRINT ---
+STEP: {step.instruction}
+SUCCESS CRITERIA: {step.success_criteria}
+EXPERT TECHNIQUE: {step.technique_notes}
+VISUAL LANDMARKS TO TRACK: {step.visual_landmarks}
+FAILURE TRIGGERS (WATCH FOR THESE): {step.failure_triggers}
+COMMON MISTAKES: {step.common_failure_points}
+----------------------------------
+
+Compare the user's live camera frame (above) against the Expert Blueprint. 
+1. Is the step completed correctly?
+2. Are they currently triggering any of the 'Failure Triggers' defined by the expert?
+3. Give them a quick coaching tip if they are struggling or a 'Failure Trigger' is active.
+"""
+    contents.append(types.Part.from_text(text=blueprint_context))
+
     try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=300,
-            system=(
-                "You are a real-time coaching assistant. Analyze the learner's "
-                "current camera frame and determine if they have completed the "
-                "current step. Respond ONLY with valid JSON."
-            ),
-            messages=[{"role": "user", "content": content}],
+        response = genai_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction="You are a real-time AR coaching assistant. Analyze the frame against the master blueprint and respond with valid JSON.",
+                response_mime_type="application/json",
+                response_schema=CoachResponse,
+                temperature=0.1
+            )
         )
-        raw_text = response.content[0].text.strip()
+        return json.loads(response.text)
+        
     except Exception as e:
-        # Claude API failure — return safe fallback rather than crashing
-        print(f"❌ Claude API error in verify-step: {type(e).__name__}: {e}")
+        print(f"❌ Gemini error in verify-step: {e}")
         return CoachResponse(
             step_completed=False,
             confidence=0.0,
-            coaching_message="Unable to analyze frame. Please try again.",
-            error_detail=f"Claude API error: {type(e).__name__}",
+            coaching_message="Still watching, keep going!",
+            error_detail=f"Vision model error: {type(e).__name__}",
             next_step_hint="",
         )
-
-    # Parse JSON response with fallback
-    try:
-        parsed = json.loads(raw_text)
-    except json.JSONDecodeError:
-        # Claude added preamble — try to extract the JSON object
-        match = re.search(r"\{.*\}", raw_text, re.DOTALL)
-        if match:
-            try:
-                parsed = json.loads(match.group())
-            except json.JSONDecodeError:
-                parsed = None
-        else:
-            parsed = None
-
-    if parsed is None:
-        return CoachResponse(
-            step_completed=False,
-            confidence=0.0,
-            coaching_message="Unable to analyze frame. Please try again.",
-            error_detail="Parse error: Claude response was not valid JSON",
-            next_step_hint="",
-        )
-
-    return CoachResponse(
-        step_completed=bool(parsed.get("step_completed", False)),
-        confidence=float(parsed.get("confidence", 0.0)),
-        coaching_message=str(parsed.get("coaching_message", "")),
-        error_detail=str(parsed.get("error_detail", "")),
-        next_step_hint=str(parsed.get("next_step_hint", "")),
-    )
 
 
 @app.post("/sessions/{lesson_id}/coach", response_model=CoachConversationResponse)
@@ -466,7 +494,7 @@ async def coach(lesson_id: str, request: CoachRequest) -> CoachConversationRespo
         user_message=request.user_message,
         conversation_history=history_dicts,
         frame_b64=request.frame_b64,
-        step_instruction=step.instruction,
+        step=step,
         lesson_title=lesson.title,
     )
 
@@ -479,6 +507,7 @@ async def coach(lesson_id: str, request: CoachRequest) -> CoachConversationRespo
     return CoachConversationResponse(
         reply=result["reply"],
         updated_history=updated_history,
+        advance_step=result.get("advance_step", False),
     )
 
 
@@ -574,8 +603,7 @@ async def voice_session(websocket: WebSocket, lesson_id: str) -> None:
                         transcribe_and_coach,
                         wav_bytes=build_wav_from_pcm(pcm_snapshot),
                         lesson_title=lesson.title,
-                        step_instruction=step.instruction,
-                        success_criteria=step.success_criteria,
+                        step=step,
                         step_index=step_index,
                         total_steps=len(lesson.steps),
                         conversation_history=conversation_history,

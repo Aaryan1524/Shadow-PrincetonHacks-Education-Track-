@@ -5,7 +5,7 @@ import UIKit
 
 enum ShadowAPI {
     // TODO: Replace with your Mac's local IP (System Settings > Wi-Fi > Details)
-    static var baseURL = "http://192.168.1.100:8000"
+    static var baseURL = "http://10.29.88.53:8000"
 }
 
 // MARK: - API Models
@@ -14,12 +14,29 @@ struct APIStep: Codable, Identifiable {
     let id: String
     let order: Int
     let instruction: String
+    let timestampStart: String
+    let timestampEnd: String
+    let tempoDescription: String
+    let techniqueNotes: String
+    let context: String
     let successCriteria: String
+    let visualLandmarks: String
+    let commonFailurePoints: String
+    let failureTriggers: String
+    let arOverlayAnchor: String
     let referenceImageB64: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, order, instruction
+        case id, order, instruction, context
+        case timestampStart = "timestamp_start"
+        case timestampEnd = "timestamp_end"
+        case tempoDescription = "tempo_description"
+        case techniqueNotes = "technique_notes"
         case successCriteria = "success_criteria"
+        case visualLandmarks = "visual_landmarks"
+        case commonFailurePoints = "common_failure_points"
+        case failureTriggers = "failure_triggers"
+        case arOverlayAnchor = "ar_overlay_anchor"
         case referenceImageB64 = "reference_image_b64"
     }
 }
@@ -77,10 +94,20 @@ struct CoachRequest: Codable {
 struct CoachConversationResponse: Codable {
     let reply: String
     let updatedHistory: [ConversationMessage]
+    let advanceStep: Bool
 
     enum CodingKeys: String, CodingKey {
         case reply
         case updatedHistory = "updated_history"
+        case advanceStep = "advance_step"
+    }
+}
+
+struct GenerateStepsResponse: Codable {
+    let suggestedSteps: [APIStep]
+
+    enum CodingKeys: String, CodingKey {
+        case suggestedSteps = "suggested_steps"
     }
 }
 
@@ -92,11 +119,28 @@ struct LessonCreateRequest: Codable {
 
 struct StepCreateRequest: Codable {
     let instruction: String
+    let timestampStart: String
+    let timestampEnd: String
+    let tempoDescription: String
+    let techniqueNotes: String
+    let context: String
     let successCriteria: String
+    let visualLandmarks: String
+    let commonFailurePoints: String
+    let failureTriggers: String
+    let arOverlayAnchor: String
 
     enum CodingKeys: String, CodingKey {
-        case instruction
+        case instruction, context
+        case timestampStart = "timestamp_start"
+        case timestampEnd = "timestamp_end"
+        case tempoDescription = "tempo_description"
+        case techniqueNotes = "technique_notes"
         case successCriteria = "success_criteria"
+        case visualLandmarks = "visual_landmarks"
+        case commonFailurePoints = "common_failure_points"
+        case failureTriggers = "failure_triggers"
+        case arOverlayAnchor = "ar_overlay_anchor"
     }
 }
 
@@ -104,45 +148,121 @@ struct StepCreateRequest: Codable {
 
 final class ShadowAPIClient {
     static let shared = ShadowAPIClient()
-    private let session = URLSession.shared
+    private let session: URLSession
     private let decoder = JSONDecoder()
 
-    private init() {}
+    private init() {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 300 // 5 minutes for Gemini video analysis
+        config.timeoutIntervalForResource = 600
+        config.waitsForConnectivity = true
+        session = URLSession(configuration: config)
+    }
 
     // MARK: - Lessons
 
     func fetchLessons() async throws -> [APILesson] {
         let url = URL(string: "\(ShadowAPI.baseURL)/lessons")!
-        let (data, _) = try await session.data(from: url)
-        return try decoder.decode([APILesson].self, from: data)
+        print("[Shadow] Fetching lessons from \(url)")
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 8
+        do {
+            let (data, _) = try await session.data(for: request)
+            let lessons = try decoder.decode([APILesson].self, from: data)
+            print("[Shadow] Fetched \(lessons.count) lessons")
+            return lessons
+        } catch {
+            print("[Shadow] fetchLessons failed: \(error)")
+            throw error
+        }
     }
 
     func fetchLesson(id: String) async throws -> APILesson {
         let url = URL(string: "\(ShadowAPI.baseURL)/lessons/\(id)")!
-        let (data, _) = try await session.data(from: url)
-        return try decoder.decode(APILesson.self, from: data)
+        print("[Shadow] Fetching lesson \(id)")
+        do {
+            let (data, _) = try await session.data(from: url)
+            let lesson = try decoder.decode(APILesson.self, from: data)
+            print("[Shadow] Fetched lesson: \(lesson.title)")
+            return lesson
+        } catch {
+            print("[Shadow] fetchLesson failed: \(error)")
+            throw error
+        }
     }
 
     func createLesson(_ request: LessonCreateRequest) async throws -> APILesson {
         let url = URL(string: "\(ShadowAPI.baseURL)/lessons")!
+        print("[Shadow] Creating lesson: \(request.title)")
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = try JSONEncoder().encode(request)
-        let (data, _) = try await session.data(for: req)
-        return try decoder.decode(APILesson.self, from: data)
+        do {
+            let (data, _) = try await session.data(for: req)
+            let lesson = try decoder.decode(APILesson.self, from: data)
+            print("[Shadow] Created lesson: \(lesson.id)")
+            return lesson
+        } catch {
+            print("[Shadow] createLesson failed: \(error)")
+            throw error
+        }
+    }
+
+    // MARK: - Generate Steps (expert flow)
+
+    func generateSteps(videoURL: URL, taskDescription: String) async throws -> [APIStep] {
+        let url = URL(string: "\(ShadowAPI.baseURL)/lessons/generate-steps")!
+        print("[Shadow] Generating steps from video: \(videoURL.lastPathComponent)")
+        let boundary = UUID().uuidString
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+
+        // task_description field
+        body.appendMultipart(boundary: boundary, name: "task_description", value: taskDescription)
+
+        // video file
+        let videoData = try Data(contentsOf: videoURL)
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"video\"; filename=\"recording.mp4\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: video/mp4\r\n\r\n".data(using: .utf8)!)
+        body.append(videoData)
+        body.append("\r\n".data(using: .utf8)!)
+
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        req.httpBody = body
+
+        do {
+            let (data, _) = try await session.data(for: req)
+            let response = try decoder.decode(GenerateStepsResponse.self, from: data)
+            print("[Shadow] Generated \(response.suggestedSteps.count) blueprint steps")
+            return response.suggestedSteps
+        } catch {
+            print("[Shadow] generateSteps failed: \(error)")
+            throw error
+        }
+    }
+
+    // Deprecated - kept for compatibility but will be removed
+    func generateSteps(frames: [UIImage], taskDescription: String) async throws -> [APIStep] {
+        return try await generateSteps(videoURL: URL(string: "file:///dummy")!, taskDescription: taskDescription)
     }
 
     // MARK: - Verify Step (multipart frame upload)
 
     func verifyStep(lessonId: String, stepIndex: Int, frame: UIImage) async throws -> CoachResponse {
         let url = URL(string: "\(ShadowAPI.baseURL)/sessions/\(lessonId)/verify-step")!
+        print("[Shadow] Verifying step \(stepIndex) for lesson \(lessonId)")
         let boundary = UUID().uuidString
 
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        req.timeoutInterval = 15
+        req.timeoutInterval = 60
 
         var body = Data()
 
@@ -161,21 +281,36 @@ final class ShadowAPIClient {
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
         req.httpBody = body
 
-        let (data, _) = try await session.data(for: req)
-        return try decoder.decode(CoachResponse.self, from: data)
+        do {
+            let (data, _) = try await session.data(for: req)
+            let response = try decoder.decode(CoachResponse.self, from: data)
+            print("[Shadow] Step \(stepIndex) verified — completed: \(response.stepCompleted), confidence: \(response.confidence)")
+            return response
+        } catch {
+            print("[Shadow] verifyStep failed: \(error)")
+            throw error
+        }
     }
 
     // MARK: - Coach Conversation (JSON body)
 
     func coach(lessonId: String, request: CoachRequest) async throws -> CoachConversationResponse {
         let url = URL(string: "\(ShadowAPI.baseURL)/sessions/\(lessonId)/coach")!
+        print("[Shadow] Sending coach request for lesson \(lessonId), step \(request.stepIndex)")
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.timeoutInterval = 30
         req.httpBody = try JSONEncoder().encode(request)
-        let (data, _) = try await session.data(for: req)
-        return try decoder.decode(CoachConversationResponse.self, from: data)
+        do {
+            let (data, _) = try await session.data(for: req)
+            let response = try decoder.decode(CoachConversationResponse.self, from: data)
+            print("[Shadow] Coach reply received (\(response.reply.prefix(80))...)")
+            return response
+        } catch {
+            print("[Shadow] coach request failed: \(error)")
+            throw error
+        }
     }
 }
 

@@ -34,10 +34,8 @@ final class StreamSessionViewModel: ObservableObject {
     @Published var coachConfidence: Double = 0.0
     @Published var isVerifying: Bool = false
 
-    // Coach conversation
-    @Published var conversationHistory: [ConversationMessage] = []
-    @Published var coachReply: String = ""
-    @Published var isSendingMessage: Bool = false
+    // Gemini voice coach
+    let voiceVM = VoiceSessionManager()
 
     var isStreaming: Bool { streamingStatus != .stopped }
 
@@ -73,6 +71,30 @@ final class StreamSessionViewModel: ObservableObject {
         sessionManager.$isReady
             .receive(on: DispatchQueue.main)
             .assign(to: &$isDeviceSessionReady)
+
+        // Bind the vision context to the voice coach
+        voiceVM.getLatestFrame = { [weak self] in
+            return self?.currentVideoFrame
+        }
+
+        // Allow the voice coach to advance the step if user says "next"/"skip"
+        voiceVM.onAdvanceStep = { [weak self] in
+            guard let self else { return }
+            Task { @MainActor in
+                self.advanceStep()
+            }
+        }
+    }
+
+    // Manually advance to the next step (triggered by voice or other UI)
+    func advanceStep() {
+        guard let lesson = currentLesson,
+              currentStepIndex + 1 < lesson.steps.count else { return }
+        currentStepIndex += 1
+        stepCompleted = false
+        voiceVM.currentStepIndex = currentStepIndex
+        coachingMessage = "Moving to step \(currentStepIndex + 1)..."
+        print("[Shadow] Step manually advanced to \(currentStepIndex)")
     }
 
     // MARK: - Lesson Management
@@ -83,7 +105,6 @@ final class StreamSessionViewModel: ObservableObject {
             currentStepIndex = 0
             coachingMessage = ""
             stepCompleted = false
-            conversationHistory = []
         } catch {
             showError("Failed to load lesson: \(error.localizedDescription)")
         }
@@ -94,15 +115,16 @@ final class StreamSessionViewModel: ObservableObject {
         currentStepIndex = 0
         coachingMessage = ""
         stepCompleted = false
-        conversationHistory = []
     }
 
     // MARK: - Streaming
 
     func handleStartStreaming() async {
+        print("[Shadow] handleStartStreaming called, hasActiveDevice=\(hasActiveDevice), streamingStatus=\(streamingStatus)")
         let permission = Permission.camera
         do {
             var status = try await wearables.checkPermissionStatus(permission)
+            print("[Shadow] Permission status: \(status)")
             if status != .granted {
                 status = try await wearables.requestPermission(permission)
             }
@@ -121,6 +143,7 @@ final class StreamSessionViewModel: ObservableObject {
         streamSession = nil
         clearListeners()
         stopVerifyLoop()
+        voiceVM.disconnect()
         streamingStatus = .stopped
         currentVideoFrame = nil
         hasReceivedFirstFrame = false
@@ -154,7 +177,7 @@ final class StreamSessionViewModel: ObservableObject {
         verifyTask = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.verifyCurrentStep()
-                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+                try? await Task.sleep(nanoseconds: 6_000_000_000) // 6 seconds
             }
         }
     }
@@ -181,15 +204,18 @@ final class StreamSessionViewModel: ObservableObject {
             stepCompleted = response.stepCompleted
             coachConfidence = response.confidence
 
+            // Feed vision context to voice coach
+            voiceVM.updateCoachResponse(response, stepIndex: currentStepIndex)
+
             if response.stepCompleted {
-                // Auto-advance to next step
+                // Use the shared advanceStep() to prevent double-advance races
+                // and keep the voice agent in sync
                 if currentStepIndex + 1 < lesson.steps.count {
-                    currentStepIndex += 1
-                    stepCompleted = false
-                    coachingMessage = response.nextStepHint.isEmpty
-                        ? "Step complete! Moving to next step."
-                        : "Step complete! Next: \(response.nextStepHint)"
-                    conversationHistory = []
+                    advanceStep()
+                    // Override the generic message with the vision's specific hint
+                    if !response.nextStepHint.isEmpty {
+                        coachingMessage = "Step complete! Next: \(response.nextStepHint)"
+                    }
                 } else {
                     stopVerifyLoop()
                     coachingMessage = "Lesson complete! Great job!"
@@ -201,54 +227,51 @@ final class StreamSessionViewModel: ObservableObject {
         isVerifying = false
     }
 
-    // MARK: - Coach Conversation
-
-    func sendCoachMessage(_ message: String) async {
-        guard let lesson = currentLesson, !message.isEmpty else { return }
-        isSendingMessage = true
-
-        let frameB64: String?
-        if let frame = currentVideoFrame, let data = frame.jpegData(compressionQuality: 0.5) {
-            frameB64 = data.base64EncodedString()
-        } else {
-            frameB64 = nil
-        }
-
-        let request = CoachRequest(
-            frameB64: frameB64,
-            stepIndex: currentStepIndex,
-            lessonId: lesson.id,
-            conversationHistory: conversationHistory,
-            userMessage: message
-        )
-
-        do {
-            let response = try await api.coach(lessonId: lesson.id, request: request)
-            coachReply = response.reply
-            conversationHistory = response.updatedHistory
-        } catch {
-            coachReply = "Sorry, I couldn't reach the coach. Try again."
-        }
-        isSendingMessage = false
-    }
-
     // MARK: - Private
 
     private func startSession() async {
-        guard let deviceSession = await sessionManager.getSession() else { return }
-        guard deviceSession.state == .started else { return }
-
-        let config = StreamSessionConfig(
-            videoCodec: VideoCodec.raw,
-            resolution: StreamingResolution.low,
-            frameRate: 24
-        )
-
-        guard let stream = try? deviceSession.addStream(config: config) else { return }
-        streamSession = stream
         streamingStatus = .waiting
-        setupListeners(for: stream)
-        await stream.start()
+
+        // Retry up to 3 times — the glasses' Activity Manager sometimes rejects
+        // the first attempt while cleaning up from a previous session.
+        let maxRetries = 3
+        for attempt in 1...maxRetries {
+            print("[Shadow] startSession: attempt \(attempt)/\(maxRetries)")
+
+            if let deviceSession = await sessionManager.getSession(),
+               deviceSession.state == .started {
+
+                let config = StreamSessionConfig(
+                    videoCodec: VideoCodec.raw,
+                    resolution: StreamingResolution.low,
+                    frameRate: 24
+                )
+
+                if let stream = try? deviceSession.addStream(config: config) {
+                    print("[Shadow] startSession: stream added, starting...")
+                    streamSession = stream
+                    setupListeners(for: stream)
+                    await stream.start()
+                    print("[Shadow] startSession: stream.start() returned")
+                    return
+                } else {
+                    print("[Shadow] startSession: addStream failed")
+                }
+            } else {
+                print("[Shadow] startSession: getSession returned nil or not started")
+            }
+
+            // Wait before retrying (increasing delay)
+            if attempt < maxRetries {
+                let delay = UInt64(attempt) * 2_000_000_000 // 2s, 4s
+                print("[Shadow] startSession: waiting before retry...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+        }
+
+        // All retries exhausted
+        streamingStatus = .stopped
+        showError("Could not connect to glasses. Close the Meta AI app, close & reopen the hinges, then try again.")
     }
 
     private func setupListeners(for stream: StreamSession) {
@@ -281,13 +304,15 @@ final class StreamSessionViewModel: ObservableObject {
         case .stopped:
             currentVideoFrame = nil
             streamingStatus = .stopped
+            voiceVM.disconnect()
         case .waitingForDevice, .starting, .stopping, .paused:
             streamingStatus = .waiting
         case .streaming:
             streamingStatus = .streaming
-            // Start verify loop when streaming begins and a lesson is loaded
-            if currentLesson != nil {
+            // Start verify loop and voice coach when streaming begins with a lesson
+            if let lesson = currentLesson {
                 startVerifyLoop()
+                Task { await voiceVM.connect(lessonId: lesson.id, lessonTitle: lesson.title, stepIndex: currentStepIndex) }
             }
         }
     }
@@ -302,6 +327,16 @@ final class StreamSessionViewModel: ObservableObject {
     }
 
     private func handleStreamError(_ error: StreamSessionError) {
+        print("[Shadow] Stream error: \(error)")
+        // Clean up the failed stream so we can start fresh
+        streamSession = nil
+        clearListeners()
+        stopVerifyLoop()
+        voiceVM.disconnect()
+        streamingStatus = .stopped
+        currentVideoFrame = nil
+        hasReceivedFirstFrame = false
+
         switch error {
         case .deviceNotFound:
             showError("Device not found. Ensure your glasses are connected.")
@@ -315,8 +350,10 @@ final class StreamSessionViewModel: ObservableObject {
             showError("Glasses hinges closed. Open them and try again.")
         case .thermalCritical:
             showError("Device overheating. Streaming paused.")
+        case .internalError:
+            showError("Connection lost. Please try streaming again.")
         default:
-            showError("Streaming error occurred.")
+            showError("Streaming error: \(error)")
         }
     }
 

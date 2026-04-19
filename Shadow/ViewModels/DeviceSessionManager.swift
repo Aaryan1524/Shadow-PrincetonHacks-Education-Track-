@@ -2,6 +2,8 @@ import Combine
 import MWDATCore
 import SwiftUI
 
+/// Manages DeviceSession lifecycle with 1:1 device-to-session mapping.
+/// Matches the sample CameraAccess app pattern exactly.
 @MainActor
 final class DeviceSessionManager: ObservableObject {
     @Published private(set) var isReady: Bool = false
@@ -24,6 +26,8 @@ final class DeviceSessionManager: ObservableObject {
         stateObserverTask?.cancel()
     }
 
+    /// Returns a ready DeviceSession, creating one if needed.
+    /// Waits for the session to reach .started state before returning.
     func getSession() async -> DeviceSession? {
         if let session = deviceSession, session.state == .started {
             isReady = true
@@ -60,6 +64,8 @@ final class DeviceSessionManager: ObservableObject {
         }
         return nil
     }
+
+    // MARK: - Private
 
     private func startDeviceMonitoring() {
         deviceMonitorTask = Task { [weak self] in
