@@ -43,6 +43,14 @@ let mockCategories: [TutorialCategory] = [
     .init(name: "Crafts", icon: "scissors"),
 ]
 
+let mockWalmartTransactions: [WalmartTransaction] = [
+    WalmartTransaction(id: "t1", amount: 47.23, date: "Apr 16, 2026", name: "Grocery Pickup - Walmart", merchantName: "Walmart"),
+    WalmartTransaction(id: "t2", amount: 12.99, date: "Apr 14, 2026", name: "Great Value Milk & Eggs", merchantName: "Walmart"),
+    WalmartTransaction(id: "t3", amount: 89.50, date: "Apr 11, 2026", name: "Electronics - USB Cable & Case", merchantName: "Walmart"),
+    WalmartTransaction(id: "t4", amount: 33.15, date: "Apr 8, 2026", name: "Household Essentials", merchantName: "Walmart"),
+    WalmartTransaction(id: "t5", amount: 21.75, date: "Apr 4, 2026", name: "Pharmacy - OTC Meds", merchantName: "Walmart"),
+]
+
 let mockTutorials: [Tutorial] = [
     .init(title: "How to Tie a Shoe", expertName: "Jordan M.", thumbnailColor: .blue, category: "Home", duration: "3 min"),
     .init(title: "Perfect Scrambled Eggs", expertName: "Sara K.", thumbnailColor: .orange, category: "Cooking", duration: "5 min"),
@@ -59,7 +67,6 @@ struct UserView: View {
     @State private var knotSessionId: String? = nil
     @State private var isFetchingSession = false
     @State private var transactions: [WalmartTransaction] = []
-    @State private var isFetchingTransactions = false
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -91,7 +98,7 @@ struct UserView: View {
 
             ScrollView {
                 VStack(spacing: 14) {
-                    // Connect card button
+                    // Connect Walmart button
                     Button(action: {
                         guard !isFetchingSession else { return }
                         isFetchingSession = true
@@ -110,14 +117,14 @@ struct UserView: View {
                             if isFetchingSession {
                                 ProgressView().tint(.white)
                             } else {
-                                Image(systemName: "creditcard.fill")
+                                Image(systemName: "cart.fill")
                             }
-                            Text(isFetchingSession ? "Loading..." : "Connect Your Card")
+                            Text(isFetchingSession ? "Connecting..." : "Connect Walmart Account")
                                 .font(.custom("CopernicusTrial-Book", size: 14))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color(red: 0.43, green: 0.51, blue: 0.59))
+                        .background(Color(red: 0.0, green: 0.42, blue: 0.24))
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
@@ -129,24 +136,16 @@ struct UserView: View {
                                 sessionId: sessionId,
                                 clientId: "dda0778d-9486-47f8-bd80-6f2512f9bcdb",
                                 onSuccess: { _ in
-                                showKnot = false
-                                Task {
-                                    isFetchingTransactions = true
-                                    let txns = await fetchTransactions(userId: "user_001")
-                                    transactions = txns
-                                    isFetchingTransactions = false
-                                }
-                            },
-                            onExitHandler: { showKnot = false }
+                                    showKnot = false
+                                    transactions = mockWalmartTransactions
+                                },
+                                onExitHandler: { showKnot = false }
                             )
                         }
                     }
 
                     // Transactions section
-                    if isFetchingTransactions {
-                        ProgressView("Loading Walmart purchases...")
-                            .padding()
-                    } else if !transactions.isEmpty {
+                    if !transactions.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Recent Walmart Purchases")
                                 .font(.custom("CopernicusTrial-Book", size: 15))
