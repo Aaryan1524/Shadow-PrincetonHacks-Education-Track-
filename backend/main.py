@@ -74,9 +74,13 @@ async def get_transactions(external_user_id: str):
         )
 
     if response.status_code not in (200, 201):
+        print(f"[Knot] Transactions error {response.status_code}: {response.text}")
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
-    return response.json()
+    data = response.json()
+    import json
+    print(f"[Knot] Transactions for {external_user_id}:\n{json.dumps(data, indent=2)}")
+    return data
 
 
 @app.get("/knot/merchants")
