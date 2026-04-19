@@ -63,9 +63,7 @@ let mockTutorials: [Tutorial] = [
 struct UserView: View {
     @State private var searchText = ""
     @State private var selectedCategory = "All"
-    @State private var showKnot = false
-    @State private var knotSessionId: String? = nil
-    @State private var isFetchingSession = false
+    @State private var showWalmartLogin = false
     @State private var transactions: [WalmartTransaction] = []
 
     private let columns = [
@@ -99,27 +97,10 @@ struct UserView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     // Connect Walmart button
-                    Button(action: {
-                        guard !isFetchingSession else { return }
-                        isFetchingSession = true
-                        Task {
-                            do {
-                                let id = try await fetchKnotSession(userId: "user_001")
-                                knotSessionId = id
-                                showKnot = true
-                            } catch {
-                                print("Failed to fetch Knot session: \(error)")
-                            }
-                            isFetchingSession = false
-                        }
-                    }) {
+                    Button(action: { showWalmartLogin = true }) {
                         HStack {
-                            if isFetchingSession {
-                                ProgressView().tint(.white)
-                            } else {
-                                Image(systemName: "cart.fill")
-                            }
-                            Text(isFetchingSession ? "Connecting..." : "Connect Walmart Account")
+                            Image(systemName: "cart.fill")
+                            Text("Connect Walmart Account")
                                 .font(.custom("CopernicusTrial-Book", size: 14))
                         }
                         .frame(maxWidth: .infinity)
@@ -130,18 +111,11 @@ struct UserView: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal)
-                    .sheet(isPresented: $showKnot) {
-                        if let sessionId = knotSessionId {
-                            KnotView(
-                                sessionId: sessionId,
-                                clientId: "dda0778d-9486-47f8-bd80-6f2512f9bcdb",
-                                onSuccess: { _ in
-                                    showKnot = false
-                                    transactions = mockWalmartTransactions
-                                },
-                                onExitHandler: { showKnot = false }
-                            )
-                        }
+                    .sheet(isPresented: $showWalmartLogin) {
+                        WalmartLoginSheet(onConnected: {
+                            showWalmartLogin = false
+                            transactions = mockWalmartTransactions
+                        })
                     }
 
                     // Transactions section
@@ -267,6 +241,76 @@ private func fetchTransactions(userId: String) async -> [WalmartTransaction] {
     }
 }
 
+// MARK: - Walmart Login Sheet
+struct WalmartLoginSheet: View {
+    var onConnected: () -> Void
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isConnecting = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer().frame(height: 8)
+
+            Image(systemName: "cart.fill")
+                .font(.system(size: 48))
+                .foregroundStyle(Color(red: 0.0, green: 0.42, blue: 0.24))
+
+            Text("Connect Walmart Account")
+                .font(.custom("CopernicusTrial-Book", size: 20))
+                .foregroundStyle(Color(red: 0.15, green: 0.15, blue: 0.15))
+
+            Text("Sign in to import your recent purchases")
+                .font(.custom("CopernicusTrial-Book", size: 14))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            VStack(spacing: 12) {
+                TextField("Walmart email", text: $email)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.emailAddress)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .padding(.horizontal)
+
+            Button(action: {
+                guard !email.isEmpty, !password.isEmpty else { return }
+                isConnecting = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    onConnected()
+                }
+            }) {
+                Group {
+                    if isConnecting {
+                        ProgressView().tint(.white)
+                    } else {
+                        Text("Connect Account")
+                            .font(.custom("CopernicusTrial-Book", size: 15))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color(red: 0.0, green: 0.42, blue: 0.24))
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .padding(.horizontal)
+            .disabled(email.isEmpty || password.isEmpty || isConnecting)
+
+            Spacer()
+        }
+        .padding(.top)
+    }
+}
+
+// MARK: - Tutorial Card
 struct TutorialCard: View {
     let tutorial: Tutorial
     @State private var showAgentSheet = false
