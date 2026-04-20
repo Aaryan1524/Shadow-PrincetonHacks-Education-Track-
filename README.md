@@ -55,6 +55,16 @@ Shadow is split into a high-performance Python backend and a native iOS AR clien
 ## 🚀 Impact on Education
 Shadow bridges the gap between digital content and physical mastery. For the first time, an "expert" can be in a thousand places at once. By reducing the cognitive load of learning complex tasks, Shadow makes high-skill trades and hobbies accessible to anyone with a pair of glasses and the will to learn.
 
+## 📱 App Interface & AI Analysis
+
+<p align="center">
+  <img src="assets/home_screen.png" width="30%" alt="Shadow Home Screen">
+  <img src="assets/expert_record.png" width="30%" alt="Expert Lesson Recording">
+  <img src="assets/vision_demo.png" width="30%" alt="Live AR Coaching">
+</p>
+
+> **From left to right:** 1. The clean learner vs. expert entry point. 2. Effortless one-tap expert lesson creation. 3. The real-time coaching brain in action.
+
 ---
 
 ## ⚙️ Getting Started
