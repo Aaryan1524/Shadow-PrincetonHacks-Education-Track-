@@ -58,11 +58,12 @@ Shadow bridges the gap between digital content and physical mastery. For the fir
 ## 📱 App Interface & AI Analysis
 
 <p align="center">
-  <img src="assets/vision_demo.png" width="300" alt="Shadow AI Coaching in Action">
+  <img src="assets/home_screen.png" width="30%" alt="Shadow Home Screen">
+  <img src="assets/expert_record.png" width="30%" alt="Expert Lesson Recording">
+  <img src="assets/vision_demo.png" width="30%" alt="Live AR Coaching">
 </p>
 
-> **Left:** The "Vision Brain" identifies the user's hand position.  
-> **Right:** The "Voice Coach" provides real-time conversational feedback and step guidance.
+> **From left to right:** 1. The clean learner vs. expert entry point. 2. Effortless one-tap expert lesson creation. 3. The real-time coaching brain in action.
 
 ---
 
