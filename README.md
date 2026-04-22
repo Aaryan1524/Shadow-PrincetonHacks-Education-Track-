@@ -10,7 +10,7 @@ Learning a physical skill—whether it's building a complex circuit, performing 
 **Shadow** changes the sphere of education by:
 - **Scaling Expertise:** We use Google’s **Gemini 2.5 Flash** to analyze a single recording of an expert performed once, and we extract a "Master Knowledge Blueprint." This blueprint encodes not just instructions, but *technique, tempo, and failure triggers*.
 - **Proactive Coaching:** Unlike voice assistants that wait for you to ask a question, Shadow **watches your hands**. It proactively corrects your movements, warns you about upcoming mistakes, and guides you through the "feel" of a task.
-- **First-Person Immersion:** By utilizing the **Brilliant Labs Frame** AR glasses, the learner’s hands remain free, and the coaching is overlaid directly in their field of vision.
+- **First-Person Immersion:** By utilizing **Meta Glasses Gen 1**, the learner’s hands remain free, and the coaching is overlaid directly in their field of vision.
 
 ---
 
@@ -26,7 +26,7 @@ Shadow is split into a high-performance Python backend and a native iOS AR clien
 - **Conversational Coach:** A creative, non-robotic voice agent that uses the Expert Blueprint to answer user questions contextually.
 
 ### 2. The AR Client (iOS)
-- **Hardware Interface:** Native Swift integration with **MWDAT (Mobile Wearables Data Toolkit)** for Brilliant Labs Frame.
+- **Hardware Interface:** Native Swift integration with **MWDAT (Mobile Wearables Data Toolkit)** for Meta Glasses Gen 1.
 - **Unified Coaching UI:** A dynamic, color-coded bubble that blends Vision alerts (Silent Brain) and Voice coaching (Conversational Agent).
 - **Audio Engine:** On-device Speech-to-Text (STT) combined with gTTS for high-fidelity vocal responses.
 - **Smart Queueing:** Handles rapid user speech during AI processing to ensure a seamless, uninterrupted coaching flow.
@@ -78,7 +78,7 @@ Shadow bridges the gap between digital content and physical mastery. For the fir
 ### iOS Setup
 1. Open `Shadow.xcodeproj` in Xcode 15+.
 2. Update `ShadowAPIClient.swift` with your Mac's local IP address.
-3. Build and run on an iPhone connected to Brilliant Labs Frame glasses.
+3. Build and run on an iPhone connected to Meta Glasses Gen 1.
 
 ---
 
