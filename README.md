@@ -1,86 +1,219 @@
-# Shadow: AI-Guided AR Coaching 🕶️🎓
+<div align="center">
+  <h1>Shadow 🕶️</h1>
+</div>
 
-**Shadow** is a next-generation education platform built for **PrincetonHacks 2024**. It transforms how practical, hands-on skills are taught by digitizing expert knowledge into a proactive, real-time AR coaching experience.
+<div align="center">
+  <h3>An expert watches over your shoulder — through your glasses — every time you learn a hands-on skill.</h3>
+</div>
 
----
+<div align="center">
+  <img src="https://img.shields.io/badge/platform-iOS%20%2B%20Meta%20Glasses%20Gen%201-black" alt="Platform: iOS + Meta Glasses Gen 1">
+  <img src="https://img.shields.io/badge/backend-FastAPI-009688" alt="Backend: FastAPI">
+  <img src="https://img.shields.io/badge/AI-Gemini%202.5%20Flash-4285F4" alt="AI: Gemini 2.5 Flash">
+  <img src="https://img.shields.io/badge/client-SwiftUI-F05138" alt="Client: SwiftUI">
+  <img src="https://img.shields.io/badge/event-PrincetonHacks%20(Education%20Track)-orange" alt="PrincetonHacks Education Track">
+</div>
 
-## 🌟 The Vision: Democratizing Expert Mentorship
-Learning a physical skill—whether it's building a complex circuit, performing surgery, or even making the perfect pour-over coffee—has traditionally required a physical mentor standing over your shoulder. Videos are passive, and manuals are clunky.
+<br>
 
-**Shadow** changes the sphere of education by:
-- **Scaling Expertise:** We use Google’s **Gemini 2.5 Flash** to analyze a single recording of an expert performed once, and we extract a "Master Knowledge Blueprint." This blueprint encodes not just instructions, but *technique, tempo, and failure triggers*.
-- **Proactive Coaching:** Unlike voice assistants that wait for you to ask a question, Shadow **watches your hands**. It proactively corrects your movements, warns you about upcoming mistakes, and guides you through the "feel" of a task.
-- **First-Person Immersion:** By utilizing **Meta Glasses Gen 1**, the learner’s hands remain free, and the coaching is overlaid directly in their field of vision.
+<div align="center">
+  <img src="assets/home_screen.png" width="30%" alt="Shadow Home Screen">
+  <img src="assets/expert_record.png" width="30%" alt="Expert Lesson Recording">
+  <img src="assets/vision_demo.png" width="30%" alt="Live AR Coaching">
+</div>
 
----
+<div align="center">
+  <sub><b>Left to right:</b> the learner/expert entry point · one-tap expert lesson capture · the real-time coaching brain in action</sub>
+</div>
 
-## 🛠️ System Architecture
+<br>
 
-Shadow is split into a high-performance Python backend and a native iOS AR client.
+Shadow turns a single video of an expert performing a task into a live,
+proactive AR coach. Record the expert once; Gemini distills their
+technique, tempo, and failure patterns into a **Master Knowledge
+Blueprint**. A learner then puts on Meta glasses, and Shadow watches their
+hands through the camera — verifying each step, catching mistakes *before*
+they happen, and answering questions out loud in a natural voice.
 
-### 1. The "Shadow Brain" (Backend)
-- **Engine:** FastAPI (Python)
-- **AI Core:** Google Gemini 2.5 Flash (Multimodal)
-- **Expert Pipeline:** Analyzes `.mp4` recordings to generate segmented steps, visual landmarks, and common beginner failure points.
-- **Live Verification:** Evaluates camera frames every 3 seconds to determine step completion and technique accuracy.
-- **Conversational Coach:** A creative, non-robotic voice agent that uses the Expert Blueprint to answer user questions contextually.
+> [!NOTE]
+> Videos are passive and manuals are clunky. The thing that actually works —
+> a mentor standing over your shoulder — doesn't scale. Shadow is that
+> mentor, digitized.
 
-### 2. The AR Client (iOS)
-- **Hardware Interface:** Native Swift integration with **MWDAT (Mobile Wearables Data Toolkit)** for Meta Glasses Gen 1.
-- **Unified Coaching UI:** A dynamic, color-coded bubble that blends Vision alerts (Silent Brain) and Voice coaching (Conversational Agent).
-- **Audio Engine:** On-device Speech-to-Text (STT) combined with gTTS for high-fidelity vocal responses.
-- **Smart Queueing:** Handles rapid user speech during AI processing to ensure a seamless, uninterrupted coaching flow.
+## Why Shadow?
 
----
+- **The expert records once, teaches forever.** A single `.mp4` of the
+  expert performing the task is enough. Gemini 2.5 Flash segments it into
+  timestamped steps and extracts what videos can't teach: *tempo*
+  ("a slow, steady, even pour"), *technique* ("circular motion, not a
+  straight line"), and *failure triggers* ("filter leaning", "liquid over
+  rim").
+- **Proactive, not reactive.** Voice assistants wait for you to ask.
+  Shadow watches. Camera frames from the glasses are verified against the
+  blueprint every few seconds — it advances you when a step is visually
+  complete and warns you the moment a known failure trigger appears.
+- **Hands-free by design.** The learner's hands stay on the task. Coaching
+  arrives as a color-coded overlay in their field of vision and as a voice
+  in their ear — never a screen they have to look down at.
+- **A coach, not a manual.** The voice agent ("Alex") is deliberately
+  non-robotic: brief, warm, specific, occasionally funny. It hears what
+  you actually said, sees what you're actually doing, and never recites
+  the instructions back at you.
 
-## 📂 Project Structure
+```
+ EXPERT (once)                          LEARNER (every session)
 
-```text
-├── Shadow/                 # Native iOS Application (SwiftUI)
-│   ├── ViewModels/         # Logic for Vision, Voice, and Device sessions
-│   ├── Views/              # AR Camera View, Unified UI, Expert Record flow
-│   ├── Networking/         # ShadowAPIClient for real-time inference
-│   └── Networking/         # Swift Models for the Knowledge Blueprint
-├── backend/                # AI Inference Server (Python)
-│   ├── agents/             # Gemini 2.5 Flash Agent Orchestration
-│   │   ├── conversation_coach.py   # Conversational Logic & Skip Detection
-│   │   └── voice_coach.py          # Blueprint Enrichment & Response Gen
-│   ├── lessons/            # JSON-based Master Knowledge Blueprints
-│   └── main.py             # FastAPI Routes & Multimodal Processing
-└── meta-wearables-dat-ios  # Hardware Communication Layer
+ expert .mp4 ──► Gemini 2.5 Flash       glasses camera ──► /verify-step ──► Gemini 2.5 Flash
+                     │                        │                                  │
+                     ▼                        ▼                                  ▼
+        Master Knowledge Blueprint      learner's voice ──► WebSocket ──► Gemini + gTTS
+         (steps · tempo · technique          │                                  │
+          landmarks · failure triggers)      ▼                                  ▼
+                     │                  unified coaching bubble  ◄──  voice reply in ear
+                     └──────────── grounds every response ──────────────────────┘
 ```
 
 ---
 
-## 🚀 Impact on Education
-Shadow bridges the gap between digital content and physical mastery. For the first time, an "expert" can be in a thousand places at once. By reducing the cognitive load of learning complex tasks, Shadow makes high-skill trades and hobbies accessible to anyone with a pair of glasses and the will to learn.
+## System Architecture
 
-## 📱 App Interface & AI Analysis
+Shadow is two halves: a Python "brain" that does all the seeing and
+thinking, and a native iOS client that owns the glasses, the mic, and the
+coaching UI.
 
-<p align="center">
-  <img src="assets/home_screen.png" width="30%" alt="Shadow Home Screen">
-  <img src="assets/expert_record.png" width="30%" alt="Expert Lesson Recording">
-  <img src="assets/vision_demo.png" width="30%" alt="Live AR Coaching">
-</p>
+### The Shadow Brain (`backend/`)
 
-> **From left to right:** 1. The clean learner vs. expert entry point. 2. Effortless one-tap expert lesson creation. 3. The real-time coaching brain in action.
+| Component | What it does |
+|---|---|
+| **Expert pipeline** (`POST /lessons/generate-steps`) | Uploads the expert `.mp4` to the Gemini File API, then prompts Gemini 2.5 Flash to segment it into the blueprint schema — schema-enforced JSON, low temperature. |
+| **Silent vision loop** (`POST /sessions/{id}/verify-step`) | The core coaching loop. Receives a live camera frame every few seconds, compares it against the step's success criteria and failure triggers, returns `step_completed` + a coaching message. |
+| **Conversational coach** (`POST /sessions/{id}/coach`) | Text-turn coaching grounded in the blueprint, with skip-detection (`advance_step`) when the learner says they're done. |
+| **Voice session** (`WS /ws/sessions/{id}`) | Streams PCM audio chunks from the iPhone mic, transcribes and coaches in one Gemini pass, replies with gTTS audio. The iOS client pushes `context_update` messages so the voice agent always knows what the vision loop just saw. |
+| **Lesson store** (`lessons/`) | Blueprints persisted as plain JSON — inspectable, editable, portable. |
+
+### The AR Client (`Shadow/`)
+
+- **Hardware layer** — native Swift integration with the
+  **Meta Wearables Device Access Toolkit** (`meta-wearables-dat-ios`
+  submodule) streams the first-person camera from Meta Glasses Gen 1.
+- **Unified coaching UI** — one dynamic, color-coded bubble that merges
+  the silent vision verdicts and the voice agent's replies, so the learner
+  reads a single coaching channel instead of two competing feeds.
+- **Audio engine** — on-device speech-to-text for wake-free listening,
+  server-side gTTS for the coach's voice.
+- **Smart queueing** — if the learner speaks while the AI is still
+  thinking, the message is queued and flushed the instant the reply lands
+  (`VoiceSessionManager.swift`), so conversation never deadlocks
+  mid-task.
+- **Expert flow** — record → auto-generate steps → review/edit
+  (`ExpertRecordView`, `StepReviewView`) → publish as a lesson.
 
 ---
 
-## ⚙️ Getting Started
+## Directory layout
 
-### Backend Setup
-1. `cd backend`
-2. Create a `.env` file with `GOOGLE_API_KEY`.
-3. `pip install -r requirements.txt`
-4. `uvicorn main:app --host 0.0.0.0 --port 8000 --reload`
+```
+Shadow-PrincetonHacks/
+├── README.md                       this file
+├── Shadow/                         native iOS app (SwiftUI)
+│   ├── Views/                      Home, Expert Record, Step Review, live AR Stream
+│   ├── ViewModels/                 vision loop, voice session, glasses device session
+│   └── Networking/                 ShadowAPIClient + blueprint Swift models
+├── Shadow.xcodeproj                Xcode project
+├── backend/                        the Shadow Brain (Python)
+│   ├── main.py                     FastAPI routes, vision loop, voice WebSocket
+│   ├── agents/
+│   │   ├── conversation_coach.py   "Alex" — conversational coaching + skip detection
+│   │   └── voice_coach.py          audio transcription + coaching + gTTS in one pass
+│   ├── lessons/                    Master Knowledge Blueprints (plain JSON)
+│   └── requirements.txt
+├── meta-wearables-dat-ios/         Meta Wearables Device Access Toolkit (submodule)
+└── assets/                         README screenshots
+```
 
-### iOS Setup
-1. Open `Shadow.xcodeproj` in Xcode 15+.
-2. Update `ShadowAPIClient.swift` with your Mac's local IP address.
-3. Build and run on an iPhone connected to Meta Glasses Gen 1.
+## Getting started
+
+### 1. Run the Shadow Brain
+
+```bash
+cd backend
+pip install -r requirements.txt
+echo "GOOGLE_API_KEY=<your key>" > .env
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+`--host 0.0.0.0` matters — the iPhone reaches the backend over your local
+network, not localhost.
+
+### 2. Point the iOS app at your Mac
+
+Open `Shadow.xcodeproj` in Xcode 15+, then set your Mac's local IP
+(System Settings → Wi-Fi → Details) in
+`Shadow/Networking/ShadowAPIClient.swift`:
+
+```swift
+enum ShadowAPI {
+    static var baseURL = "http://<your-mac-ip>:8000"
+}
+```
+
+### 3. Build and run
+
+Build to an iPhone paired with Meta Glasses Gen 1 (the glasses stream
+their camera through the Meta Wearables Device Access Toolkit). Both the
+Mac and iPhone must be on the same Wi-Fi network.
+
+> [!TIP]
+> No glasses on hand? The expert-side flow (record → generate blueprint →
+> review steps) runs entirely on the phone, and you can exercise the
+> backend directly — `POST` an `.mp4` to `/lessons/generate-steps` and
+> watch the blueprint come back.
+
+## How a session works
+
+**As an expert:** record yourself doing the task once. Shadow uploads the
+video, Gemini segments it into steps with timestamps, tempo, technique
+notes, visual landmarks, and failure triggers. You review and edit the
+generated steps, then publish the lesson.
+
+**As a learner:** pick a lesson and start. From there, three loops run
+concurrently:
+
+1. **The silent brain** — every few seconds, a frame from the glasses is
+   verified against the current step. Completed? The UI advances and
+   previews what's next. Failure trigger active? You get a specific,
+   immediate correction.
+2. **The voice coach** — speak at any time. Your audio streams over the
+   WebSocket; Alex answers in your ear, grounded in both the blueprint
+   *and* the latest thing the vision loop saw.
+3. **The unified bubble** — both loops feed one color-coded overlay, so
+   coaching reads as a single voice, not two systems talking over each
+   other.
+
+## Known gaps
+
+- **Latency is network-bound.** Every vision verdict is a round trip to
+  Gemini; on hackathon Wi-Fi that's a few seconds per check. On-device
+  landmark tracking between cloud verdicts is the natural next step.
+- **`baseURL` is hand-configured.** The client points at a hard-coded
+  local IP; Bonjour discovery would remove the last manual setup step.
+- **Blueprints trust the expert video.** One recording, one perspective —
+  the pipeline doesn't yet merge multiple takes or camera angles into a
+  single blueprint.
+- **gTTS is a placeholder voice.** It's reliable and free, but a
+  streaming neural TTS would cut the pause before Alex speaks.
+
+## The bigger picture
+
+For the first time, an expert can be in a thousand places at once.
+Learning a physical skill — wiring a circuit, suturing, dialing in a
+pour-over — has always required a mentor physically present. Shadow makes
+that mentorship a file: recorded once, distilled by AI, and replayed as
+live guidance for anyone with a pair of glasses and the will to learn.
 
 ---
 
-**Shadow — Learning through the lens of AI.**
-*A PrincetonHacks 2024 Project*
+<div align="center">
+  <b>Shadow — learning through the lens of AI.</b><br>
+  <sub>A PrincetonHacks project · Education Track</sub>
+</div>
